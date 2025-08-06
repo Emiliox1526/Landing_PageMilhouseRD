@@ -16,9 +16,14 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.javalin:javalin:5.6.1'
+
     implementation 'org.slf4j:slf4j-simple:2.0.7'
     testImplementation 'junit:junit:4.13.2'
+
+    implementation "com.theokanning.openai-gpt3-java:service:0.18.2"            // OpenAiService de Theo Kanning :contentReference[oaicite:1]{index=1}
+
+    implementation("io.javalin:javalin:5.6.4")
+    implementation("com.openai:openai-java:2.20.1")
 }
 
 // ----------------------------------------------------------------
