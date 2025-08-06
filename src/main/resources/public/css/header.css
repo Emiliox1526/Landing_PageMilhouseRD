@@ -6,6 +6,7 @@
     --mh-gold:    #cfbb9b;
     --mh-blue:    #7fa1a8;
     --mh-navy:    #212635;
+    --mh-navy-gradient: #2c3d69;
     --mh-white:   #ffffff;
 }
 .nav-link span {
@@ -34,9 +35,9 @@ header.site-header {
 .navbar-gradiente {
     background: linear-gradient(
             to right,
-            var(--mh-gold) 0%,
-            var(--mh-blue) 60%,
-            var(--mh-blue) 100%
+            var(--mh-navy-gradient) 0%,
+            var(--mh-navy) 20%,
+            var(--mh-navy) 100%
     ) !important;
 }
 
