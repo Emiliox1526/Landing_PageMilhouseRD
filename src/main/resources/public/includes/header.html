@@ -1,0 +1,96 @@
+<!-- header.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- 1. Import Google Font Montserrat -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap"
+            rel="stylesheet">
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+    <script>
+        // Al cargar: asignar .active según la URL
+        document.addEventListener("DOMContentLoaded", () => {
+            const links = document.querySelectorAll('.nav-center .nav-link');
+            const path = window.location.pathname.split("/").pop();
+            links.forEach(a => {
+                const href = a.getAttribute("href").split("/").pop();
+                if (href === path) {
+                    a.classList.add("active");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<header class="site-header fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-gradiente">
+        <div class="container-fluid position-relative">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/index.html">
+                <img src="/assets/img/LogoMilhouse.png"
+                     alt="Logo MILHOUSE"
+                     class="logo-mh"
+                     width="203" />
+                <span>MILHOUSE RD</span>
+            </a>
+
+            <!-- Toggler mobile -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMenu">
+                <!--  --- PESTAÑAS CENTRADAS --- -->
+                <ul class="navbar-nav nav-center align-items-center gap-4">
+                    <li class="nav-item dropdown">
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                    </li>
+                </ul>
+
+                <!--  --- LINKS DERECHA --- -->
+                <ul class="navbar-nav ms-auto nav-right align-items-center gap-3">
+                    <li class="nav-item d-flex align-items-center" id="loginBtn">
+                        <a class="nav-link d-flex align-items-center gap-1" href="/login.html">
+                            <span>Iniciar sesión</span>
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown d-none" id="profileDropdown">
+                        <a
+                                class="nav-link dropdown-toggle d-flex align-items-center gap-1"
+                                href="#"
+                                id="profileMenuLink"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                        >
+                            <ion-icon name="person-circle" class="profile-animated"></ion-icon>
+                            <span id="nav-username">Perfil</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="profileMenuLink">
+                            <li><a class="dropdown-item" href="/mis-propiedades.html">Mis Propiedades</a></li>
+                            <li id="dashboardItem" class="d-none">
+                                <a class="dropdown-item" href="/dashboard">Panel</a>
+                            </li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                                <a class="dropdown-item" href="#" id="logoutBtn">Cerrar sesión</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

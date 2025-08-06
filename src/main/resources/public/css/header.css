@@ -1,0 +1,202 @@
+/* header.css */
+
+/* 0. Importante: familia de fuente Montserrat */
+:root {
+    --mh-font:    'Montserrat', sans-serif;
+    --mh-gold:    #cfbb9b;
+    --mh-blue:    #7fa1a8;
+    --mh-navy:    #212635;
+    --mh-white:   #ffffff;
+}
+.nav-link span {
+    font-family: 'Montserrat', sans-serif !important;
+}
+/* Aplico la fuente globalmente al header/navbar */
+header.site-header,
+.navbar,
+.navbar-brand,
+.nav-center .nav-link,
+.nav-right .nav-link,
+.dropdown-item {
+    font-family: var(--mh-font) !important;
+}
+
+/* 1. Header wrapper: sticky to top */
+header.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+}
+
+/* 2. Gradient background for navbar */
+.navbar-gradiente {
+    background: linear-gradient(
+            to right,
+            var(--mh-gold) 0%,
+            var(--mh-blue) 60%,
+            var(--mh-blue) 100%
+    ) !important;
+}
+
+/* header.css */
+.logo-mh {
+    width: 60px;    /* ajusta este valor al tamaño que quieras */
+    height: auto;   /* mantiene la proporción original */
+    display: block; /* elimina gaps si está en línea */
+}
+/* 3. Brand (logo + text) */
+.navbar-brand {
+    color: var(--mh-blue) !important;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* 4. Toggler icon (mobile) invert for dark bg */
+.navbar-dark .navbar-toggler-icon {
+    filter: invert(1);
+}
+.navbar-brand span {
+    font-family: 'Montserrat', sans-serif !important;
+}
+/* 5. Central navigation container */
+.nav-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* 6. Central nav links */
+.nav-center .nav-link {
+    color: var(--mh-blue) !important;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+/* 7. Icon spacing in central links */
+.nav-center .nav-link ion-icon {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+    vertical-align: middle;
+}
+
+/* 8. Underline effect on hover/active */
+.nav-center .nav-link:hover::after,
+.nav-center .nav-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: var(--mh-blue);
+    border-radius: 2px;
+}
+
+/* 9. Dropdown menu (hidden by default) */
+.nav-center .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 10rem;
+    background-color: var(--mh-navy);
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    padding: 0.5rem 0;
+    z-index: 1000;
+}
+.nav-center .dropdown:hover > .dropdown-menu {
+    display: block;
+}
+.nav-center .dropdown-item {
+    color: var(--mh-white) !important;
+    padding: 0.5rem 1rem;
+}
+.nav-center .dropdown-item:hover {
+    background: var(--mh-blue);
+}
+
+/* 12. Apply white text to any other dropdown-items globally */
+.dropdown-item {
+    color: var(--mh-white) !important;
+}
+
+/* 13–19. Nav right & profile dropdown (igual que antes, con la misma fuente) */
+.nav-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.nav-right .nav-link {
+    color: var(--mh-white) !important;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+.nav-right .nav-link ion-icon {
+    margin-left: 0.25rem;
+    font-size: 1.4rem;
+}
+.nav-right .nav-link:hover {
+    text-decoration: underline;
+}
+.nav-right .dropdown-toggle {
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+.nav-right .dropdown-toggle::after {
+    margin-left: 0.25rem;
+    vertical-align: middle;
+}
+#profileDropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+    top: calc(100% + 0.25rem);
+    background-color: var(--mh-navy);
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    min-width: 12rem;
+    padding: 0.5rem 0;
+}
+#profileDropdown .dropdown-item {
+    color: var(--mh-white) !important;
+    padding: 0.5rem 1rem;
+}
+#profileDropdown .dropdown-item:hover {
+    background: var(--mh-blue);
+}
+#profileDropdown .dropdown-divider {
+    margin: 0.25rem 0;
+    border-color: rgba(255,255,255,0.2);
+}
+
+/* 21. Responsive adjustments */
+@media (max-width: 991.98px) {
+    .nav-center {
+        position: static;
+        transform: none;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+    .nav-center .dropdown-menu,
+    #profileDropdown .dropdown-menu {
+        position: static;
+        transform: none;
+        box-shadow: none;
+        background: transparent;
+    }
+}

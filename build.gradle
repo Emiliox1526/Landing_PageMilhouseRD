@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'edu.pucmm'
+version = '1.0-SNAPSHOT'
+
+application {
+    // Tu clase Main de Javalin
+    mainClass = 'edu.pucmm.Main'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.javalin:javalin:5.6.1'
+    implementation 'org.slf4j:slf4j-simple:2.0.7'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+// ----------------------------------------------------------------
+// Tarea para copiar los archivos estáticos a build/dist
+// ----------------------------------------------------------------
+import org.gradle.api.tasks.Copy
+
+task copyStatic(type: Copy) {
+    description = 'Copia HTML, CSS, JS y assets a build/dist para Netlify'
+    // Ajusta esta ruta si tus .html/.css/.js no están aquí:
+    from('src/main/resources/public') {
+        include '**/*'
+    }
+    into("$buildDir/dist")
+}
+
+// Haz que 'assemble' (y por ende 'build') dependa de copyStatic
+assemble.dependsOn(copyStatic)

@@ -1,0 +1,357 @@
+/* ====================
+       HERO
+==================== */
+.hero {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 100;
+    transition: height 0.3s ease;
+    background-color: black;
+}
+
+.hero-wrapper {
+    height: 100vh;
+    position: sticky;
+    overflow: hidden;
+}
+
+.hero.sticky-shrink {
+    height: 200px;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* ====================
+    SLIDER DE FONDO EN EL HERO
+==================== */
+.hero-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    transition: height 0.3s ease;
+}
+
+.hero-slider .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    z-index: 0;
+}
+
+.hero-slider .slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.hero-slider .slide img.hero-image,
+.hero-slider .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: height 0.3s ease;
+}
+
+/* ====================
+   INDICADORES (DOTS) DEL SLIDER
+==================== */
+.slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 2;
+}
+
+.slider-dots .dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.slider-dots .dot.active {
+    background-color: #fff;
+}
+
+/* ====================
+   BOTONES DE FLECHA PARA HERO
+==================== */
+.hero-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 3;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.hero-arrow-left {
+    left: 30px;
+}
+
+.hero-arrow-right {
+    right: 30px;
+}
+
+.hero-arrow ion-icon {
+    font-size: 1.5rem;
+}
+
+.hero-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    color: #000;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* ====================
+   HERO OVERLAY (texto sobre la imagen)
+==================== */
+.hero-overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+    pointer-events: none;
+    text-align: center;
+}
+
+.hero-overlay h1 {
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+.hero-overlay p {
+    display: block;
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.hero-container {
+    height: 100vh;
+    position: relative;
+}
+
+/* ================================
+   CONTADOR DE IMÁGENES EN HERO
+================================ */
+.image-navigation {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+}
+
+.image-navigation button {
+    padding: 8px 16px;
+    background-color: #111;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.image-navigation button:hover {
+    background-color: #333;
+}
+
+#image-counter {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+/* ====================
+   CONTADORES NUMÉRICOS
+==================== */
+.hero-counter {
+    background-color: #000;
+    padding: 100px 0 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 120px;
+}
+
+.hero-counter-overlay {
+    width: 100%;
+}
+
+.counters-container {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.counter-box {
+    background-color: #111;
+    width: 200px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.counter-box:hover {
+    transform: scale(1.05);
+}
+
+.counter-value {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: 'Cinzel', serif;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.counter-box p {
+    font-size: 1.2rem;
+    color: #ddd;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ================================
+   SLIDER ROW - AUTO SCROLL
+================================ */
+.slider-row {
+    position: relative;
+    overflow: hidden;
+    margin-top: 60px;
+}
+
+.slider-row-images {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    gap: 30px;
+    scroll-behavior: auto;
+}
+
+
+.slider-row-images::-webkit-scrollbar {
+    display: none;
+}
+
+.slide-item {
+    flex: 0 0 auto;
+    width: 300px; /* o el ancho que desees */
+}
+
+.slide-item:hover {
+    transform: scale(1.05);
+}
+
+.project-card {
+    background: #111;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.project-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media screen and (max-width: 768px) {
+    .hero-overlay h1 {
+        font-size: 2rem;
+    }
+
+    .hero-overlay p {
+        font-size: 1rem;
+    }
+
+    .image-navigation {
+        bottom: 20px;
+        gap: 12px;
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+
+    .image-navigation button {
+        padding: 6px 12px;
+    }
+
+    .hero-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    .counter-value {
+        font-size: 3rem;
+    }
+
+    .counter-box p {
+        font-size: 1rem;
+        color: #fad9c7;
+    }
+
+    .slide-item {
+        width: 80vw;
+    }
+}

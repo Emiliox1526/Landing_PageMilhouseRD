@@ -1,0 +1,327 @@
+/*=============================================
+=            Variables de diseño             =
+=============================================*/
+:root {
+    --primary:   #cfbb9b;  /* Azul Blueloft */
+    --accent:    #--mh-blue;  /* Rojo Airbnb */
+    --text:      #000000;  /* Gris oscuro para texto */
+    --text-light:#767676;  /* Gris medio para subtítulos */
+    --bg:        #eaeae3;  /* Fondo general */
+    --radius:    8px;      /* Radio estándar */
+    --transition:0.3s ease;
+}
+
+/*=============================================
+=               Reset & Base                 =
+=============================================*/
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+    padding-block-start: 6rem;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text);
+    background-color: var(--bg);
+    padding-block-end: 4rem;
+}
+.site-main {
+    padding-block-start: 6rem;  /* espacio para el header */
+    padding-block-end:   4rem;  /* espacio para el footer */
+}
+h1,h2,h3,h4,h5,h6 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text);
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+a:hover { color: var(--accent); }
+
+/*=============================================
+=           HEADER DE PROPIEDAD              =
+=============================================*/
+.property-header {
+    background-color: #ffffff;
+    padding: 4rem 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.property-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.property-header .text-muted {
+    color: var(--text-light);
+}
+
+/*=============================================
+=        CARRUSEL & GALERÍA IMÁGENES         =
+=============================================*/
+.property-gallery {
+    position: relative;
+    margin-bottom: 3rem;
+}
+.property-gallery .carousel-item img {
+    border-radius: var(--radius);
+    object-fit: cover;
+    height: 500px;
+}
+.property-gallery .gallery-share {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/*=============================================
+=         BOTONES Y BADGES PERSONALIZADOS    =
+=============================================*/
+.btn-warning {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    border-radius: var(--radius);
+    transition: background var(--transition);
+}
+.btn-warning:hover {
+    background-color: var(--accent), 10%;
+}
+
+.badge.bg-warning {
+    background-color: var(--accent);
+    color: #fff;
+    border-radius: var(--radius);
+}
+
+/*=============================================
+=       SECCIÓN DETALLES & AMENIDADES        =
+=============================================*/
+.property-details {
+    padding: 4rem 0;
+}
+.property-details h2 {
+    font-size: 1.75rem;
+    border-bottom: 3px solid var(--primary);
+    display: inline-block;
+    padding-bottom: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+.property-details p {
+    max-width: 700px;
+    margin-bottom: 2rem;
+    color: var(--text-light);
+}
+.property-details ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+    gap: 1rem;
+}
+.property-details ul li {
+    background: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text);
+}
+
+/*=============================================
+=            TABLA DE TIPOLOGÍA              =
+=============================================*/
+.property-typology {
+    padding: 4rem 0;
+    background-color: #fff;
+}
+.property-typology .table {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+.property-typology .table thead {
+    background-color: var(--primary);
+}
+.property-typology .table th,
+.property-typology .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/*=============================================
+=     MAPA & FORMULARIO DE CONTACTO          =
+=============================================*/
+.property-contact {
+    padding: 4rem 0;
+}
+#map {
+    width: 100%;
+    height: 300px;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+/*=============================================
+=        PROPIEDADES RELACIONADAS            =
+=============================================*/
+.related-properties {
+    padding: 4rem 0;
+}
+.related-properties .card {
+    border: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.related-properties .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+.related-properties .card img {
+    object-fit: cover;
+    height: 200px;
+}
+.related-properties .card-body {
+    padding: 1.25rem;
+}
+.related-properties .card-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+}
+.related-properties .card-text {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+/* =======================================
+   Sección: Loan Calculator (Placeholder)
+   ======================================= */
+.loan-calculator {
+    background-color: #ffffff;
+    margin-bottom: 3rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Ajustes de texto y espaciado */
+.loan-calculator .form-label {
+    font-weight: 500;
+    color: var(--text);
+}
+.loan-calculator h2 {
+    color: var(--text);
+}
+
+/* Slider accent */
+.loan-calculator .form-range {
+    /* Chrome / Edge */
+    accent-color: var(--primary);
+    margin-top: 0.25rem;
+}
+
+/* Inputs agrupados */
+.loan-calculator .input-group-text {
+    background: var(--bg);
+    border-right: 0;
+}
+.loan-calculator .input-group .form-control {
+    border-left: 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767px) {
+    .loan-calculator {
+        padding: 2rem 1rem;
+    }
+}
+/* ----------------------------------------
+   Sección Tipología (modern table style)
+   ---------------------------------------- */
+.property-typology {
+    background-color: var(--bg);
+}
+
+/* Título con línea debajo */
+.property-typology h2 {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+}
+
+/* Contenedor con sombra y esquinas redondeadas */
+.property-typology .table-responsive {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+/* Tabla limpia sin bordes por defecto */
+.property-typology .table {
+    margin-bottom: 0;
+    background-color: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Encabezados: texto oscuro, sin fondo gris */
+.property-typology .table thead th {
+    background: transparent;
+    color: var(--text);
+    font-weight: 600;
+    border-bottom: 2px solid var(--primary);
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+/* Celdas: líneas finas entre filas */
+.property-typology .table tbody td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #f1f1f1;
+    color: var(--text-light);
+}
+
+/* Primera fila no necesita border-top (evitar doble línea) */
+.property-typology .table tbody tr:first-child td {
+    border-top: none;
+}
+
+/* Precio en negrita y color primario */
+.property-typology .table tbody td:last-child {
+    font-weight: 600;
+    color: var(--primary);
+    text-align: right;
+}
+
+/* Iconos en encabezado, tamaño y color coherentes */
+.property-typology .table thead th .bi {
+    font-size: 1rem;
+    vertical-align: -.1rem;
+}
+
+/*=============================================
+=               RESPONSIVE                  =
+=============================================*/
+@media (max-width: 767px) {
+    .property-gallery .carousel-item img { height: 300px; }
+    .property-header { padding: 2rem 0; }
+    .property-title { font-size: 2rem; }
+    .property-details { padding: 2rem 0; }
+    .property-typology { padding: 2rem 0; }
+    .property-contact { padding: 2rem 0; }
+    .related-properties { padding: 2rem 0; }
+}

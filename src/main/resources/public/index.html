@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio | MILHOUSE RD</title>
+    <!-- Bootstrap CSS + Icons -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+            rel="stylesheet"
+    />
+
+
+    <!-- Google Fonts: Montserrat para cuerpo, Cinzel para títulos -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- CSS Global -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/hero.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/index.css"/>
+    <link rel="stylesheet" href="css/portfolio.css">
+    <link rel="stylesheet" href="css/contact.css">
+    <link rel="stylesheet" href="css/team.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/services.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Fuentes adicionales -->
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Ajuste para ocultar scroll bar y permitir auto-scroll suave -->
+    <style>
+
+        .slider-row-images {
+            display: flex;          /* ponemos un flex container */
+            flex-wrap: nowrap;      /* sin wrap */
+            overflow-x: hidden;     /* ocultamos la barra */
+            scroll-behavior: smooth;/* para que, si tuvieras controles manuales, fueran suaves */
+        }
+        .slider-row-images .slide-item {
+            flex: 0 0 auto;         /* cada item mantiene su tamaño y no encoge */
+        }
+    </style>
+</head>
+<body>
+<!-- HEADER -->
+<!-- Header incluido -->
+<div id="header-container"></div>
+<script src="js/includeHeader.js" defer></script>
+
+
+<!-- MAIN -->
+<main>
+    <!-- HERO SECTION -->
+    <section class="hero fade-in">
+        <div class="hero-slider" id="dynamic-slider"></div>
+
+        <!--  ← inserta aquí tu botón -->
+        <a class="nav-link hero-btn" href="property.html">
+            <!-- SVG + texto -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor">
+                <path d="M244-204h116v-238.5h240V-204h116v-355L480-736 244-559v355Zm-75 75v-467.5L480-830l311 233.67V-129H525v-238.5h-90V-129H169Zm311-341Z"/>
+            </svg>
+            Ver propiedades
+        </a>
+
+        <div class="slider-dots" id="slider-dots"></div>
+        <button class="hero-arrow hero-arrow-left" id="prev-slide">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+        <button class="hero-arrow hero-arrow-right" id="next-slide">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+    </section>
+
+
+    <!-- FEATURED PROJECTS SECTION -->
+    <section class="featured-projects fade-in fullwidth">
+        <div class="container">
+            <h2>Recientemente agregados</h2>
+            <div class="slider-row">
+
+                <div class="slider-row-images" id="row1">
+                    <div class="slide-item"><div class="project-card"><img src="/assets/img/house.PNG" alt="Henbet58"></div></div>
+                    <div class="slide-item"><div class="project-card"><img src="/assets/img/house2.PNG" alt="Henbet58"></div></div>
+                    <div class="slide-item"><div class="project-card"><img src="/assets/img/house.PNG" alt="Henbet58"></div></div>
+                    <div class="slide-item"><div class="project-card"><img src="/assets/img/house2.PNG" alt="Proyecto 4"></div></div>
+                    <div class="slide-item"><div class="project-card"><img src="/assets/img/house.PNG" alt="Proyecto 5"></div></div>
+                </div>
+            </div>
+            <div class="container services-container">
+                <button class="view-more" onclick="window.location.href='portfolio.html';">Ver Mas</button>
+            </div>
+        </div>
+
+    </section>
+
+
+
+    <!-- MODAL (proyectos) -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title"></h2>
+            <p id="modal-description"></p>
+            <div class="video-container">
+                <video id="modal-video" controls>
+                    <source id="modal-video-source" src="" type="video/mp4">
+                    Tu navegador no soporta el elemento de video.
+                </video>
+            </div>
+            <p id="modal-location"></p>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<div id="footer-container"></div>
+<script src="js/includeFooter.js" defer></script>
+
+<!-- HEADER BG ON SCROLL -->
+<script>
+    (function() {
+        const header = document.querySelector("header");
+        if (!header) return;
+
+        // parsea "rgb(...)" o "rgba(...)" y devuelve [r,g,b]
+        function parseRGB(str) {
+            const nums = str.match(/\d+/g);
+            return nums ? nums.slice(0,3).map(Number) : [255,255,255];
+        }
+
+        function updateHeaderTextColor() {
+            const bg = getComputedStyle(header).backgroundColor;
+            const [r,g,b] = parseRGB(bg);
+            // luminancia relativa (0 oscuro → 1 claro)
+            const lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+            if (lum < 0.5) {
+                header.classList.add("dark-bg");
+                header.classList.remove("light-bg");
+            } else {
+                header.classList.add("light-bg");
+                header.classList.remove("dark-bg");
+            }
+        }
+
+        function onScroll() {
+            const o = Math.min(window.scrollY / 300, 0.9);
+            header.style.backgroundColor = `rgba(0,0,0,${o})`;
+            updateHeaderTextColor();
+        }
+
+        window.addEventListener("scroll", onScroll);
+        // iniciar estado al cargar
+        onScroll();
+    })();
+</script>
+
+<!-- HERO SLIDER JS -->
+<script>
+    const sliderImages = [
+        "assets/Henbet58/GPR_6935.jpg",
+        "assets/Henbet58/GPR_6917.jpg",
+        "assets/Henbet58/GPR_6870.jpg",
+        "assets/Henbet58/GPR_6902.jpg",
+        "assets/Henbet58/GPR_6872.jpg",
+        "assets/Enmag11/GPR03040.jpg",
+        "assets/Enmag11/GPR03159.jpg",
+        "assets/Enmag11/GPR02998.jpg",
+        "assets/Enmag11/GPR03004.jpg",
+        "assets/Enmag11/GPR03033.jpg",
+        "assets/BauruII/A3RE_F003_BAURU II.png",
+        "assets/BauruII/A3RE_F004_BAURU II.png",
+        "assets/BauruII/CONJUNTO.jpg",
+    ];
+    const sliderContainer = document.getElementById("dynamic-slider");
+    const dotsContainer   = document.getElementById("slider-dots");
+    let currentSlide = 0;
+
+    function renderSlides() {
+        sliderContainer.innerHTML = "";
+        dotsContainer  .innerHTML = "";
+
+        sliderImages.forEach((src, i) => {
+            // Extraemos el nombre de la carpeta: la segunda parte de "assets/CARPETA/archivo"
+            const parts = src.split("/");
+            const projectName = parts.length > 1 ? parts[1] : `Proyecto ${i+1}`;
+
+            const slide = document.createElement("div");
+            slide.className = "slide" + (i === 0 ? " active" : "");
+            slide.innerHTML = `
+  <img class="hero-image" src="${src}" alt="Slide ${i+1}">
+  <div class="hero-overlay">
+    <h1>${projectName}</h1>
+    <p>Posible ubicación ${i + 1}?</p>
+
+  </div>
+`;
+
+
+            sliderContainer.appendChild(slide);
+
+            const dot = document.createElement("span");
+            dot.className = "dot" + (i === 0 ? " active" : "");
+            dot.addEventListener("click", () => goToSlide(i));
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    function goToSlide(idx) {
+        const slides = sliderContainer.querySelectorAll(".slide");
+        const dots   = dotsContainer.querySelectorAll(".dot");
+        slides[currentSlide].classList.remove("active");
+        dots  [currentSlide].classList.remove("active");
+        currentSlide = idx;
+        slides[currentSlide].classList.add("active");
+        dots  [currentSlide].classList.add("active");
+    }
+
+    document.getElementById("prev-slide")
+        .addEventListener("click", () =>
+            goToSlide((currentSlide - 1 + sliderImages.length) % sliderImages.length)
+        );
+
+    document.getElementById("next-slide")
+        .addEventListener("click", () =>
+            goToSlide((currentSlide + 1) % sliderImages.length)
+        );
+
+    renderSlides();
+</script>
+
+
+
+
+
+
+<!-- Ionicons -->
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<!-- JS General -->
+<script src="./js/app.js"></script>
+</body>
+</html>

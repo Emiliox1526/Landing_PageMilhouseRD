@@ -1,0 +1,201 @@
+/* PORTFOLIO ESTILO APPLE */
+.portfolio-apple {
+    padding: 80px 0;
+    background-color: #000;
+}
+
+/* Título de cada sección */
+.portfolio-section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ce4242;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+/* Tarjeta de proyecto */
+.portfolio-item-apple {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(17, 17, 17, 0.37);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2.5rem;
+    gap: 2rem;
+    border: 1px solid #222;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.03);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.portfolio-item-apple:hover {
+    transform: scale(1.01);
+}
+
+/* Imagen del proyecto */
+.portfolio-img-apple {
+    flex: 1;
+    max-width: 50%;
+    height: 300px; /* altura fija */
+    overflow: hidden;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.portfolio-img-apple img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+
+.portfolio-img-apple img:hover {
+    transform: scale(1.03);
+    filter: brightness(1.1) sepia(0.3);
+}
+
+/* Texto del proyecto */
+.portfolio-text-apple {
+    flex: 1;
+}
+
+.portfolio-text-apple h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.portfolio-text-apple p {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    max-width: 450px;
+    line-height: 1.4;
+}
+
+/* Botón (opcional) */
+.btn-apple {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.btn-apple:hover {
+    background-color: #555;
+}
+
+/* Pantalla completa (opcional) */
+.fullscreen {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================
+   🟢 RESPONSIVE (CELULAR)
+============================ */
+@media (max-width: 768px) {
+    .portfolio-item-apple {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .portfolio-img-apple {
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .portfolio-img-apple img {
+        width: 100%;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .portfolio-text-apple {
+        max-width: 100%;
+    }
+
+    .portfolio-text-apple h2 {
+        font-size: 1.5rem;
+    }
+
+    .portfolio-text-apple p {
+        font-size: 1rem;
+    }
+
+    .portfolio-section-title {
+        font-size: 1.8rem;
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* 🔘 Paginación */
+.pagination {
+    text-align: center;
+    font-size: larger;
+    margin-top: 2rem;
+}
+
+.pagination button {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    margin: 0 5px;
+    padding:1.1rem 1.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.pagination button.active,
+.pagination button:hover {
+    background-color: #e35858;
+}
+
+/* 🎛️ Selector de categoría */
+.portfolio-controls {
+    padding: 6rem 0 1rem;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+main {
+    flex: 1;
+}
+body {
+    flex: 1;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.portfolio-controls select {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #111;
+    color: #fff;
+    z-index: 11;
+    position: relative;
+}
+
