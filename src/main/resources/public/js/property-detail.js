@@ -5,7 +5,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Intentamos extraer el id de la URL en caso de que venga como segmento
     if (!id) {
         const parts = window.location.pathname.split('/').filter(Boolean);
-        id = parts[parts.length - 1];
+
+        const numericPart = [...parts].reverse().find(p => /^\d+$/.test(p));
+        if (numericPart) id = numericPart;
+
     }
 
     if (!id) {
