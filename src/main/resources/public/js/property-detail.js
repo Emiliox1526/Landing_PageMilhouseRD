@@ -18,7 +18,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         const response = await fetch(`/api/properties/${id}`);
-        if (!response.ok) throw new Error(`Status ${response.status}`);
+        if (!response.ok) {
+            const main = document.querySelector('main.site-main');
+            if (main) {
+                const message = response.status === 404
+                    ? 'Propiedad no encontrada.'
+                    : 'Error al cargar la propiedad.';
+                main.innerHTML = `
+                    <div class="container py-5">
+                        <div class="alert alert-warning">${message}</div>
+                    </div>`;
+            }
+            throw new Error(`Status ${response.status}`);
+        }
         const property = await response.json();
 
         document.title = property.title || 'Detalle de Propiedad';
