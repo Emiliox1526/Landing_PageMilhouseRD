@@ -11,6 +11,10 @@ async function cargarPropiedades() {
         }
         const properties = await response.json();
         properties.forEach(property => {
+
+            const id = property._id?.$oid || property._id;
+
+
             const col = document.createElement('div');
             col.className = 'col-md-4';
 
@@ -25,7 +29,7 @@ async function cargarPropiedades() {
                 </div>
             `;
             card.addEventListener('click', () => {
-                window.location.href = `property.html?id=${property._id}`;
+                window.location.href = `property.html?id=${id}`;
             });
 
             col.appendChild(card);
