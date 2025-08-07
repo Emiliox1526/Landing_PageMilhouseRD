@@ -31,8 +31,14 @@ public class MongoConfig {
                 .serverApi(ServerApi.builder().version(ServerApiVersion.V1).build())
                 .build();
         CLIENT = MongoClients.create(settings);
-        String dbName = connectionString.getDatabase() != null ? connectionString.getDatabase() : "MilhouseRD";
+        String dbName = connectionString.getDatabase();
+
+        System.out.println("🔗 URI leída: " + uri);
+        if (dbName == null || dbName.trim().isEmpty()) {
+            dbName = "Test";
+        }
         DATABASE = CLIENT.getDatabase(dbName);
+        System.out.println("✅ Conectando a DB: " + dbName);
     }
 
     private MongoConfig() { /* evita instanciación */ }
