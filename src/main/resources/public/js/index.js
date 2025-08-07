@@ -11,7 +11,10 @@ async function cargarPropiedades() {
         }
         const properties = await response.json();
         properties.forEach(property => {
+
             const id = property._id?.$oid || property._id;
+
+
             const col = document.createElement('div');
             col.className = 'col-md-4';
 
