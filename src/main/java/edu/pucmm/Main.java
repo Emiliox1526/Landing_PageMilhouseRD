@@ -6,7 +6,8 @@ import edu.pucmm.controller.ContactController;
 import edu.pucmm.controller.PropertyController;
 import io.javalin.Javalin;
 import org.bson.Document;
-
+import io.javalin.http.staticfiles.Location;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,8 +32,15 @@ public class Main {
 
         // 3) Inicializa Javalin y sirve estáticos desde resources/public
         Javalin app = Javalin.create(cfg -> {
-            cfg.staticFiles.add("/public");
-        }).start(port);
+            cfg.staticFiles.add(staticConfig -> {
+                staticConfig.directory = "/public";          // carpeta en classpath: src/main/resources/public
+                staticConfig.hostedPath = "/";               // monta en la raíz
+                staticConfig.location   = Location.CLASSPATH;
+                // evita servir cualquier ruta que empiece con /api/
+                staticConfig.aliasCheck = (path, resource) ->
+                        !path.startsWith("/api/");
+            });
+        }).start(7070);
 
         // Registrar controladores
         new ContactController(contacts).register(app);
