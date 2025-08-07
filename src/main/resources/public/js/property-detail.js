@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
+    let id = params.get('id');
+
+    // Intentamos extraer el id de la URL en caso de que venga como segmento
+    if (!id) {
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const numericPart = [...parts].reverse().find(p => /^\d+$/.test(p));
+        if (numericPart) id = numericPart;
+    }
+
     if (!id) {
         console.error('No property id provided');
         return;
