@@ -12,11 +12,16 @@ async function cargarPropiedades() {
         const properties = await response.json();
         properties.forEach(property => {
 
-            const id = property._id?.$oid || property._id;
+            const id = property._id;
 
 
             const col = document.createElement('div');
             col.className = 'col-md-4';
+
+            // Enlazamos la carta completa para permitir abrir en nueva pestaña si se desea
+            const link = document.createElement('a');
+            link.href = `property.html?id=${id}`;
+            link.className = 'text-decoration-none text-dark';
 
             const card = document.createElement('div');
             card.className = 'card h-100';
@@ -28,11 +33,9 @@ async function cargarPropiedades() {
                     <p class="card-text fw-bold">${property.priceFormatted}</p>
                 </div>
             `;
-            card.addEventListener('click', () => {
-                window.location.href = `property.html?id=${id}`;
-            });
 
-            col.appendChild(card);
+            link.appendChild(card);
+            col.appendChild(link);
             propertiesContainer.appendChild(col);
         });
     } catch (error) {

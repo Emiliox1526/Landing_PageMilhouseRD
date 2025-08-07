@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!response.ok) throw new Error('Error en la respuesta de la red');
         const property = await response.json();
 
+        // Reflejamos el id para permitir referencia desde formularios u otras acciones
+        const propertyIdEl = document.querySelector('.property-id');
+        if (propertyIdEl) propertyIdEl.textContent = `ID: ${id}`;
+
         document.title = property.title || 'Propiedad';
 
         const titleEl = document.querySelector('.property-title');

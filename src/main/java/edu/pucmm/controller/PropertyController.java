@@ -26,9 +26,11 @@ public class PropertyController {
      */
     public void register(Javalin app) {
         // Obtener todas las propiedades
-        app.get("/api/properties", ctx ->
-                ctx.json(properties.find().into(new ArrayList<>()))
-        );
+        app.get("/api/properties", ctx -> {
+            var docs = properties.find().into(new ArrayList<Document>());
+            docs.forEach(d -> d.put("_id", d.getObjectId("_id").toHexString()));
+            ctx.json(docs);
+        });
 
         // Obtener una propiedad por ID
         app.get("/api/properties/:id", ctx -> {
@@ -37,6 +39,7 @@ public class PropertyController {
             if (doc == null) {
                 ctx.status(404).json(Map.of("message", "Property not found"));
             } else {
+                doc.put("_id", doc.getObjectId("_id").toHexString());
                 ctx.json(doc);
             }
         });
