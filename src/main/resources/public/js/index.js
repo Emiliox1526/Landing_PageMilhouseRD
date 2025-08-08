@@ -1,5 +1,6 @@
 const propertiesContainer = document.getElementById('propertiesContainer');
 const verPropiedadesBtn = document.getElementById('verPropiedadesBtn');
+const heroVerPropiedades = document.getElementById('heroVerPropiedades');
 
 async function cargarPropiedades() {
     propertiesContainer.innerHTML = '';
@@ -45,4 +46,12 @@ async function cargarPropiedades() {
 }
 
 verPropiedadesBtn.addEventListener('click', cargarPropiedades);
+
+if (heroVerPropiedades) {
+    heroVerPropiedades.addEventListener('click', (e) => {
+        e.preventDefault();
+        cargarPropiedades();
+        document.getElementById('properties').scrollIntoView({ behavior: 'smooth' });
+    });
+}
 
