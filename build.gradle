@@ -20,7 +20,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:2.0.7'
     testImplementation 'junit:junit:4.13.2'
 
-    implementation "com.theokanning.openai-gpt3-java:service:0.18.2"            // OpenAiService de Theo Kanning :contentReference[oaicite:1]{index=1}
+
     implementation 'org.mongodb:mongodb-driver-sync:4.11.0'
     implementation("io.javalin:javalin:5.6.4")
     implementation("com.openai:openai-java:2.20.1")
@@ -33,12 +33,20 @@ import org.gradle.api.tasks.Copy
 
 task copyStatic(type: Copy) {
     description = 'Copia HTML, CSS, JS y assets a build/dist para Netlify'
-    // Ajusta esta ruta si tus .html/.css/.js no están aquí:
     from('src/main/resources/public') {
         include '**/*'
     }
     into("$buildDir/dist")
 }
 
-// Haz que 'assemble' (y por ende 'build') dependa de copyStatic
 assemble.dependsOn(copyStatic)
+
+// ----------------------------------------------------------------
+// Forzar TLS 1.2 para la ejecución de la app con gradlew run
+// ----------------------------------------------------------------
+import org.gradle.api.tasks.JavaExec
+
+tasks.named('run', JavaExec) {
+    jvmArgs = ["-Djdk.tls.client.protocols=TLSv1.2"]
+    environment 'MONGODB_URI', 'mongodb+srv://emiliox1526:yK3iPdLxeJmws2I9@cluster0.1fs6ett.mongodb.net/MilhouseRD?retryWrites=true&w=majority'
+}

@@ -51,5 +51,6 @@ public class Property {
         public String thumb;
         public String url;
     }
+
 }
 

@@ -1,16 +1,39 @@
 /* header.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap');
 /* 0. Importante: familia de fuente Montserrat */
 :root {
     --mh-font:    'Montserrat', sans-serif;
     --mh-gold:    #cfbb9b;
     --mh-blue:    #7fa1a8;
     --mh-navy:    #212635;
+
     --mh-navy-gradient: #2c3d69;
     --mh-white:   #ffffff;
 }
 .nav-link span {
     font-family: 'Montserrat', sans-serif !important;
+}
+body {
+    font-family: 'Roboto Thin', sans-serif;
+    /* opcional: ajusta tamaño y altura de línea global */
+    font-size: 16px;
+    line-height: 1.5;
+    color: #000;
+}
+span {
+    color: #fff !important;
+}
+h1,h2,h3,h4,h5,h6 {
+
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 500;
+    color: #000;
+}
+
+p, li, span, a {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 400;
+    color: #000;
 }
 /* Aplico la fuente globalmente al header/navbar */
 header.site-header,
@@ -19,7 +42,8 @@ header.site-header,
 .nav-center .nav-link,
 .nav-right .nav-link,
 .dropdown-item {
-    font-family: var(--mh-font) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    color: #ffffff;
 }
 
 /* 1. Header wrapper: sticky to top */

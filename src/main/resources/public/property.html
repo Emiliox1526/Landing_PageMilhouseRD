@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Detalle de Propiedad</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio | MILHOUSE RD</title>
     <!-- Bootstrap CSS + Icons -->
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -14,201 +15,203 @@
             rel="stylesheet"
     />
 
+
     <!-- Google Fonts: Montserrat para cuerpo, Cinzel para títulos -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <!-- CSS Global -->
-    <link rel="stylesheet" href="css/reset.css">
+
     <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/hero.css">
-    <link rel="stylesheet" href="css/property.css" />
-    <link rel="stylesheet" href="css/slider.css">
-    <link rel="stylesheet" href="css/modal.css">
-    <link rel="stylesheet" href="css/index.css"/>
-    <link rel="stylesheet" href="css/portfolio.css">
-    <link rel="stylesheet" href="css/contact.css">
-    <link rel="stylesheet" href="css/team.css">
-    <link rel="stylesheet" href="css/animations.css">
+
+
     <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/services.css">
+
+
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <!-- Google Fonts: Montserrat (títulos) + Roboto (texto) -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-
-    <!-- Leaflet (si lo usas) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-
     <!-- Fuentes adicionales -->
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ====== Design tokens estilo marketplace moderno ====== */
+        :root{
+            --ink:#0f172a;         /* slate-900 */
+            --muted:#64748b;       /* slate-500 */
+            --line:#e2e8f0;        /* slate-200 */
+            --card:#ffffff;
+            --bg:#f8fafc;          /* slate-50 */
+            --chip:#eef2ff;        /* indigo-50 */
+            --chip-b:#6366f1;      /* indigo-500 */
+            --accent:#1d4ed8;      /* blue-700 */
+            --ok:#16a34a;          /* green-600 */
+        }
+
+        html,body{height:100%}
+        body{
+            background:var(--bg);
+        }
+        body {
+            font-family: 'Roboto Thin', sans-serif;
+            /* opcional: ajusta tamaño y altura de línea global */
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        h1,h2,h3,h4,h5,h6 {
+
+            font-family: 'Montserrat', sans-serif !important;
+            font-weight: 500;
+        }
+
+        p, li, span, a {
+            font-family: 'Montserrat', sans-serif !important;
+            font-weight: 400;
+        }
+
+        /* Contenedor amplio tipo Airbnb */
+        .wrap{max-width:1224px; margin:0 auto; padding:24px 16px}
+        @media (min-width:992px){ .wrap{padding:32px 24px} }
+
+        /* Topbar con acciones */
+        .topbar{
+            display:flex; align-items:center; gap:.75rem;
+             top:64px; z-index:10; background:transparent;
+        }
+        .topbar .actions{margin-left:auto; display:flex; gap:.5rem}
+        .btn-ghost{
+            border:1px solid var(--line); background:#fff;
+            border-radius:999px; padding:.45rem .8rem; font-weight:500;
+        }
+        .btn-ghost i{margin-right:.35rem}
+
+        /* Hero */
+        .hero-title{font-weight:800; line-height:1.15; margin:6px 0}
+        .hero-meta{color:var(--muted)}
+        .chip{
+            display:inline-flex; gap:.4rem; align-items:center;
+            background:var(--chip); border:1px solid var(--chip-b);
+            color:#1e293b; border-radius:999px; padding:.35rem .65rem; font-size:.85rem; font-weight:600;
+        }
+
+        /* Galería 5-col estilo Airbnb */
+        .gallery{
+            display:grid; gap:8px; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 220px 220px;
+        }
+        @media (min-width:992px){ .gallery{grid-template-rows: 260px 260px; gap:10px} }
+        .gallery .g-main{grid-row: 1 / span 2; position:relative; overflow:hidden; border-radius:16px}
+        .gallery img{
+            width:100%; height:100%; object-fit:cover; object-position:center;
+            border-radius:12px; cursor:pointer;
+        }
+        .gallery .g-main img{border-radius:16px}
+        .gallery .more-btn{
+            position:absolute; right:12px; bottom:12px; z-index:2;
+            border-radius:999px; padding:.45rem .8rem; border:1px solid var(--line); background:#fff;
+            display:inline-flex; align-items:center; gap:.4rem; font-weight:600;
+        }
+
+        /* Stats */
+        .stat{background:#fff; border:1px solid var(--line); border-radius:14px; padding:.85rem .9rem; text-align:center}
+        .stat .lbl{color:var(--muted); font-size:.85rem}
+
+        /* Cards secciones */
+        .section-card{border:1px solid var(--line); background:var(--card); border-radius:16px}
+        .section-card .card-header{background:transparent; border-bottom:1px solid var(--line)}
+        .section-card .card-body{padding:1rem 1rem}
+        @media (min-width:992px){ .section-card .card-body{padding:1.25rem 1.25rem} }
+
+        /* Lista de facilidades tipo masonry simple */
+        .fac-grid{columns:2; column-gap:1.25rem}
+        @media (min-width:992px){ .fac-grid{columns:3} }
+        .fac-grid li{break-inside:avoid; margin:.4rem 0}
+
+        /* Tipología tabla limpia */
+        .table-typ td,.table-typ th{vertical-align:middle}
+        .table-typ thead th{color:#0b1324}
+
+        /* Aside sticky (contacto) */
+        .aside-sticky{position:sticky; top:96px}
+
+        /* Lightbox Overlay */
+        #lightbox {
+            position: fixed; inset:0; display:none; justify-content:center; align-items:center;
+            background: rgba(0,0,0,.88); z-index: 9999;
+        }
+        #lightbox.open { display:flex; }
+        #lightbox .lightbox-img { max-width:90%; max-height:90%; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,.5) }
+        #lightbox .lightbox-prev, #lightbox .lightbox-next, #lightbox .lightbox-close {
+            position:absolute; background:rgba(0,0,0,.55); color:#fff; border:none; padding:.5rem; font-size:1.5rem; cursor:pointer;
+        }
+        #lightbox .lightbox-prev  { left:  1rem; top: 50%; transform: translateY(-50%); }
+        #lightbox .lightbox-next  { right: 1rem; top: 50%; transform: translateY(-50%); }
+        #lightbox .lightbox-close { right: 1rem; top: 1rem; }
+        .lightbox-footer{
+            position:absolute; left:50%; bottom:1rem; transform:translateX(-50%);
+            width:min(860px, 92%); background:rgba(0,0,0,.5);
+            border-radius:10px; padding:.5rem .75rem; display:flex; flex-direction:column; gap:.4rem
+        }
+        .lightbox-counter{color:#fff; text-align:center; font-weight:600}
+        .lightbox-thumbs{display:flex; gap:.5rem; justify-content:center; overflow-x:auto}
+        .lightbox-thumbs img{width:64px; height:44px; object-fit:cover; border:2px solid transparent; border-radius:6px; cursor:pointer}
+        .lightbox-thumbs img.active{border-color:#fff}
+
+        /* Skeleton loader minimal */
+        .skeleton{background:linear-gradient(90deg, #eef2f7 25%, #f5f7fb 37%, #eef2f7 63%); background-size:400% 100%; animation:sheen 1.4s ease infinite}
+        @keyframes sheen{0%{background-position:100% 0}100%{background-position:0 0}}
+        .skeleton.box{height:200px; border-radius:12px}
+        #topbarTitle{
+            font-size: clamp(1rem, 2.6vw, 1.5rem); /* móvil → desktop */
+            font-weight: 700;
+            line-height: 1.1;
+        }
+    </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<!-- Header incluido -->
 <div id="header-container"></div>
 <script src="js/includeHeader.js" defer></script>
-<main class="site-main bg-light">
-    <!-- HEADER PRINCIPAL -->
-    <section class="property-header py-5 bg-light">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <h1 class="property-title"></h1>                                    <!-- Título -->
-                    <p class="text-muted mb-1"></p>                                     <!-- Ubicación -->
-                    <p class="property-id text-muted small mb-3"></p>                    <!-- ID -->
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="badge bg-warning text-dark"></span>                 <!-- Tipo de venta -->
-                        <span class="h4 mb-0"></span>                                     <!-- Precio -->
-                        <button class="btn btn-outline-dark btn-sm">Calcular cuotas</button>
-                    </div>
-                </div>
-                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <div class="d-inline-flex gap-4">
-                        <div><i class="bi bi-house-door-fill"></i></div>                <!-- Dormitorios -->
-                        <div><i class="bi bi-bath"></i></div>                            <!-- Baños -->
-                        <div><i class="bi bi-car-front-fill"></i></div>                  <!-- Parqueos -->
-                        <div><i class="bi bi-arrows-fullscreen"></i></div>               <!-- Área -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- DESCRIPCIÓN Y CARACTERÍSTICAS -->
-    <section class="property-details py-5 bg-light">
-        <div class="container">
-            <h2 class="h4 mb-3">Descripción</h2>
-            <p></p>                                                             <!-- Descripción -->
-            <ul class="list-unstyled row"></ul>                                 <!-- Features -->
+<!-- Lightbox (dentro del body) -->
+<div id="lightbox" aria-hidden="true">
+    <button class="lightbox-prev" aria-label="Anterior">‹</button>
+    <img class="lightbox-img" alt="Foto ampliada">
+    <button class="lightbox-next" aria-label="Siguiente">›</button>
+    <button class="lightbox-close" aria-label="Cerrar">✕</button>
+    <div class="lightbox-footer">
+        <div class="lightbox-counter"><span class="current">1</span> / <span class="total">1</span></div>
+        <div class="lightbox-thumbs"></div>
+    </div>
+</div>
 
-            <h2 class="h4 mt-5 mb-3">Amenidades</h2>
-            <div class="row gy-2"></div>                                        <!-- Amenities -->
-        </div>
-    </section>
-
-
-    <!-- TIPOLOGÍA (modernizada) -->
-    <section class="property-typology py-5">
-        <div class="container">
-            <h2 class="h4 mb-4">Tipología</h2>
-            <div class="table-responsive">
-                <table class="table mb-0">
-                    <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Piso</th>
-                        <th><i class="bi bi-door-open-fill me-1"></i>Habitaciones</th>
-                        <th><i class="bi bi-bath me-1"></i>Baños</th>
-                        <th><i class="bi bi-car-front-fill me-1"></i>Parqueos</th>
-                        <th><i class="bi bi-geo-alt-fill me-1"></i>Zona</th>
-                        <th><i class="bi bi-aspect-ratio me-1"></i>Terraza</th>
-                        <th>Precio</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- CALCULADORA DE PRÉSTAMOS (Placeholder) -->
-    <section class="loan-calculator py-5 bg-white">
-        <div class="container">
-            <h2 class="h4 mb-4">Calculadora de Préstamos</h2>
-            <form id="calculatorForm">
-                <div class="row g-4 align-items-end">
-                    <!-- Banco -->
-                    <div class="col-md-6">
-                        <label for="bankSelect" class="form-label">Selecciona tu Banco</label>
-                        <select id="bankSelect" class="form-select">
-                            <option>Alaver (15% Anual)</option>
-                            <option>Banco 2 (13% Anual)</option>
-                            <option>Banco 3 (10% Anual)</option>
-                        </select>
-                    </div>
-                    <!-- Precio de la propiedad -->
-                    <div class="col-md-6">
-                        <label for="priceSelect" class="form-label">Precio de Tipología</label>
-                        <select id="priceSelect" class="form-select">
-                            <option>Unidad -202 – US$356,000.00</option>
-                            <option>Unidad -203 – US$400,000.00</option>
-                        </select>
-                    </div>
-                    <!-- Pago inicial (numérico) -->
-                    <div class="col-md-4">
-                        <label for="initialPayment" class="form-label">Pago Inicial</label>
-                        <div class="input-group">
-                            <span class="input-group-text">US$</span>
-                            <input type="number" id="initialPayment" class="form-control" value="100000" />
-                        </div>
-                    </div>
-                    <!-- Slider % de pago inicial -->
-                    <div class="col-md-8">
-                        <label class="form-label">
-                            Porcentaje Inicial: <span id="downPaymentPercent">10%</span>
-                        </label>
-                        <input
-                                type="range"
-                                class="form-range"
-                                min="0"
-                                max="100"
-                                step="1"
-                                value="10"
-                                data-target="downPaymentPercent"
-                        />
-                    </div>
-                    <!-- Etiqueta plazo -->
-                    <div class="col-md-4">
-                        <label class="form-label">Tiempo del Préstamo: <span id="loanTerm">10 años</span></label>
-                    </div>
-                    <!-- Slider años -->
-                    <div class="col-md-8">
-                        <input
-                                type="range"
-                                class="form-range"
-                                min="1"
-                                max="30"
-                                step="1"
-                                value="10"
-                                data-target="loanTerm"
-                        />
-                    </div>
-                </div>
-            </form>
-        </div>
-    </section>
-
-<!-- PROPIEDADES RELACIONADAS -->
-<section class="related-properties py-5 bg-light">
-    <div class="container">
-        <h2 class="h4 mb-4">Propiedades relacionadas</h2>
-        <div class="row gy-4">
-            {% for rel in property.related %}
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img src="{{ rel.thumb }}" class="card-img-top" alt="{{ rel.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ rel.title }}</h5>
-                        <p class="card-text">{{ rel.priceFormatted }}</p>
-                        <a href="{{ rel.url }}" class="stretched-link"></a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+<!-- CONTENT -->
+<main class="wrap" style="padding-top: 92px;">
+    <div class="topbar">
+        <h1 id="topbarTitle" class="m-0 flex-grow-1 text-truncate">Cargando…</h1>
+        <div class="actions">
+            <button id="btnShare" class="btn-ghost"><i class="bi bi-share"></i>Compartir</button>
         </div>
     </div>
-</section>
+
+    <div id="propertyContent">
+        <!-- Loader inicial -->
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="skeleton box"></div>
+            </div>
+            <div class="col-6 col-lg-3"><div class="skeleton box"></div></div>
+            <div class="col-6 col-lg-3"><div class="skeleton box"></div></div>
+            <div class="col-6 col-lg-3"><div class="skeleton box"></div></div>
+            <div class="col-6 col-lg-3"><div class="skeleton box"></div></div>
+        </div>
+    </div>
 </main>
+
 <!-- FOOTER -->
 <div id="footer-container"></div>
 <script src="js/includeFooter.js" defer></script>
 
-<!-- Ionicons -->
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-<script src="js/property-detail.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/property-detail.js" defer></script>
 </body>
 </html>

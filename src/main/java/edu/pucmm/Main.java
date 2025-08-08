@@ -1,16 +1,18 @@
 package edu.pucmm;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.bson.Document;
+
 import com.mongodb.client.MongoCollection;
+
 import edu.pucmm.config.MongoConfig;
 import edu.pucmm.controller.ContactController;
 import edu.pucmm.controller.PropertyController;
 import io.javalin.Javalin;
-import org.bson.Document;
 import io.javalin.http.staticfiles.Location;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
