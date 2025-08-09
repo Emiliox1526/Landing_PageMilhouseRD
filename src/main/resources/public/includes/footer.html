@@ -1,49 +1,121 @@
-<hr class="border-secondary opacity-25 m-0"/>
-<footer class="bg-dark text-light py-5">
-    <div class="container">
-        <div class="row gy-4">
-            <!-- Logo y descripción -->
-            <div class="col-md-3">
-                <a href="/" class="d-flex align-items-center mb-3 text-reset text-decoration-none">
-                    <!-- Logo adaptado en blanco/azul/naranja -->
-                    <svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- M blanco -->
-                        <path d="M0 32V0l10 16L20 0v32H10V16L0 32Z" fill="#FFFFFF"/>
-                        <!-- H naranja -->
-                        <rect x="22" y="0" width="6" height="32" fill="#F6A623"/>
-                        <!-- Barra central H celeste -->
-                        <rect x="28" y="13" width="12" height="6" fill="#00BFD6"/>
-                    </svg>
-                    <span class="fs-4 fw-bold ms-2">MILHOUSE RD</span>
-                </a>
-                <p class="small">Tu aliado en bienes raíces en República Dominicana.</p>
-            </div>
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap");
 
-            <!-- Enlaces rápidos -->
-            <div class="col-md-3">
-                <h6 class="text-uppercase fw-bold">Enlaces</h6>
-                <ul class="list-unstyled">
-                    <li><a href="/propiedades" class="text-light text-decoration-none">Propiedades</a></li>
-                    <li><a href="/nosotros" class="text-light text-decoration-none">Nosotros</a></li>
-                    <li><a href="/servicios" class="text-light text-decoration-none">Servicios</a></li>
-                    <li><a href="/contacto" class="text-light text-decoration-none">Contacto</a></li>
-                </ul>
+    /* ===== MilhouseRD Footer (solo dentro de .mhf-footer) ===== */
+    .mhf-footer{
+        /* tokens locales */
+        --mhf-navy:#0F1B2D;
+        --mhf-navy-2:#142742;
+        --mhf-gold:#C7A252;
+
+        background: linear-gradient(
+                to right,
+                var(--mhf-navy-2) 0%,
+                var(--mhf-navy) 20%,
+                var(--mhf-navy) 100%
+        ) !important;
+
+        color:#fff;
+        padding:56px 0 20px;
+        font-family:"Montserrat",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    .mhf-footer *{ font-family:inherit; }
+
+    /* layout */
+    .mhf-footer .mhf-container{ max-width:1280px; margin-inline:auto; }
+
+    /* Marca */
+    .mhf-footer .mhf-brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff; }
+    .mhf-footer .mhf-logo{ width:64px; height:auto; } /* logo reducido */
+    @media (max-width:991.98px){ .mhf-footer .mhf-logo{ width:56px; } }
+    .mhf-footer .mhf-name{ font-weight:800; letter-spacing:.5px; color:#fff; }
+
+    /* Encabezados de columna */
+    .mhf-footer .mhf-heading{
+        font-weight:800; text-transform:uppercase; letter-spacing:.6px;
+        font-size:.9rem; margin:0 0 .75rem; color:#fff;
+    }
+
+    /* Texto y enlaces (TODO blanco) */
+    .mhf-footer p,
+    .mhf-footer a,
+    .mhf-footer a:hover,
+    .mhf-footer .mhf-bottom,
+    .mhf-footer .mhf-bottom a{ color:#fff !important; text-decoration:none; }
+
+    /* Listas / contacto */
+    .mhf-footer .mhf-list li{ margin-bottom:.5rem; }
+
+    /* Redes */
+    .mhf-footer .mhf-social .btn{
+        border-color:rgba(255,255,255,.35);
+        color:#fff;
+    }
+    .mhf-footer .mhf-social .btn:hover{
+        background:#fff; color:var(--mhf-navy); border-color:#fff;
+    }
+    /* ===== FIX de color blanco en listas de contacto ===== */
+    .mhf-footer .mhf-list,
+    .mhf-footer .mhf-list li,
+    .mhf-footer .mhf-list li i,
+    .mhf-footer .mhf-list a{
+        color:#fff !important;
+    }
+    /* Newsletter */
+    .mhf-footer .mhf-newsletter .form-control{
+        border-radius:9999px 0 0 9999px;
+        background:rgba(255,255,255,.10);
+        border:1px solid rgba(255,255,255,.28);
+        color:#fff;
+    }
+    .mhf-footer .mhf-newsletter .form-control::placeholder{
+        color:#fff; opacity:.85;
+    }
+    .mhf-footer .mhf-newsletter .btn{
+        border-radius:0 9999px 9999px 0;
+        background:linear-gradient(135deg,var(--mhf-gold),#E2CF92);
+        border:0; color:#fff; font-weight:800;
+    }
+    .mhf-footer .mhf-newsletter .btn:hover{ filter:brightness(1.06); }
+
+    /* Franja inferior */
+    .mhf-footer .mhf-bottom{
+        border-top:1px solid rgba(255,255,255,.22);
+        margin-top:32px; padding-top:16px;
+    }
+
+    /* Utilidades */
+    .mhf-footer .mhf-legal a{ margin-right:1rem; }
+</style>
+
+
+<footer class="mhf-footer">
+    <div class="mhf-container">
+        <div class="row gy-4 g-lg-5">
+            <!-- Marca + tagline -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <a class="mhf-brand" href="/index.html" aria-label="Milhouse RD">
+                    <img src="/assets/img/LogoMilhouse.png" alt="Logo Milhouse RD" class="mhf-logo">
+                    <span class="mhf-name">MILHOUSE RD</span>
+                </a>
+                <p class="mhf-small">Tu aliado en bienes raíces en República Dominicana.</p>
             </div>
 
             <!-- Contacto -->
-            <div class="col-md-3">
-                <h6 class="text-uppercase fw-bold">Contáctanos</h6>
-                <ul class="list-unstyled small">
-                    <li><i class="bi bi-geo-alt-fill me-2"></i>Av. Winston Churchill #123, Santo Domingo</li>
-                    <li><i class="bi bi-telephone-fill me-2"></i>+1 (809) 555-1234</li>
-                    <li><i class="bi bi-envelope-fill me-2"></i>info@milhouserd.com</li>
+            <div class="col-6 col-md-3 col-lg-4">
+                <p class="mhf-heading">Contáctanos</p>
+                <ul class="list-unstyled mhf-list small m-0">
+                    <li><i class="bi bi-geo-alt-fill me-2"></i> Av. Winston Churchill #123, Santo Domingo</li>
+                    <li><i class="bi bi-telephone-fill me-2"></i> +1 (809) 555-1234</li>
+                    <li><i class="bi bi-envelope-fill me-2"></i> info@milhouserd.com</li>
+                    <li><i class="bi bi-clock me-2"></i> Lun–Vie 9:00–18:00</li>
                 </ul>
             </div>
 
-            <!-- Redes & Newsletter -->
-            <div class="col-md-3">
-                <h6 class="text-uppercase fw-bold">Síguenos</h6>
-                <ul class="list-inline mb-3">
+            <!-- Redes + Newsletter -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <p class="mhf-heading">Síguenos</p>
+                <ul class="list-inline mb-3 mhf-social">
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-sm" href="https://www.instagram.com/milhouserd" target="_blank" aria-label="Instagram">
                             <i class="bi bi-instagram"></i>
@@ -60,27 +132,18 @@
                         </a>
                     </li>
                 </ul>
-                <form id="newsletter-form" class="mt-2">
-                    <label for="newsletter-email" class="form-label small">Suscríbete:</label>
-                    <div class="input-group input-group-sm">
-                        <input
-                                type="email"
-                                id="newsletter-email"
-                                class="form-control"
-                                placeholder="Tu correo"
-                                required
-                        />
-                        <button class="btn" style="background-color: #F6A623; border-color: #F6A623; color: #fff;" type="submit">
-                            Enviar
-                        </button>
-                    </div>
-                </form>
+
             </div>
         </div>
 
-        <!-- Copyright -->
-        <div class="text-center mt-4 small">
-            &copy; <script>document.write(new Date().getFullYear());</script> Milhouse RD. Todos los derechos reservados.
+        <!-- Franja inferior -->
+        <div class="mhf-bottom d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+            <div class="small">
+                &copy; <script>document.write(new Date().getFullYear());</script> Milhouse RD. Todos los derechos reservados.
+            </div>
+            <div class="small mhf-legal">
+                <a href="/terms.html"></a>
+            </div>
         </div>
     </div>
 </footer>
