@@ -13,6 +13,10 @@
 .nav-link span {
     font-family: 'Montserrat', sans-serif !important;
 }
+.milhouse-brand {
+    color: #fff;     /* fondo blanco */
+
+}
 body {
     font-family: 'Roboto Thin', sans-serif;
     /* opcional: ajusta tamaño y altura de línea global */
@@ -20,9 +24,7 @@ body {
     line-height: 1.5;
     color: #000;
 }
-span {
-    color: #fff !important;
-}
+
 h1,h2,h3,h4,h5,h6 {
 
     font-family: 'Montserrat', sans-serif !important;

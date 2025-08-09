@@ -1,48 +1,73 @@
 package edu.pucmm.model;
 
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
- * Representa una propiedad inmobiliaria tal como se definía en el backend de Node.js.
+ * Modelo de Propiedad.
+ * - type: Casa | Apartamento | Penthouse | Solares | Villa
+ * - latitude / longitude: coordenadas
+ * - units[].area: área de cada unidad (m²)
  */
 public class Property {
 
-    public String id;
+    // Identificador Mongo
+    public ObjectId _id;
+
+    // Datos básicos
     public String title;
-    public Location location;
-    public String saleType;
+    public String type;           // Casa | Apartamento | Penthouse | Solares | Villa
+    public String saleType;       // Venta / Alquiler / etc.
+
+    // Precio principal (opcional si usas por unidad)
+    public Double price;
     public String priceFormatted;
-    public double price;
-    public int bedrooms;
-    public int bathrooms;
-    public int parking;
-    public int area;
+
+    // Resumen general
+    public Integer bedrooms;
+    public Integer bathrooms;
+    public Integer parking;
+    public Double area;           // Área total de la propiedad (m²) – opcional
+
+    // Ubicación
+    public String address;        // Texto libre (opcional)
+    public Double latitude;       // NUEVO
+    public Double longitude;      // NUEVO
+
+    // Contenido
     public String descriptionParagraph;
-    public List<String> features;
-    public List<String> amenities;
-    public List<Image> images;
-    public List<Unit> units;
-    public List<Related> related;
+    public List<String> features = new ArrayList<>();
+    public List<String> amenities = new ArrayList<>();
+    public List<String> images = new ArrayList<>();
 
-    public static class Location {
-        public String city;
-        public String area;
-    }
+    // Unidades / Tipología
+    public List<Unit> units = new ArrayList<>();
 
-    public static class Image {
-        public String src;
-    }
+    // Relacionados
+    public List<Related> related = new ArrayList<>();
+
+    // Metadatos
+    public Date createdAt;
+    public Date updatedAt;
 
     public static class Unit {
         public String name;
-        public int floor;
-        public int bedrooms;
-        public int bathrooms;
-        public int parking;
+        public Integer floor;
+        public Integer bedrooms;
+        public Integer bathrooms;
+        public Integer parking;
         public String zone;
-        public boolean terrace;
+        public Boolean terrace;
+
+        public Double price;
         public String priceFormatted;
-        public double price;
+
+        public Double area; // NUEVO: área de la unidad (m²)
+
+        public Unit() {}
     }
 
     public static class Related {
@@ -50,7 +75,9 @@ public class Property {
         public String priceFormatted;
         public String thumb;
         public String url;
+
+        public Related() {}
     }
 
+    public Property() {}
 }
-

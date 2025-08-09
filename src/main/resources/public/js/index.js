@@ -1,174 +1,187 @@
-// =========[ INDEX DEBUG LOGS ]=========
-console.info(`[INDEX] Script cargado @ ${new Date().toISOString()}`);
-
 const propertiesContainer = document.getElementById('propertiesContainer');
-const verPropiedadesBtn   = document.getElementById('verPropiedadesBtn');
-const heroVerPropiedades  = document.getElementById('heroVerPropiedades');
+const verPropiedadesBtn = document.getElementById('verPropiedadesBtn');
+const heroVerPropiedades = document.getElementById('heroVerPropiedades');
 
-console.debug('[INDEX] Refs:', {
-    hasPropertiesContainer: !!propertiesContainer,
-    hasVerPropiedadesBtn: !!verPropiedadesBtn,
-    hasHeroVerPropiedades: !!heroVerPropiedades,
-});
+console.log('[INDEX] script cargado');
 
-// Solo para confirmar que el HTML está listo (no dispara la carga)
-document.addEventListener('DOMContentLoaded', () => {
-    console.info('[INDEX] DOMContentLoaded');
-});
+/* ----------------------------- Helpers ----------------------------- */
+function extractId(doc) {
+    const raw = doc?._id ?? doc?.id;
+    if (!raw) return '';
+    if (typeof raw === 'string') return raw;
 
-async function cargarPropiedades() {
-    const t0 = performance.now();
-    console.group('[INDEX] cargarPropiedades()');
+    if (typeof raw === 'object') {
+        if (raw.$oid) return String(raw.$oid);
+        if (raw.oid)  return String(raw.oid);
+        if (typeof raw.toHexString === 'function') {
+            try { return raw.toHexString(); } catch {}
+        }
+    }
+    const m = JSON.stringify(raw).match(/[0-9a-fA-F]{24}/);
+    return m ? m[0] : '';
+}
+
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function getMainImage(p) {
+    if (Array.isArray(p?.images) && p.images[0]) return p.images[0];
+    return 'https://via.placeholder.com/800x450?text=Propiedad';
+}
+
+function getLocationText(loc) {
+    if (!loc) return '';
+    if (typeof loc === 'string') return loc;
+    const parts = [loc.sector, loc.city, loc.province, loc.country].filter(Boolean);
+    return parts.join(', ');
+}
+
+function formatPrice(p) {
+    if (p?.priceFormatted) return p.priceFormatted;
+    if (typeof p?.price === 'number') {
+        try {
+            const currency = p?.currency || 'USD';
+            return new Intl.NumberFormat('es-DO', { style: 'currency', currency }).format(p.price);
+        } catch {
+            return `$${p.price.toLocaleString()}`;
+        }
+    }
+    return '';
+}
+
+/* ---------------------------- Fetch helper --------------------------- */
+async function fetchJSON(url) {
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    console.log('[INDEX] fetch', url, res.status, res.statusText);
+    const text = await res.text();
+    let data;
     try {
-        if (!propertiesContainer) {
-            console.error('[INDEX] #propertiesContainer no encontrado. Abortando render.');
-            console.groupEnd();
+        data = text ? JSON.parse(text) : null;
+    } catch (e) {
+        console.error('[INDEX] No se pudo parsear JSON. Respuesta cruda:', text);
+        throw e;
+    }
+    return { ok: res.ok, status: res.status, data };
+}
+
+function coerceToArray(data) {
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object') {
+        const keys = ['properties','data','results','items','content','list'];
+        for (const k of keys) {
+            if (Array.isArray(data[k])) return data[k];
+        }
+        const firstArray = Object.values(data).find(Array.isArray);
+        if (firstArray) return firstArray;
+    }
+    return [];
+}
+
+/* ---------------------------- Render list --------------------------- */
+async function cargarPropiedades() {
+    if (!propertiesContainer) return;
+    propertiesContainer.innerHTML = '';
+    propertiesContainer.className = 'row g-3';
+
+    try {
+        const { ok, status, data } = await fetchJSON('/api/properties');
+        if (!ok) throw new Error(`HTTP ${status}`);
+
+        const list = coerceToArray(data);
+        console.log('[INDEX] tamaño lista:', list.length, { keys: data && typeof data === 'object' ? Object.keys(data) : null });
+        if (!Array.isArray(list) || list.length === 0) {
+            propertiesContainer.innerHTML = '<p class="text-muted">No hay propiedades disponibles.</p>';
             return;
         }
 
-        console.log('[INDEX] Limpiando contenedor y seteando clases…');
-        propertiesContainer.innerHTML = '';
-        propertiesContainer.className = 'row g-3';
+        // Diagnóstico: ver ids y títulos
+        try {
+            console.table(list.map(p => ({ id: extractId(p), title: p?.title })));
+        } catch (_) {}
 
-        const url = '/api/properties';
-        console.time('[INDEX] fetch /api/properties');
-        console.log('[INDEX] Haciendo fetch:', url);
+        list.forEach((property) => {
+            const id = extractId(property);
+            if (!id) return;
 
-        const response = await fetch(url);
+            const col = document.createElement('div');
+            col.className = 'col-md-4';
 
-        console.timeEnd('[INDEX] fetch /api/properties');
-        console.log('[INDEX] Respuesta:', {
-            ok: response.ok,
-            status: response.status,
-            statusText: response.statusText,
-        });
+            const link = document.createElement('a');
+            link.href = `property.html?id=${encodeURIComponent(id)}`;
+            link.className = 'text-decoration-none text-dark';
+            link.setAttribute('data-id', id);
 
-        if (!response.ok) {
-            throw new Error(`Network response not ok (status ${response.status})`);
-        }
+            const mainImg = getMainImage(property);
+            const title = escapeHtml(property?.title || 'Propiedad');
+            const propType = escapeHtml(property?.type || '');
+            const saleType = escapeHtml(property?.saleType || '');
+            const locationText = escapeHtml(getLocationText(property?.location));
+            const priceText = escapeHtml(formatPrice(property));
+            const beds = property?.bedrooms ?? null;
+            const baths = property?.bathrooms ?? null;
+            const park = property?.parking ?? null;
+            const area = property?.area ?? null;
+            const areaUnit = property?.areaUnit ?? 'm²';
 
-        console.time('[INDEX] response.json()');
-        const properties = await response.json();
-        console.timeEnd('[INDEX] response.json()');
-
-        const count = Array.isArray(properties) ? properties.length : 0;
-        console.info(`[INDEX] Propiedades recibidas: ${count}`);
-
-        if (!Array.isArray(properties)) {
-            console.warn('[INDEX] La respuesta no es un array. Valor:', properties);
-        } else {
-            // Muestra un resumen tabular para inspección rápida
-            try {
-                console.table(
-                    properties.map((p, i) => ({
-                        idx: i,
-                        _id: p?._id,
-                        id: p?.id,
-                        title: p?.title,
-                        city: p?.location?.city,
-                        area: p?.location?.area,
-                        priceFormatted: p?.priceFormatted,
-                    }))
-                );
-            } catch (e) {
-                console.warn('[INDEX] No se pudo imprimir console.table, detalle:', e);
-            }
-        }
-
-        let appended = 0;
-
-        properties?.forEach((property, idx) => {
-            console.groupCollapsed(`[INDEX] Render card #${idx + 1}`);
-            try {
-                console.log('[INDEX] property cruda:', property);
-
-                const id = String(property?._id ?? property?.id ?? '').trim();
-                console.log('[INDEX] ID resuelto:', id);
-
-                if (!id) {
-                    console.warn('[INDEX] ID vacío o inválido. Se omite esta card.');
-                    console.groupEnd();
-                    return;
-                }
-
-                const href = `property.html?id=${encodeURIComponent(id)}`;
-                console.log('[INDEX] Enlace generado:', href);
-
-                const col = document.createElement('div');
-                col.className = 'col-md-4';
-                console.log('[INDEX] <div.col-md-4> creado.');
-
-                const link = document.createElement('a');
-                link.href = href;
-                link.className = 'text-decoration-none text-dark';
-                console.log('[INDEX] <a> creado y configurado.');
-
-                const title = property?.title ?? 'Sin título';
-                const city = property?.location?.city || '';
-                const area = property?.location?.area || '';
-                const price = property?.priceFormatted || '';
-
-                const card = document.createElement('div');
-                card.className = 'card h-100';
-                card.style.cursor = 'pointer';
-                card.innerHTML = `
-          <div class="card-body">
-            <h5 class="card-title">${title}</h5>
-            <p class="card-text"><i class="bi bi-geo-alt-fill me-1"></i>${city} ${area}</p>
-            <p class="card-text fw-bold">${price}</p>
+            const card = document.createElement('div');
+            card.className = 'card h-100 shadow-sm';
+            card.innerHTML = `
+        <div class="ratio ratio-16x9">
+          <img src="${mainImg}" alt="${title}" class="card-img-top" loading="lazy" style="object-fit: cover;">
+        </div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            ${propType ? `<span class="badge text-bg-primary">${propType}</span>` : ''}
+            ${saleType ? `<span class="badge text-bg-secondary">${saleType}</span>` : ''}
           </div>
-        `;
-                console.log('[INDEX] <div.card> creado con innerHTML.');
 
-                link.appendChild(card);
-                col.appendChild(link);
-                propertiesContainer.appendChild(col);
-                appended++;
-                console.log('[INDEX] Card agregada al DOM. Total appended:', appended);
-            } catch (cardErr) {
-                console.error('[INDEX] Error al construir/adjuntar card:', cardErr);
-            } finally {
-                console.groupEnd();
-            }
+          <h5 class="card-title mb-1">${title}</h5>
+          ${locationText ? `<div class="text-muted small mb-2"><i class="bi bi-geo-alt-fill me-1"></i>${locationText}</div>` : ''}
+
+          <div class="d-flex flex-wrap gap-3 small text-muted mb-2">
+            ${Number.isFinite(beds) ? `<span><i class="bi bi-door-open me-1"></i>${beds} hab</span>` : ''}
+            ${Number.isFinite(baths) ? `<span><i class="bi bi-droplet me-1"></i>${baths} baños</span>` : ''}
+            ${Number.isFinite(park) ? `<span><i class="bi bi-car-front me-1"></i>${park} parqueos</span>` : ''}
+            ${Number.isFinite(area) ? `<span><i class="bi bi-aspect-ratio me-1"></i>${area} ${escapeHtml(areaUnit)}</span>` : ''}
+          </div>
+
+          <p class="fw-bold fs-5 mb-0">${priceText || ''}</p>
+        </div>
+      `;
+
+            link.appendChild(card);
+            col.appendChild(link);
+            propertiesContainer.appendChild(col);
         });
-
-        console.info(`[INDEX] Render finalizado. Cards agregadas: ${appended}/${count}`);
-        const t1 = performance.now();
-        console.info(`[INDEX] Duración total cargarPropiedades(): ${(t1 - t0).toFixed(1)} ms`);
     } catch (error) {
-        console.error('[INDEX] Error al cargar las propiedades:', error);
-        if (propertiesContainer) {
-            propertiesContainer.innerHTML = '<p>No se pudieron cargar las propiedades.</p>';
-        }
-    } finally {
-        console.groupEnd();
+        console.error('Error al cargar las propiedades:', error);
+        propertiesContainer.innerHTML = `
+      <div class="alert alert-danger" role="alert">
+        No se pudieron cargar las propiedades. Intenta de nuevo más tarde.
+      </div>`;
     }
 }
 
-// Eventos
+/* --------------------------- Event wiring --------------------------- */
 if (verPropiedadesBtn) {
-    verPropiedadesBtn.addEventListener('click', () => {
-        console.log('[INDEX] Click en #verPropiedadesBtn → cargarPropiedades()');
-        cargarPropiedades();
-    });
-} else {
-    console.warn('[INDEX] #verPropiedadesBtn no existe; no se adjunta listener.');
+    verPropiedadesBtn.addEventListener('click', cargarPropiedades);
 }
 
 if (heroVerPropiedades) {
     heroVerPropiedades.addEventListener('click', (e) => {
-        console.log('[INDEX] Click en #heroVerPropiedades → prevenir default y cargar');
         e.preventDefault();
         cargarPropiedades();
-
         const section = document.getElementById('properties');
-        if (section) {
-            console.log('[INDEX] Haciendo scroll a #properties…');
-            section.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            console.warn('[INDEX] #properties no encontrado para scroll.');
-        }
+        if (section) section.scrollIntoView({ behavior: 'smooth' });
     });
-} else {
-    console.warn('[INDEX] #heroVerPropiedades no existe; no se adjunta listener.');
 }
+
+/* Auto-cargar al abrir la página */
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('[INDEX] DOMContentLoaded');
+    cargarPropiedades();
+});
