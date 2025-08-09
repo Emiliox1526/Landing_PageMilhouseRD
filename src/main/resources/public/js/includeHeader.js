@@ -27,74 +27,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // 2) Elementos de login y perfil
-            const loginBtn        = document.getElementById('loginBtn');
-            const profileDropdown = document.getElementById('profileDropdown');
-            const dashboardItem   = document.getElementById('dashboardItem');
-            if (!loginBtn || !profileDropdown) {
-                console.error('No se encontraron #loginBtn y/o #profileDropdown.');
+            // 2) Lógica sencilla de login para admin
+            const loginBtn = document.getElementById('loginBtn');
+            const adminDropdown = document.getElementById('adminDropdown');
+            if (!loginBtn || !adminDropdown) {
+                console.error('No se encontraron #loginBtn o #adminDropdown.');
                 return;
             }
 
-            // 3) Lógica existente: uso de localStorage para login manual
-            const token = localStorage.getItem('jwt');
-            if (token) {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (isAdmin) {
                 loginBtn.classList.add('d-none');
-                profileDropdown.classList.remove('d-none');
-                const username = localStorage.getItem('userName') || 'Perfil';
-                const navUsernameSpan = document.getElementById('nav-username');
-                if (navUsernameSpan) navUsernameSpan.textContent = username;
+                adminDropdown.classList.remove('d-none');
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
-                    logoutBtn.addEventListener('click', (e) => {
+                    logoutBtn.addEventListener('click', e => {
                         e.preventDefault();
-                        localStorage.removeItem('jwt');
-                        localStorage.removeItem('userName');
-                        localStorage.removeItem('role');
-                        document.cookie = 'jwt=; Path=/; Max-Age=0';
-                        window.location.href = '../index.html';
+                        localStorage.removeItem('isAdmin');
+                        window.location.href = '/index.html';
                     });
-                }
-                if (dashboardItem) {
-                    const role = localStorage.getItem('role');
-                    const isAdmin = role && role.toLowerCase() === 'admin';
-                    dashboardItem.classList.toggle('d-none', !isAdmin);
                 }
             } else {
                 loginBtn.classList.remove('d-none');
-                profileDropdown.classList.add('d-none');
-                if (dashboardItem) dashboardItem.classList.add('d-none');
+                adminDropdown.classList.add('d-none');
             }
 
-            // ——— Nuevo: comprobar sesión con cookie JWT y endpoint /api/auth/me ———
-            fetch('/api/auth/me', { credentials: 'include' })
-                .then(res => {
-                    if (!res.ok) throw new Error('No autenticado');
-                    return res.json();
-                })
-                .then(({ name, email, role }) => {
-                    // Actualizamos localStorage con datos frescos
-                    localStorage.setItem('userName', name);
-                    localStorage.setItem('userEmail', email);
-                    if (role) localStorage.setItem('role', role);
-
-                    // Mostramos perfil y ocultamos loginBtn
-                    loginBtn.classList.add('d-none');
-                    profileDropdown.classList.remove('d-none');
-                    const navUsernameSpan = document.getElementById('nav-username');
-                    if (navUsernameSpan) navUsernameSpan.textContent = name;
-
-                    // Mostrar menu de admin si aplica
-                    if (dashboardItem) {
-                        const isAdmin = role && role.toLowerCase() === 'admin';
-                        dashboardItem.classList.toggle('d-none', !isAdmin);
-                    }
-                })
-                .catch(() => {
-                    // No autenticado o error: nada que cambiar
-                });
-
-            // 4) Cambio de fondo según página
+            // 3) Cambio de fondo según página
             if (navEl) {
                 const isHome = location.pathname.endsWith('/index.html') || location.pathname === '/';
                 navEl.classList.add(isHome ? 'navbar-gradiente' : 'bg-vino');
