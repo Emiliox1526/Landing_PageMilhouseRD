@@ -11,9 +11,89 @@
 <div id="header-container"></div>
 <div class="container mt-5">
     <h2>Administración de propiedades</h2>
-    <p>Página en construcción.</p>
+    <form id="propertyForm" class="row g-3">
+        <div class="col-md-6">
+            <label for="title" class="form-label">Título</label>
+            <input type="text" class="form-control" id="title" required />
+        </div>
+        <div class="col-md-6">
+            <label for="type" class="form-label">Tipo</label>
+            <select id="type" class="form-select" required>
+                <option value="" disabled selected>Seleccione...</option>
+                <option>Casa</option>
+                <option>Apartamento</option>
+                <option>Penthouse</option>
+                <option>Solares</option>
+                <option>Villa</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="saleType" class="form-label">Tipo de venta</label>
+            <select id="saleType" class="form-select" required>
+                <option value="" disabled selected>Seleccione...</option>
+                <option>Venta</option>
+                <option>Alquiler</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="price" class="form-label">Precio</label>
+            <input type="number" class="form-control" id="price" required min="0" step="0.01" />
+        </div>
+        <div class="col-md-6">
+            <label for="priceFormatted" class="form-label">Precio formateado</label>
+            <input type="text" class="form-control" id="priceFormatted" />
+        </div>
+        <div class="col-md-4">
+            <label for="bedrooms" class="form-label">Habitaciones</label>
+            <input type="number" class="form-control" id="bedrooms" required min="0" />
+        </div>
+        <div class="col-md-4">
+            <label for="bathrooms" class="form-label">Baños</label>
+            <input type="number" class="form-control" id="bathrooms" required min="0" />
+        </div>
+        <div class="col-md-4">
+            <label for="parking" class="form-label">Parqueos</label>
+            <input type="number" class="form-control" id="parking" required min="0" />
+        </div>
+        <div class="col-md-6">
+            <label for="area" class="form-label">Área (m²)</label>
+            <input type="number" class="form-control" id="area" min="0" step="0.01" />
+        </div>
+        <div class="col-md-6">
+            <label for="address" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="address" />
+        </div>
+        <div class="col-md-6">
+            <label for="latitude" class="form-label">Latitud</label>
+            <input type="number" class="form-control" id="latitude" step="0.000001" />
+        </div>
+        <div class="col-md-6">
+            <label for="longitude" class="form-label">Longitud</label>
+            <input type="number" class="form-control" id="longitude" step="0.000001" />
+        </div>
+        <div class="col-12">
+            <label for="descriptionParagraph" class="form-label">Descripción</label>
+            <textarea id="descriptionParagraph" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="col-12">
+            <label for="features" class="form-label">Características (separadas por coma)</label>
+            <input type="text" class="form-control" id="features" />
+        </div>
+        <div class="col-12">
+            <label for="amenities" class="form-label">Amenidades (separadas por coma)</label>
+            <input type="text" class="form-control" id="amenities" />
+        </div>
+        <div class="col-12">
+            <label for="images" class="form-label">URLs de imágenes (separadas por coma)</label>
+            <input type="text" class="form-control" id="images" />
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Guardar Propiedad</button>
+        </div>
+    </form>
 </div>
 <script src="js/includeHeader.js"></script>
+<script src="js/admin.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
