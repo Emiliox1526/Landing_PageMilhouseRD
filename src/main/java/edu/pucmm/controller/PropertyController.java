@@ -1,5 +1,7 @@
 package edu.pucmm.controller;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.Sorts;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -13,6 +15,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -41,47 +44,48 @@ public class PropertyController {
 
         // LISTAR
         app.get("/api/properties", ctx -> {
-            List<Document> list = new ArrayList<>();
-            properties.find().forEach((Document d) -> list.add(normalizeId(d)));
-            ctx.json(list);
+            List<Map<String, Object>> out = new ArrayList<>();
+            FindIterable<Document> it = properties.find().sort(Sorts.descending("createdAt")).limit(100);
+            for (Document d : it) {
+                Map<String, Object> m = new LinkedHashMap<>(d);
+                m.put("id", d.getObjectId("_id").toHexString());
+                m.remove("_id");
+                out.add(m);
+            }
+            ctx.json(out);
         });
+
 
         // OBTENER POR ID
         app.get("/api/properties/:id", ctx -> {
             String id = ctx.pathParam("id");
-            ObjectId objectId = parseObjectIdOrNull(id);
-            if (objectId == null) {
-                ctx.status(400).result("Invalid id");
-                return;
-            }
-
-            Document doc = properties.find(Filters.eq("_id", objectId)).first();
-            if (doc == null) {
+            Document d = properties.find(Filters.eq("_id", new ObjectId(id))).first();
+            if (d == null) {
                 ctx.status(404).result("Not Found");
                 return;
             }
-            ctx.json(normalizeId(doc));
+            Map<String, Object> m = new LinkedHashMap<>(d);
+            m.put("id", d.getObjectId("_id").toHexString());
+            m.remove("_id");
+            ctx.json(m);
         });
 
-        // CREAR
+        // CREAR (ESTA ES LA QUE TE FALTA SI TE SALE 404)
         app.post("/api/properties", ctx -> {
-            Document body = parseBodyAsDocument(ctx);
+            // Lee el JSON tal cual lo envía admin.js
+            String body = ctx.body();
+            Document doc = Document.parse(body);
 
-            List<String> errors = validateAndNormalize(body);
-            if (!errors.isEmpty()) {
-                ctx.status(400).json(Map.of("ok", false, "errors", errors));
-                return;
-            }
+            // Timestamps y defaults opcionales
+            doc.putIfAbsent("createdAt", Instant.now().toString());
 
-            Date now = new Date();
-            body.putIfAbsent("createdAt", now);
-            body.put("updatedAt", now);
+            properties.insertOne(doc);
+            String id = doc.getObjectId("_id").toHexString();
 
-            InsertOneResult res = properties.insertOne(body);
-            ObjectId insertedId = res.getInsertedId().asObjectId().getValue();
-            body.put("_id", insertedId.toHexString()); // <- devolver como string
-
-            ctx.status(201).json(body);
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("id", id);
+            resp.put("message", "created");
+            ctx.status(201).json(resp);
         });
 
         // ACTUALIZAR
