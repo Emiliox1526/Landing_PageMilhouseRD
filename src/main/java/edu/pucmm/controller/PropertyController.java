@@ -15,7 +15,8 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import java.time.Instant;
+import edu.pucmm.model.Property;
+
 import java.util.*;
 
 /**
@@ -70,22 +71,22 @@ public class PropertyController {
             ctx.json(m);
         });
 
-        // CREAR (ESTA ES LA QUE TE FALTA SI TE SALE 404)
+        // CREAR
         app.post("/api/properties", ctx -> {
-            // Lee el JSON tal cual lo envía admin.js
-            String body = ctx.body();
-            Document doc = Document.parse(body);
+            Property property = ctx.bodyAsClass(Property.class);
+            List<String> errors = validateRequired(property);
+            if (!errors.isEmpty()) {
+                ctx.status(400).json(Map.of("errors", errors));
+                return;
+            }
 
-            // Timestamps y defaults opcionales
-            doc.putIfAbsent("createdAt", Instant.now().toString());
+            Document doc = Document.parse(ctx.body());
+            doc.putIfAbsent("createdAt", new Date());
 
-            properties.insertOne(doc);
-            String id = doc.getObjectId("_id").toHexString();
+            InsertOneResult res = properties.insertOne(doc);
+            String id = res.getInsertedId().asObjectId().getValue().toHexString();
 
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("id", id);
-            resp.put("message", "created");
-            ctx.status(201).json(resp);
+            ctx.status(201).json(Map.of("id", id, "message", "created"));
         });
 
         // ACTUALIZAR
@@ -240,6 +241,18 @@ public class PropertyController {
             errors.add("units debe ser un arreglo");
         }
 
+        return errors;
+    }
+
+    private static List<String> validateRequired(Property p) {
+        List<String> errors = new ArrayList<>();
+        if (p.getTitle() == null || p.getTitle().isBlank()) errors.add("title es requerido");
+        if (p.getType() == null || p.getType().isBlank()) errors.add("type es requerido");
+        if (p.getSaleType() == null || p.getSaleType().isBlank()) errors.add("saleType es requerido");
+        if (p.getPrice() == null) errors.add("price es requerido");
+        if (p.getBedrooms() == null) errors.add("bedrooms es requerido");
+        if (p.getBathrooms() == null) errors.add("bathrooms es requerido");
+        if (p.getParking() == null) errors.add("parking es requerido");
         return errors;
     }
 
