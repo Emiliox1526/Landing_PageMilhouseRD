@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('propertyForm');
     if (!form) return;
 
+
+    const API_BASE = (location.origin.includes('localhost:7070')) ? '' : 'http://localhost:7070';
+
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -9,8 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
             title: form.title.value.trim(),
             type: form.type.value,
             saleType: form.saleType.value,
-            price: parseFloat(form.price.value),
-            priceFormatted: form.priceFormatted.value.trim(),
+
+            price: parseFloat(form.price.value.replace(/[^0-9.]/g, '')),
+
+
             bedrooms: parseInt(form.bedrooms.value, 10),
             bathrooms: parseInt(form.bathrooms.value, 10),
             parking: parseInt(form.parking.value, 10),
@@ -38,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         try {
-            const res = await fetch('/api/properties', {
+            const res = await fetch(`${API_BASE}/api/properties`, {
+
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -57,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         msg += ': ' + err.message;
                     }
                 } catch (_) {
-                    // Ignorar
+
+                    msg += ` (status ${res.status})`;
+
                 }
                 alert(msg);
             }
