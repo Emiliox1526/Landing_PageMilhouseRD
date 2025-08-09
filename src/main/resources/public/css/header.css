@@ -1,229 +1,157 @@
 /* header.css */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap');
-/* 0. Importante: familia de fuente Montserrat */
-:root {
-    --mh-font:    'Montserrat', sans-serif;
-    --mh-gold:    #cfbb9b;
-    --mh-blue:    #7fa1a8;
-    --mh-navy:    #212635;
 
-    --mh-navy-gradient: #2c3d69;
-    --mh-white:   #ffffff;
-}
-.nav-link span {
-    font-family: 'Montserrat', sans-serif !important;
-}
-.milhouse-brand {
-    color: #fff;     /* fondo blanco */
-
-}
-body {
-    font-family: 'Roboto Thin', sans-serif;
-    /* opcional: ajusta tamaño y altura de línea global */
-    font-size: 16px;
-    line-height: 1.5;
-    color: #000;
+:root{
+    --mh-font:'Montserrat',sans-serif;
+    --mh-gold:#cfbb9b;
+    --mh-blue:#7fa1a8;
+    --mh-navy:#212635;
+    --mh-navy-gradient:#2c3d69;
+    --mh-white:#ffffff;
 }
 
-h1,h2,h3,h4,h5,h6 {
+.nav-link span{ font-family:'Montserrat',sans-serif !important; }
+.milhouse-brand{ color:#fff; }
 
-    font-family: 'Montserrat', sans-serif !important;
-    font-weight: 500;
-    color: #000;
+body{
+    font-family:'Roboto Thin',sans-serif;
+    font-size:16px; line-height:1.5; color:#000;
+}
+h1,h2,h3,h4,h5,h6{
+    font-family:'Montserrat',sans-serif !important;
+    font-weight:500; color:#000;
+}
+p,li,span,a{
+    font-family:'Montserrat',sans-serif !important;
+    font-weight:400; color:#000;
 }
 
-p, li, span, a {
-    font-family: 'Montserrat', sans-serif !important;
-    font-weight: 400;
-    color: #000;
-}
 /* Aplico la fuente globalmente al header/navbar */
-header.site-header,
-.navbar,
-.navbar-brand,
-.nav-center .nav-link,
-.nav-right .nav-link,
-.dropdown-item {
-    font-family: 'Montserrat', sans-serif !important;
-    color: #ffffff;
+header.site-header,.navbar,.navbar-brand,.nav-center .nav-link,.nav-right .nav-link,.dropdown-item{
+    font-family:'Montserrat',sans-serif !important; color: #000000;
+}
+header.site-header .nav-right .nav-link.mh-admin-btn,
+.navbar .nav-right .nav-link.mh-admin-btn,
+.navbar-dark .navbar-nav .nav-link.mh-admin-btn {
+    background-color: #fff !important;
+    color: #0e0e0e !important;
+    border: 1px solid rgba(20,39,66,.12) !important;
+    border-radius: 9999px !important;
+}
+/* Asegura que TODO lo interno herede el color (incluye ion-icon y utilidades tipo .text-white) */
+header.site-header .nav-right .nav-link.mh-admin-btn *,
+header.site-header .nav-right .nav-link.mh-admin-btn ion-icon,
+header.site-header .nav-right .nav-link.mh-admin-btn .text-white,
+header.site-header .nav-right .nav-link.mh-admin-btn .text-light {
+    color: inherit !important;
+    fill: currentColor !important;
 }
 
-/* 1. Header wrapper: sticky to top */
-header.site-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 2000;
+/* Caret del dropdown en negro (usa currentColor) */
+header.site-header .nav-right .nav-link.mh-admin-btn::after {
+    border-top-color: currentColor !important;
 }
 
-/* 2. Gradient background for navbar */
-.navbar-gradiente {
-    background: linear-gradient(
-            to right,
-            var(--mh-navy-gradient) 0%,
-            var(--mh-navy) 20%,
-            var(--mh-navy) 100%
-    ) !important;
+/* Estados hover/active/show, siempre negro sobre blanco */
+.nav-right .nav-link.mh-admin-btn:hover,
+.nav-right .nav-link.mh-admin-btn:focus,
+.nav-right .show > .nav-link.mh-admin-btn,
+.nav-right .nav-link.mh-admin-btn.active {
+    background-color: #f6f8fa !important;
+    color: #0e0e0e !important;
+}
+/* HEADER pegado arriba */
+header.site-header{ position:fixed; top:0; left:0; width:100%; z-index:2000; }
+
+/* Fondo gradiente */
+.navbar-gradiente{
+    background:linear-gradient(to right,var(--mh-navy-gradient) 0%,var(--mh-navy) 20%,var(--mh-navy) 100%) !important;
 }
 
-/* header.css */
-.logo-mh {
-    width: 60px;    /* ajusta este valor al tamaño que quieras */
-    height: auto;   /* mantiene la proporción original */
-    display: block; /* elimina gaps si está en línea */
+/* Logo */
+.logo-mh{ width:60px; height:auto; display:block; }
+
+/* Brand */
+.navbar-brand{ color:var(--mh-blue) !important; font-weight:bold; display:flex; align-items:center; gap:.5rem; }
+
+/* Toggler en oscuro */
+.navbar-dark .navbar-toggler-icon{ filter:invert(1); }
+.navbar-brand span{ font-family:'Montserrat',sans-serif !important; }
+
+/* Centro */
+.nav-center{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    display:flex; align-items:center; gap:2rem;
 }
-/* 3. Brand (logo + text) */
-.navbar-brand {
-    color: var(--mh-blue) !important;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.nav-center .nav-link{
+    color:var(--mh-blue) !important; font-weight:600; position:relative; padding-bottom:.5rem; display:flex; align-items:center;
+}
+.nav-center .nav-link ion-icon{ margin-right:.5rem; font-size:1.2rem; vertical-align:middle; }
+.nav-center .nav-link:hover::after,.nav-center .nav-link.active::after{
+    content:""; position:absolute; bottom:0; left:0; width:100%; height:4px; background-color:var(--mh-blue); border-radius:2px;
 }
 
-/* 4. Toggler icon (mobile) invert for dark bg */
-.navbar-dark .navbar-toggler-icon {
-    filter: invert(1);
+/* (Solo para menús del centro si los usas) */
+.nav-center .dropdown-menu{
+    display:none; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    min-width:10rem; background-color:var(--mh-navy); border:none; box-shadow:0 4px 8px rgba(0,0,0,.2); padding:.5rem 0; z-index:1000;
 }
-.navbar-brand span {
-    font-family: 'Montserrat', sans-serif !important;
-}
-/* 5. Central navigation container */
-.nav-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
+.nav-center .dropdown:hover>.dropdown-menu{ display:block; }
+.nav-center .dropdown-item{ color:var(--mh-white) !important; padding:.5rem 1rem; }
+.nav-center .dropdown-item:hover{ background:var(--mh-blue); }
 
-/* 6. Central nav links */
-.nav-center .nav-link {
-    color: var(--mh-blue) !important;
-    font-weight: 600;
-    position: relative;
-    padding-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-}
+/* Derecha */
+.nav-right{ margin-left:auto; display:flex; align-items:center; gap:1.5rem; }
+.nav-right .nav-link{ color:var(--mh-white) !important; font-weight:500; display:flex; align-items:center; }
+.nav-right .nav-link ion-icon{ margin-left:.25rem; font-size:1.4rem; }
+.nav-right .nav-link:hover{ text-decoration:underline; }
+.nav-right .dropdown-toggle{ padding-bottom:.5rem; position:relative; }
+.nav-right .dropdown-toggle::after{ margin-left:.25rem; vertical-align:middle; }
 
-/* 7. Icon spacing in central links */
-.nav-center .nav-link ion-icon {
-    margin-right: 0.5rem;
-    font-size: 1.2rem;
-    vertical-align: middle;
-}
+/* ===============================
+   MENÚ HEADER (fondo blanco)
+   =============================== */
+.site-header,.site-header .navbar,.site-header .container-fluid{ overflow:visible; }
 
-/* 8. Underline effect on hover/active */
-.nav-center .nav-link:hover::after,
-.nav-center .nav-link.active::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background-color: var(--mh-blue);
-    border-radius: 2px;
-}
+.site-header .mh-header-menu{
+    /* NO fijamos left/transform: dejamos a Popper posicionar */
+    min-width:220px;
+    max-width:calc(100vw - 2rem);
+    overflow-wrap:anywhere;
 
-/* 9. Dropdown menu (hidden by default) */
-.nav-center .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 10rem;
-    background-color: var(--mh-navy);
-    border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    padding: 0.5rem 0;
-    z-index: 1000;
+    /* Estilos visuales */
+    background:#fff;
+    color:#000;
+    border:1px solid rgba(20,39,66,.12);
+    border-radius:12px;
+    box-shadow:0 12px 28px rgba(16,24,40,.12);
 }
-.nav-center .dropdown:hover > .dropdown-menu {
-    display: block;
+.site-header .mh-header-menu[data-bs-popper]{ margin-top:.5rem; } /* separación del botón */
+.site-header .mh-header-menu .mh-header-item{ color:#000 !important; padding:.5rem 1rem; }
+.site-header .mh-header-menu .mh-header-item:hover,
+.site-header .mh-header-menu .mh-header-item:focus{
+    color:#000 !important; background:rgba(0,0,0,.05) !important;
 }
-.nav-center .dropdown-item {
-    color: var(--mh-white) !important;
-    padding: 0.5rem 1rem;
-}
-.nav-center .dropdown-item:hover {
-    background: var(--mh-blue);
-}
+.site-header .mh-header-menu .mh-header-divider{ margin:.25rem 0; border-top-color:rgba(20,39,66,.12); }
 
-/* 12. Apply white text to any other dropdown-items globally */
-.dropdown-item {
-    color: var(--mh-white) !important;
+/* ===============================
+   BOTÓN ADMIN blanco (pill)
+   =============================== */
+.nav-right .mh-admin-btn{
+    background:#fff; color:#000 !important;
+    border:1px solid rgba(20,39,66,.12);
+    border-radius:9999px;
+    padding:.375rem .75rem;
+    line-height:1;
+    display:inline-flex; align-items:center; gap:.35rem;
+    text-decoration:none !important;
 }
+.nav-right .mh-admin-btn:hover{ background:#f6f8fa; text-decoration:none; }
+.nav-right .mh-admin-btn:focus{ box-shadow:0 0 0 .25rem rgba(49,132,253,.25); outline:none; }
+.nav-right .mh-admin-btn ion-icon{ color:inherit; font-size:1.4rem; }
 
-/* 13–19. Nav right & profile dropdown (igual que antes, con la misma fuente) */
-.nav-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-.nav-right .nav-link {
-    color: var(--mh-white) !important;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-}
-.nav-right .nav-link ion-icon {
-    margin-left: 0.25rem;
-    font-size: 1.4rem;
-}
-.nav-right .nav-link:hover {
-    text-decoration: underline;
-}
-.nav-right .dropdown-toggle {
-    padding-bottom: 0.5rem;
-    position: relative;
-}
-.nav-right .dropdown-toggle::after {
-    margin-left: 0.25rem;
-    vertical-align: middle;
-}
-#profileDropdown .dropdown-menu {
-    right: 0;
-    left: auto;
-    top: calc(100% + 0.25rem);
-    background-color: var(--mh-navy);
-    border: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    min-width: 12rem;
-    padding: 0.5rem 0;
-}
-#profileDropdown .dropdown-item {
-    color: var(--mh-white) !important;
-    padding: 0.5rem 1rem;
-}
-#profileDropdown .dropdown-item:hover {
-    background: var(--mh-blue);
-}
-#profileDropdown .dropdown-divider {
-    margin: 0.25rem 0;
-    border-color: rgba(255,255,255,0.2);
-}
-
-/* 21. Responsive adjustments */
-@media (max-width: 991.98px) {
-    .nav-center {
-        position: static;
-        transform: none;
-        flex-direction: column;
-        gap: 1rem;
-        margin: 1rem 0;
-    }
-    .nav-center .dropdown-menu,
-    #profileDropdown .dropdown-menu {
-        position: static;
-        transform: none;
-        box-shadow: none;
-        background: transparent;
-    }
+/* Responsive */
+@media (max-width: 991.98px){
+    .nav-center{ position:static; transform:none; flex-direction:column; gap:1rem; margin:1rem 0; }
+    .nav-center .dropdown-menu{ position:static; transform:none; box-shadow:none; background:transparent; }
 }
