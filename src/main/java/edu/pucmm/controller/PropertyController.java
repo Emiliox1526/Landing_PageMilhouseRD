@@ -8,7 +8,6 @@ import io.javalin.http.Context;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 
 import org.bson.Document;
@@ -41,11 +40,13 @@ public class PropertyController {
 
     /** Registra endpoints en Javalin */
     public void register(Javalin app) {
+        System.out.println("[REGISTER] PropertyController routes");
 
         // LISTAR
         app.get("/api/properties", ctx -> {
+            System.out.println("[HIT] GET /api/properties");
             List<Map<String, Object>> out = new ArrayList<>();
-            FindIterable<Document> it = properties.find().sort(Sorts.descending("createdAt")).limit(100);
+            FindIterable<Document> it = properties.find().sort(Sorts.descending("createdAt")).limit(200);
             for (Document d : it) {
                 Map<String, Object> m = new LinkedHashMap<>(d);
                 m.put("id", d.getObjectId("_id").toHexString());
@@ -55,12 +56,20 @@ public class PropertyController {
             ctx.json(out);
         });
 
-
-        // OBTENER POR ID
+        // DETALLE
         app.get("/api/properties/:id", ctx -> {
             String id = ctx.pathParam("id");
-            Document d = properties.find(Filters.eq("_id", new ObjectId(id))).first();
+            System.out.println("[HIT] GET /api/properties/" + id);
+            Document d;
+            try {
+                d = properties.find(Filters.eq("_id", new ObjectId(id))).first();
+            } catch (Exception e) {
+                System.err.println("[ERR] Invalid ObjectId: " + id);
+                ctx.status(400).result("Invalid id");
+                return;
+            }
             if (d == null) {
+                System.out.println("[MISS] Not found: " + id);
                 ctx.status(404).result("Not Found");
                 return;
             }
@@ -70,22 +79,37 @@ public class PropertyController {
             ctx.json(m);
         });
 
-        // CREAR (ESTA ES LA QUE TE FALTA SI TE SALE 404)
+        // CREAR (POST)
         app.post("/api/properties", ctx -> {
-            // Lee el JSON tal cual lo envía admin.js
+            System.out.println("[HIT] POST /api/properties");
+            System.out.println("[HIT] CT=" + ctx.contentType());
             String body = ctx.body();
-            Document doc = Document.parse(body);
+            System.out.println("[HIT] Body=" + body);
 
-            // Timestamps y defaults opcionales
-            doc.putIfAbsent("createdAt", Instant.now().toString());
+            try {
+                Document doc = Document.parse(body);
+                doc.putIfAbsent("createdAt", Instant.now().toString());
+                properties.insertOne(doc);
 
-            properties.insertOne(doc);
-            String id = doc.getObjectId("_id").toHexString();
+                String id = doc.getObjectId("_id").toHexString();
+                System.out.println("[OK] Inserted _id=" + id);
 
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("id", id);
-            resp.put("message", "created");
-            ctx.status(201).json(resp);
+                Map<String, Object> resp = new HashMap<>();
+                resp.put("id", id);
+                resp.put("message", "created");
+                ctx.status(201).json(resp);
+
+            } catch (org.bson.json.JsonParseException jpe) {
+                System.err.println("[ERR] JSON parse: " + jpe.getMessage());
+                ctx.status(400).json(Map.of("message", "Invalid JSON"));
+            } catch (com.mongodb.MongoException me) {
+                System.err.println("[ERR] Mongo: " + me.getMessage());
+                ctx.status(500).json(Map.of("message", "DB error"));
+            } catch (Exception e) {
+                System.err.println("[ERR] Uncaught: " + e.getMessage());
+                e.printStackTrace();
+                ctx.status(500).json(Map.of("message", "Internal error"));
+            }
         });
 
         // ACTUALIZAR

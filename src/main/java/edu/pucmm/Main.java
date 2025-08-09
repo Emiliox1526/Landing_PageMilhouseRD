@@ -51,6 +51,18 @@ public class Main {
             });
         }).start(port);
 
+        // --- LOGS GLOBALES ---
+        app.before(ctx -> {
+            System.out.printf("[REQ] %s %s | CT=%s%n", ctx.method(), ctx.path(), ctx.contentType());
+        });
+        app.after(ctx -> {
+            System.out.printf("[RES] %s %s -> %d%n", ctx.method(), ctx.path(), ctx.status());
+        });
+        app.error(404, ctx -> {
+            System.out.printf("[404] %s %s | Body=%s%n", ctx.method(), ctx.path(), safeBody(ctx));
+            ctx.result("Not Found");
+        });
+
         // 5) Registrar controller con la colección 'properties'
         MongoCollection<Document> propertiesCol = db.getCollection("properties");
         PropertyController propertyController = new PropertyController(propertiesCol);
@@ -76,5 +88,9 @@ public class Main {
 
     private static int parseInt(String s, int def) {
         try { return Integer.parseInt(s.trim()); } catch (Exception e) { return def; }
+    }
+
+    public static String safeBody(io.javalin.http.Context ctx){
+        try { return ctx.body(); } catch(Exception e){ return "<no-readable-body>"; }
     }
 }
