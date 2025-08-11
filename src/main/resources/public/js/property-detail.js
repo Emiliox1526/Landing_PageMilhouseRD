@@ -26,7 +26,10 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         { id:'custom',            name:'Personalizada…',                  apr:'X' }, // editable
     ];
     // Usa base absoluta solo si no estás en :7070
-    const API_BASE = (location.origin.includes('localhost:7070')) ? '' : 'http://localhost:7070';
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const API_BASE = isLocal ? 'http://localhost:7070' : ''; // en prod, vacío para usar el proxy de Netlify
+    const API = `${API_BASE}/api`;
+    const UPLOADS = `${API_BASE}/uploads`;
 
     // Helpers
     const fmtCurrency = (v, currency='USD', locale='en-US') =>

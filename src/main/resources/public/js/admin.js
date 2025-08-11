@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE = (location.origin.includes('localhost:7070')) ? '' : 'http://localhost:7070';
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const API_BASE = isLocal ? 'http://localhost:7070' : ''; // en prod, vacío para usar el proxy de Netlify
+    const API = `${API_BASE}/api`;
+    const UPLOADS = `${API_BASE}/uploads`;
+
     console.log('[ADMIN] API_BASE:', API_BASE);
 
     // --- Config imágenes ---
