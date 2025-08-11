@@ -1,0 +1,11 @@
+# netlify.toml
+[build]
+command = ""                         # sin build
+publish = "src/main/resources/public"  # carpeta estática
+
+# Proxy del backend en Render
+[[redirects]]
+from = "/api/*"
+to   = "https://TU-SERVICIO.onrender.com/:splat"
+status = 200
+force  = true
