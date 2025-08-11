@@ -21,6 +21,7 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -28,49 +29,68 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        // ========= ENV / Puertos / Paths =========
+        int port = Integer.parseInt(Optional.ofNullable(System.getenv("PORT")).orElse("7070"));
+        String uploadsDirEnv = Optional.ofNullable(System.getenv("UPLOADS_DIR")).orElse("");
+        String allowedOrigin = Optional.ofNullable(System.getenv("ALLOWED_ORIGIN")).orElse("*");
+
+        // Ruta absoluta para uploads (por defecto <workdir>/uploads)
+        Path uploadsRoot = uploadsDirEnv.isBlank()
+                ? Paths.get(System.getProperty("user.dir"), "uploads")
+                : Paths.get(uploadsDirEnv);
+        Files.createDirectories(uploadsRoot); // asegura existencia
+
         // ========= Mongo =========
-        String mongoUri   = System.getenv().getOrDefault("MONGODB_URI", "mongodb://localhost:27017");
-        String dbName     = System.getenv().getOrDefault("MONGODB_DB",  "MilhouseRD");
-        String collName   = System.getenv().getOrDefault("MONGODB_COLLECTION", "properties");
+        String mongoUri = Optional.ofNullable(System.getenv("MONGODB_URI"))
+                .orElse(Optional.ofNullable(System.getenv("MONGO_URI")).orElse("mongodb://localhost:27017"));
+        String dbName   = Optional.ofNullable(System.getenv("MONGODB_DB")).orElse("MilhouseRD");
+        String collName = Optional.ofNullable(System.getenv("MONGODB_COLLECTION")).orElse("properties");
 
         MongoClient mongo = MongoClients.create(mongoUri);
         MongoDatabase db  = mongo.getDatabase(dbName);
         MongoCollection<Document> properties = db.getCollection(collName);
 
-        // ========= Ruta de uploads (EXTERNAL) =========
-        // Usamos una ruta absoluta basada en el directorio de trabajo
-        Path uploadsRoot = Paths.get(System.getProperty("user.dir"), "uploads");
-        Files.createDirectories(uploadsRoot); // <-- crea si no existe (evita el error)
-
         // ========= Javalin (v5+) =========
         Javalin app = Javalin.create(cfg -> {
             cfg.showJavalinBanner = false;
 
-            // Evita 413 (Payload Too Large) para JSON o multipart
+            // Tamaño máx. request (JSON/multipart)
             cfg.http.maxRequestSize = 100L * 1024 * 1024; // 100 MB
 
-            // Sirve / (admin.html, js, css) desde resources/public
+            // / -> resources/public (CLASSPATH)
             cfg.staticFiles.add(staticFiles -> {
                 staticFiles.directory = "/public";
                 staticFiles.location  = Location.CLASSPATH;
                 staticFiles.precompress = true;
             });
 
-            // Sirve /uploads/** desde carpeta externa ./uploads ya creada arriba
+            // /uploads/** -> carpeta EXTERNAL
             cfg.staticFiles.add(staticFiles -> {
                 staticFiles.hostedPath = "/uploads";
-                staticFiles.directory  = uploadsRoot.toString(); // usa la ruta absoluta
+                staticFiles.directory  = uploadsRoot.toString();
                 staticFiles.location   = Location.EXTERNAL;
             });
 
-            // Si sirves desde otro dominio:
-            // cfg.plugins.enableCors(cors -> cors.add(it -> it.anyHost()));
-        }).start(7070);
+            // CORS (Netlify + dev)
+            cfg.plugins.enableCors(cors -> cors.add(rule -> {
+                if ("*".equals(allowedOrigin)) {
+                    rule.anyHost();
+                } else {
+                    String host = allowedOrigin.replaceFirst("^https?://", "");
+                    rule.allowHost(host);
+                }
+                // hosts locales para desarrollo
+                rule.allowHost("localhost:3000", "localhost:5173", "localhost:8080");
+                rule.allowCredentials = true;
+                // Si necesitas exponer headers de respuesta, usa:
+                // rule.exposeHeader("Content-Disposition");
+            }));
+        }).start(port);
 
         // ========= Rutas de dominio =========
         new PropertyController(properties).register(app);
 
-        // ========= Healthcheck simple =========
+        // ========= Healthcheck =========
         app.get("/health", ctx -> ctx.json(Map.of("status", "ok")));
 
         // ========= Endpoint de uploads =========
@@ -97,10 +117,10 @@ public class Main {
                 String ext = "";
                 String original = f.filename() == null ? "" : f.filename();
                 int dot = original.lastIndexOf('.');
-                if (dot > -1 && dot < original.length()-1) {
+                if (dot > -1 && dot < original.length() - 1) {
                     ext = original.substring(dot).toLowerCase();
                 } else if (ct.contains("/")) {
-                    String guessed = ct.substring(ct.indexOf('/')+1).toLowerCase();
+                    String guessed = ct.substring(ct.indexOf('/') + 1).toLowerCase();
                     if (guessed.equals("jpeg")) guessed = "jpg";
                     if (guessed.matches("[a-z0-9]+")) {
                         ext = "." + guessed;
