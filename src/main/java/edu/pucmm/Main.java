@@ -50,11 +50,14 @@ public class Main {
         MongoDatabase db  = mongo.getDatabase(dbName);
         MongoCollection<Document> properties = db.getCollection(collName);
 
+        // (Opcional) prueba de conexión al arrancar (verás esto en logs de Render)
+        db.runCommand(new Document("ping", 1));
+        System.out.println("[Mongo] Conexión OK a DB=" + db.getName()
+                + " collection=" + properties.getNamespace().getCollectionName());
+
         // ========= Javalin (v5+) =========
         Javalin app = Javalin.create(cfg -> {
             cfg.showJavalinBanner = false;
-
-            // Tamaño máx. request (JSON/multipart)
             cfg.http.maxRequestSize = 100L * 1024 * 1024; // 100 MB
 
             // / -> resources/public (CLASSPATH)
@@ -71,7 +74,7 @@ public class Main {
                 staticFiles.location   = Location.EXTERNAL;
             });
 
-            // CORS (Netlify + dev)
+            // CORS (Netlify + local dev)
             cfg.plugins.enableCors(cors -> cors.add(rule -> {
                 if ("*".equals(allowedOrigin)) {
                     rule.anyHost();
@@ -79,23 +82,26 @@ public class Main {
                     String host = allowedOrigin.replaceFirst("^https?://", "");
                     rule.allowHost(host);
                 }
-                // hosts locales para desarrollo
                 rule.allowHost("localhost:3000", "localhost:5173", "localhost:8080");
                 rule.allowCredentials = true;
-                // Si necesitas exponer headers de respuesta, usa:
+                // Ejemplo si necesitas exponer headers de respuesta:
                 // rule.exposeHeader("Content-Disposition");
             }));
         }).start(port);
 
-        // ========= Rutas de dominio =========
+        // ========= Página inicial (opcional)
+        app.get("/", ctx -> ctx.render("index.html"));
+
+        // ========= Rutas de dominio
         new PropertyController(properties).register(app);
 
-        // ========= Healthcheck =========
+        // ========= Healthcheck
         app.get("/health", ctx -> ctx.json(Map.of("status", "ok")));
-        // Diagnóstico de Mongo
+
+        // ========= Diagnóstico de Mongo
         app.get("/api/_diag/mongo", ctx -> {
             try {
-                var ping = db.runCommand(new org.bson.Document("ping", 1));
+                var ping = db.runCommand(new Document("ping", 1));
                 long count = properties.countDocuments();
                 ctx.json(Map.of(
                         "ok", true,
@@ -112,8 +118,8 @@ public class Main {
             }
         });
 
-        // ========= Endpoint de uploads =========
-        // Frontend: FormData con name="files" (múltiples). Máx 10 por request.
+        // ========= Endpoint de uploads (múltiples imágenes)
+        // Frontend: FormData con name="files" (máx 10 por request).
         app.post("/api/uploads", ctx -> {
             var files = ctx.uploadedFiles("files");
             if (files == null || files.isEmpty()) {
@@ -141,9 +147,7 @@ public class Main {
                 } else if (ct.contains("/")) {
                     String guessed = ct.substring(ct.indexOf('/') + 1).toLowerCase();
                     if (guessed.equals("jpeg")) guessed = "jpg";
-                    if (guessed.matches("[a-z0-9]+")) {
-                        ext = "." + guessed;
-                    }
+                    if (guessed.matches("[a-z0-9]+")) ext = "." + guessed;
                 }
 
                 String name = UUID.randomUUID().toString().replace("-", "") + ext;
@@ -164,7 +168,7 @@ public class Main {
             ctx.json(Map.of("urls", urls));
         });
 
-        // ========= Apagado limpio =========
+        // ========= Apagado limpio
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try { mongo.close(); } catch (Exception ignored) {}
         }));
