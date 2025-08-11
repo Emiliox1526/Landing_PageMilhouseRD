@@ -92,10 +92,10 @@ public class Main {
 
         // ========= Healthcheck =========
         app.get("/health", ctx -> ctx.json(Map.of("status", "ok")));
-        // Diagnóstico de Mongo
+        // ====== Diagnóstico de Mongo ======
         app.get("/api/_diag/mongo", ctx -> {
             try {
-                var ping = db.runCommand(new org.bson.Document("ping", 1));
+                var ping  = db.runCommand(new org.bson.Document("ping", 1));
                 long count = properties.countDocuments();
                 ctx.json(Map.of(
                         "ok", true,

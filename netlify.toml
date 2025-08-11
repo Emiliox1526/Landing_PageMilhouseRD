@@ -4,6 +4,6 @@ publish = "src/main/resources/public"
 
 [[redirects]]
 from = "/api/*"
-to   = "https://landing-pagemilhouserd.onrender.com/:splat"
+to   = "https://landing-pagemilhouserd.onrender.com/api/:splat"
 status = 200
 force  = true
