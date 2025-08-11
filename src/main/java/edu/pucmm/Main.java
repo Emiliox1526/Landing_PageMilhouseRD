@@ -92,6 +92,25 @@ public class Main {
 
         // ========= Healthcheck =========
         app.get("/health", ctx -> ctx.json(Map.of("status", "ok")));
+        // Diagnóstico de Mongo
+        app.get("/api/_diag/mongo", ctx -> {
+            try {
+                var ping = db.runCommand(new org.bson.Document("ping", 1));
+                long count = properties.countDocuments();
+                ctx.json(Map.of(
+                        "ok", true,
+                        "db", db.getName(),
+                        "collection", properties.getNamespace().getCollectionName(),
+                        "count", count,
+                        "pingOk", ping.get("ok")
+                ));
+            } catch (Exception e) {
+                ctx.status(500).json(Map.of(
+                        "ok", false,
+                        "error", e.getClass().getSimpleName() + ": " + e.getMessage()
+                ));
+            }
+        });
 
         // ========= Endpoint de uploads =========
         // Frontend: FormData con name="files" (múltiples). Máx 10 por request.
