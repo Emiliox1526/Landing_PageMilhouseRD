@@ -4,20 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inicio | MILHOUSE RD</title>
-    <!-- Bootstrap CSS + Icons -->
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-    />
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-            rel="stylesheet"
-    />
 
+    <!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
-    <!-- Google Fonts: Montserrat para cuerpo, Cinzel para títulos -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-    <!-- CSS Global -->
+    <!-- CSS del proyecto (se respetan tus fuentes) -->
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/hero.css">
@@ -31,311 +23,182 @@
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/services.css">
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-    <!-- Fuentes adicionales -->
+    <!-- Ionicons (fallback nomodule ya está al final) -->
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
 
-    <!-- Ajuste para ocultar scroll bar y permitir auto-scroll suave -->
+    <!-- Ajustes responsive + posicionamiento del CTA del héroe -->
     <style>
-        /* ===== Fuente (Montserrrat en TODO el sitio) ===== */
-        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap");
         :root{
-            /* Bootstrap usa estas vars: las apuntamos a Montserrat */
-            --bs-font-sans-serif: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            --bs-body-font-family: var(--bs-font-sans-serif);
-
-            /* Tokens MilhouseRD */
-            --mh-ink:#0B1220;
-            --mh-navy:#0F1B2D;
-            --mh-navy-2:#142742;
-            --mh-gold:#C7A252;
-            --mh-line:#E7EBF3;
-            --mh-bg:#E7EBF3;
+            /* tokens de color (no alteran tus fuentes) */
+            --mh-ink:#0B1220; --mh-navy:#0F1B2D; --mh-navy-2:#142742;
+            --mh-gold:#C7A252; --mh-line:#E7EBF3; --mh-bg:#E7EBF3;
         }
+        .hero{
+            position: relative;
+            min-height: clamp(48vh, 60vh, 78vh); /* evita heros "bajos" que escondan el CTA */
+        }
+        /* Sección de propiedades: fondo suave y espaciado cómodo */
+        .properties{ background:var(--mh-bg); padding:2rem 0; }
 
-        /* Forzamos familia en los componentes comunes (por si algo hereda distinto) */
-        html, body,
-        h1,h2,h3,h4,h5,h6,
-        .btn,.badge,.form-control,.form-select,.pagination,.card,.modal,.nav-link,
-        .seg-btn,.chip,.price-badge,.location,.meta,.title { font-family: var(--bs-font-sans-serif) !important; color: var(--mh-ink); }
+        /* Filtros: sticky en desktop / colapsable en móvil */
+        #filtersCol{ align-self:flex-start; }
+        @media (min-width: 992px){ #filtersCol{ position: sticky; top: 88px; } }
 
-        /* ===== Sección Propiedades ===== */
-        .properties{ background:var(--mh-bg) !important; padding:2rem 0; }
-
-        /* ===== Filtros ===== */
-        #filtersCol{ position:sticky; top:88px; align-self:flex-start; }
         .filters-card .card-header{ background:transparent; border:0; padding:0 0 .75rem; }
-        .filters-card .title{ font-weight:800; color:var(--mh-ink); margin:0; }
-        .filters-card .form-label{ font-family: var(--bs-font-sans-serif); font-weight:500; color:var(--mh-navy); }
+        .filters-card .title{ font-weight:800; margin:0; color:var(--mh-ink); }
+        .filters-card .form-label{ font-weight:500; color:var(--mh-navy); }
 
-        /* Inputs / selects modernos */
         .mh-input,.mh-select{
-            border-radius:14px !important;
-            border:1.5px solid var(--mh-line) !important;
-            background:#fff !important;
-            box-shadow:none !important;
-            padding:.62rem .85rem !important;
-            font-weight:600; color:var(--mh-ink);
+            border-radius:14px !important; border:1.5px solid var(--mh-line) !important; background:#fff !important;
+            box-shadow:none !important; padding:.62rem .85rem !important; font-weight:600; color:var(--mh-ink);
         }
-        .mh-input:focus,.mh-select:focus{
-            outline:0; border-color:transparent !important;
-            box-shadow:0 0 0 3px rgba(15,27,45,.12) !important;
-        }
-
-        /* Select con flecha custom */
+        .mh-input:focus,.mh-select:focus{ outline:0; border-color:transparent !important; box-shadow:0 0 0 3px rgba(15,27,45,.12) !important; }
         .mh-select{
             appearance:none;
             background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23142742' viewBox='0 0 16 16'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708L8.354 10.354a.5.5 0 0 1-.708 0L4.646 7.354a.5.5 0 0 1 0-.708z'/></svg>");
-            background-repeat:no-repeat; background-position:right .8rem center; background-size:16px 16px;
-            padding-right:2.2rem !important;
+            background-repeat:no-repeat; background-position:right .8rem center; background-size:16px 16px; padding-right:2.2rem !important;
         }
 
-        /* Botón primario en marca */
-        .btn-primary{
-            background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)) !important;
-            color: #fff;
-            border-radius: 1.25rem;
-            border:0 !important;
-        }
-        .btn-primary:hover{ filter:brightness(1.05); }
-        .btn-secondary{
-            background: linear-gradient(135deg, var(--mh-blue), var(--mh-navy-gradient));
-            color: #fff;
-            border-radius: 1.25rem;
-            border:0 !important;
-        }
-        .btn-secondary:hover{ filter:brightness(1.05); }
-        /* ===== Toolbar + Segmented pills ===== */
-        .toolbar-card .card-body{ padding:.8rem 1rem; }
-        .ta-toolbar label{ font-weight:500; color:var(--mh-navy); }
+        /* Pills de orden/tamaño (UI moderna, tus selects reales siguen en el DOM) */
+        .segmented{ display:flex; flex-wrap:wrap; gap:.5rem; background:#f1f3f7; border:1.5px solid #e3e7ef; border-radius:9999px; padding:.35rem; }
+        .seg-btn{ border:0; background:transparent; border-radius:9999px; padding:.45rem .9rem; font-weight:500; color:#23324a; cursor:pointer; opacity:.9; }
+        .seg-btn[aria-pressed="true"]{ background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)); color:#fff; opacity:1; }
 
-        .segmented{
-            display:flex; flex-wrap:wrap; gap:.5rem;
-            background:#f1f3f7; border:1.5px solid #e3e7ef; border-radius:9999px; padding:.35rem;
-        }
-        .seg-btn{
-            border:0; background:transparent; border-radius:9999px;
-            padding:.45rem .9rem; font-weight:500; color:#23324a; cursor:pointer; opacity:.9;
-        }
-        .seg-btn[aria-pressed="true"]{
-            background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2));
-            color:#fff; opacity:1;
-        }
-
-        /* Oculta <select> originales pero deja accesibilidad/eventos */
-        .visually-hidden{
-            position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
-            overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
-        }
-
-        /* ===== Tarjetas de propiedad ===== */
-        .prop-card,
-        .properties #propertiesContainer .card{
-            border:0; border-radius:20px; background:#fff;
-            box-shadow:0 6px 20px rgba(16,24,40,.06);
-            overflow:hidden; transition:transform .2s ease, box-shadow .2s ease;
-        }
-        .prop-card:hover,
-        .properties #propertiesContainer .card:hover{
-            transform:translateY(-4px);
-            box-shadow:0 12px 28px rgba(16,24,40,.10);
-        }
-
-        /* Media */
-        .prop-card .media,
-        .properties #propertiesContainer .card .media{
-            position:relative; aspect-ratio:4/3; overflow:hidden;
-        }
-        .prop-card .media img,
-        .properties #propertiesContainer .card img{
-            width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;
-        }
-        .prop-card:hover .media img,
-        .properties #propertiesContainer .card:hover img{ transform:scale(1.04); }
-
-        /* Precio */
-        .prop-card .price-badge,
-        .properties #propertiesContainer .card .price-badge{
-            position:absolute; left:12px; bottom:12px;
-            padding:.35rem .6rem; border-radius:999px;
-            font-weight:800; font-size:.95rem; color:#fff;
-            background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2));
-            box-shadow:0 6px 18px rgba(16,24,40,.25);
-        }
-
-        /* Favorito */
-        .prop-card .fav,
-        .properties #propertiesContainer .card .fav{
-            position:absolute; top:10px; right:10px; width:38px; height:38px; border-radius:50%;
-            display:grid; place-items:center; background:rgba(255,255,255,.85);
-            border:1px solid rgba(16,24,40,.08); backdrop-filter:blur(6px); cursor:pointer;
-        }
-        .prop-card .fav i,
-        .properties #propertiesContainer .card .fav i{ font-size:1.05rem; }
-        .prop-card .fav.active i,
-        .properties #propertiesContainer .card .fav.active i{ color:#e11d48; }
-
-        /* Cuerpo */
-        .prop-card .card-body{ padding:14px 14px 16px; }
-        .prop-card .title{ font-size:clamp(1rem,.9rem + .3vw,1.1rem); font-weight:800; line-height:1.2; margin:0 0 .25rem; color:var(--mh-ink); }
-        .prop-card .location{ color:#6b7280; font-size:.9rem; display:flex; align-items:center; gap:.35rem; }
-
-        /* Chips */
-        .prop-card .chips{ display:flex; flex-wrap:wrap; gap:.4rem; margin:.6rem 0 .2rem; }
-        .prop-card .chip{
-            display:inline-flex; align-items:center; gap:.35rem;
-            padding:.28rem .6rem; border-radius:999px;
-            background:#f4f6fa; border:1px solid var(--mh-line);
-            font-size:.78rem; font-weight:700; color:#334155;
-        }
-
-        /* Meta */
-        .prop-card .meta{ display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin:.75rem 0 0; }
-        .prop-card .meta .item{ display:flex; align-items:center; gap:.35rem; font-size:.88rem; color:#0f1b2d; }
-        .prop-card .meta i{ font-size:1rem; color:#64748b; }
-
-        /* Actions */
-        .prop-card .actions{ display:flex; align-items:center; justify-content:space-between; gap:.5rem; margin-top:.9rem; }
-        .prop-card .btn{ border-radius:10px; font-weight:700; }
-
-        /* ===== Paginación ===== */
-        .ta-pagination .page-link{
-            border-radius:999px; border:1.5px solid var(--mh-line);
-            background:#fff; font-weight:700;
-        }
+        /* Tarjetas y paginación */
+        .prop-card,.properties #propertiesContainer .card{ border:0; border-radius:20px; background:#fff; box-shadow:0 6px 20px rgba(16,24,40,.06); overflow:hidden; transition:transform .2s ease, box-shadow .2s ease; }
+        .prop-card:hover,.properties #propertiesContainer .card:hover{ transform:translateY(-4px); box-shadow:0 12px 28px rgba(16,24,40,.10); }
+        .ta-pagination .page-link{ border-radius:999px; border:1.5px solid var(--mh-line); background:#fff; font-weight:700; }
         .ta-pagination .page-item + .page-item .page-link{ margin-left:.4rem; }
-        .ta-pagination .page-item.active .page-link{
-            color:#fff; background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)); border-color:transparent;
-        }
-        .ta-pagination .page-item.disabled .page-link{
-            background:#f4f6fa; color:#9aa1b3; border-color:var(--mh-line);
+        .ta-pagination .page-item.active .page-link{ color:#fff; background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)); border-color:transparent; }
+        .ta-pagination .page-item.disabled .page-link{ background:#f4f6fa; color:#9aa1b3; border-color:var(--mh-line); }
+
+        /* Legibilidad en hero (si la imagen es clara) */
+        .hero-overlay h1, .hero-overlay p { color:#fff !important; text-shadow:0 2px 16px rgba(0,0,0,.35); }
+        .slider-dots{
+            position: absolute; left: 50%; transform: translateX(-50%);
+            bottom: clamp(10px, 2vh, 24px); /* no empujar al CTA hacia fuera */
+            display: flex; gap: .5rem;
+            z-index: 4; /* debajo del CTA */
         }
 
-        /* ===== Responsive ===== */
-        @media (max-width:575.98px){
-            .prop-card .meta{ grid-template-columns:repeat(2,1fr); }
+        /* CTA del héroe: absoluto, centrado horizontal y con z alto para que nunca quede tapado */
+        .hero .hero-btn{
+            position: absolute;
+            left: 50%;
+            top: 70%;                   /* <-- valor seguro por defecto al recargar */
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            display: inline-flex; align-items: center; gap: .5rem;
+            padding: 1.8rem 2.5rem; border-radius: 12px; text-decoration: none;
+            background: #1f2430; color: #fff; box-shadow: 0 6px 24px rgba(16,24,40,.35);
         }
-        /* HERO: título y descripción en blanco */
-        .hero-overlay h1,
-        .hero-overlay p{
-            color: #fff !important;
+        @media (max-height: 420px){
+            .hero .hero-btn{ padding: 1.65rem 1.95rem; font-size: .95rem; }
         }
-
-        /* (opcional) legibilidad sobre fotos */
-        .hero-overlay h1{ text-shadow: 0 2px 16px rgba(0,0,0,.35); }
-        .hero-overlay p { text-shadow: 0 1px 12px rgba(0,0,0,.25); }
+        /* Flechas del slider con mejor “hit area” en móvil */
+        .hero-arrow{ width:44px; height:44px; display:grid; place-items:center; }
+        @media (hover:hover){
+            .hero-arrow:hover{ filter:brightness(1.05); }
+        }
     </style>
-
-
 </head>
 
 <body>
-<!-- HEADER -->
-<!-- Header incluido -->
+<!-- HEADER por include -->
 <div id="header-container"></div>
-<script src="js/includeHeader.js" defer></script>
+<script src="js/includeHeader.js" defer></script> <!-- se mantiene tu include --> <!-- :contentReference[oaicite:3]{index=3} -->
 
-
-<!-- MAIN -->
 <main>
-    <!-- HERO SECTION -->
+    <!-- HERO -->
     <section class="hero fade-in">
         <div class="hero-slider" id="dynamic-slider"></div>
 
-        <!--  ← inserta aquí tu botón -->
+        <!-- CTA del héroe (el script lo posiciona a mitad de camino entre el bloque de título/ubicación y el borde inferior) -->
         <a class="nav-link hero-btn" href="#properties" id="heroVerPropiedades">
-            <!-- SVG + texto -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24" fill="currentColor">
-                <path d="M244-204h116v-238.5h240V-204h116v-355L480-736 244-559v355Zm-75 75v-467.5L480-830l311 233.67V-129H525v-238.5h-90V-129H169Zm311-341Z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="22" height="22" fill="currentColor" aria-hidden="true">
+                <path d="M244-204h116v-238.5h240V-204h116v-355L480-736 244-559v355Z"/>
             </svg>
             Ver listado de propiedades
         </a>
 
         <div class="slider-dots" id="slider-dots"></div>
-        <button class="hero-arrow hero-arrow-left" id="prev-slide">
+        <button class="hero-arrow hero-arrow-left" id="prev-slide" aria-label="Anterior">
             <ion-icon name="chevron-back-outline"></ion-icon>
         </button>
-        <button class="hero-arrow hero-arrow-right" id="next-slide">
+        <button class="hero-arrow hero-arrow-right" id="next-slide" aria-label="Siguiente">
             <ion-icon name="chevron-forward-outline"></ion-icon>
         </button>
     </section>
 
-
-    <!-- FEATURED PROJECTS SECTION -->
+    <!-- Featured (placeholder) -->
     <section class="featured-projects fade-in fullwidth">
         <div class="container">
             <h2>Nuestras propiedades</h2>
-
-
         </div>
     </section>
-
 
     <!-- PROPERTIES -->
     <section class="properties" id="properties">
         <div class="container">
             <div class="row">
-                <!-- Filtros -->
+                <!-- FILTROS -->
                 <aside class="col-lg-3 mb-3" id="filtersCol">
-                    <div class="section-card filters-card">
-                        <div class="card-header"><h3 class="title">Filtrar búsqueda</h3></div>
-                        <div class="card-body">
-                            <form id="filtersForm" class="row g-3 align-items-end" novalidate>
-                                <div class="col-12">
-                                    <label for="q" class="form-label">Buscar</label>
-                                    <input id="q" type="search" class="form-control mh-input" placeholder="Título, sector, ciudad…">
-                                </div>
+                    <button class="btn btn-primary w-100 d-lg-none mb-2" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#filtersCollapse"
+                            aria-expanded="false" aria-controls="filtersCollapse">
+                        <i class="bi bi-funnel me-2"></i> Filtros
+                    </button>
 
-                                <div class="col-12">
-                                    <label for="fType" class="form-label">Tipo de Propiedad</label>
-                                    <select id="fType" class="form-select mh-select">
-                                        <option value="">Todos</option>
-                                        <option>Apartamento</option>
-                                        <option>Casa</option>
-                                        <option>Penthouse</option>
-                                        <option>Terreno</option>
-                                        <option>Solares</option>
-                                        <option>Villa</option>
-                                        <option>Local</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label for="fSaleType" class="form-label">Transacción</label>
-                                    <select id="fSaleType" class="form-select mh-select">
-                                        <option value="">Venta / Alquiler</option>
-                                        <option>Venta</option>
-                                        <option>Alquiler</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">Rango de precio</label>
-                                    <div class="row g-2">
-                                        <div class="col-6"><input id="fMin" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Mínimo"></div>
-                                        <div class="col-6"><input id="fMax" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Máximo"></div>
+                    <div id="filtersCollapse" class="collapse d-lg-block show">
+                        <div class="section-card filters-card">
+                            <div class="card-header"><h3 class="title">Filtrar búsqueda</h3></div>
+                            <div class="card-body">
+                                <form id="filtersForm" class="row g-3 align-items-end" novalidate>
+                                    <div class="col-12">
+                                        <label for="q" class="form-label">Buscar</label>
+                                        <input id="q" type="search" class="form-control mh-input" placeholder="Título, sector, ciudad…">
                                     </div>
-                                </div>
 
-                                <div class="col-12 d-grid gap-2">
-                                    <button class="btn btn-primary" type="submit">Filtrar</button>
-                                    <button class="btn btn-secondary" id="resetFilters" type="button">Reestablecer</button>
-                                </div>
-                            </form>
+                                    <div class="col-12">
+                                        <label for="fType" class="form-label">Tipo de Propiedad</label>
+                                        <select id="fType" class="form-select mh-select">
+                                            <option value="">Todos</option>
+                                            <option>Apartamento</option><option>Casa</option><option>Penthouse</option>
+                                            <option>Terreno</option><option>Solares</option><option>Villa</option><option>Local</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="fSaleType" class="form-label">Transacción</label>
+                                        <select id="fSaleType" class="form-select mh-select">
+                                            <option value="">Venta / Alquiler</option>
+                                            <option>Venta</option><option>Alquiler</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label">Rango de precio</label>
+                                        <div class="row g-2">
+                                            <div class="col-6"><input id="fMin" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Mínimo"></div>
+                                            <div class="col-6"><input id="fMax" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Máximo"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 d-grid gap-2">
+                                        <button class="btn btn-primary" type="submit">Filtrar</button>
+                                        <button class="btn btn-secondary" id="resetFilters" type="button">Reestablecer</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </aside>
 
-                <!-- Listado -->
+                <!-- LISTADO -->
                 <div class="col-lg-9">
                     <!-- Toolbar -->
                     <div class="section-card toolbar-card mb-3">
                         <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2 ta-toolbar">
-
-
-                            <!-- Segmented pills (Orden + Página) -->
                             <div class="d-flex flex-wrap align-items-center gap-3">
                                 <div class="d-flex flex-column gap-1">
                                     <span class="small fw-bold text-muted">Orden</span>
@@ -358,7 +221,7 @@
                                     </div>
                                 </div>
 
-                                <!-- <select> originales (ocultos) para que index.js siga funcionando -->
+                                <!-- Selects reales (ocultos) que usa tu index.js -->
                                 <label class="visually-hidden" for="sortBy">Orden</label>
                                 <select id="sortBy" class="visually-hidden">
                                     <option value="createdAt-desc" selected>Más recientes</option>
@@ -379,7 +242,7 @@
                         </div>
                     </div>
 
-                    <!-- Tarjetas -->
+                    <!-- Cards -->
                     <div id="propertiesContainer" class="row g-3"></div>
 
                     <!-- Paginación -->
@@ -392,15 +255,8 @@
                     </div>
                 </div> <!-- /col-lg-9 -->
             </div> <!-- /row -->
-        </div>
+        </div> <!-- /container -->
     </section>
-
-
-    </div>
-        </div>
-    </section>
-
-
 
     <!-- MODAL (proyectos) -->
     <div id="project-modal" class="modal">
@@ -419,119 +275,218 @@
     </div>
 </main>
 
-<!-- FOOTER -->
+<!-- FOOTER por include -->
 <div id="footer-container"></div>
-<script src="js/includeFooter.js" defer></script>
+<script src="js/includeFooter.js" defer></script> <!-- :contentReference[oaicite:4]{index=4} -->
+<script>
+    (function(){
+        var hero  = document.querySelector('.hero');
+        var btn   = document.getElementById('heroVerPropiedades');
+        var slider= document.getElementById('dynamic-slider');
+        var dots  = document.getElementById('slider-dots');
+        if(!hero || !btn) return;
 
-<!-- HEADER BG ON SCROLL -->
+        // Margenes/espacios de seguridad
+        var SAFE_TOP = 12;          // margen superior mínimo dentro del hero
+        var SAFE_BOTTOM = 12;       // margen inferior mínimo dentro del hero
+        var GAP_AFTER_CONTENT = 16; // separación mínima entre el contenido (título/ubicación) y el CTA
+
+        function getActiveOverlay(){
+            // overlay de la slide activa, creada por tu index.js
+            return hero.querySelector('.slide.active .hero-overlay');
+        }
+
+        function getContentBottom(){
+            var overlay = getActiveOverlay();
+            if(!overlay) return null;
+            var target = overlay.querySelector('p:last-of-type')
+                || overlay.querySelector('h1:last-of-type')
+                || overlay;
+            var rT = target.getBoundingClientRect();
+            var rH = hero.getBoundingClientRect();
+            return rT.bottom - rH.top; // px desde el top del hero
+        }
+
+        function positionCTA(){
+            var cb = getContentBottom();
+            var rH = hero.getBoundingClientRect();
+            var heroH = rH.height;
+
+            if(!heroH) return;
+
+            // si aún no hay contenido (ej: primera pintura del slider), usa top seguro
+            if(cb == null){
+                btn.style.top = '70%';
+                btn.style.left = '50%';
+                btn.style.transform = 'translate(-50%, -50%)';
+                return;
+            }
+
+            // Medida real del botón (evita 0 en layouts iniciales)
+            var prevVis = btn.style.visibility;
+            btn.style.visibility = 'hidden';
+            var tempTop = btn.style.top;
+            btn.style.top = '50%';
+            var btnRect = btn.getBoundingClientRect();
+            var btnHalf = Math.max(1, btnRect.height / 2);
+            btn.style.top = tempTop || '';
+            btn.style.visibility = prevVis || '';
+
+            // Altura ocupada por dots abajo
+            var dotsH = (dots && dots.offsetParent !== null) ? (dots.offsetHeight + 12) : 0;
+
+            // Límites duros para no salir del hero
+            var minTop = SAFE_TOP + btnHalf;
+            var maxTop = heroH - SAFE_BOTTOM - dotsH - btnHalf;
+
+            // Distancia mínima después del contenido
+            var minAfterContent = cb + GAP_AFTER_CONTENT + btnHalf;
+
+            // Centro ideal entre fin del contenido y bottom del hero
+            var desiredCenter = cb + (heroH - cb) / 2;
+
+            // 1) limitar al rango físico
+            var top = Math.min(Math.max(desiredCenter, minTop), maxTop);
+
+            // 2) respetar separación mínima con el contenido
+            top = Math.max(top, Math.min(minAfterContent, maxTop));
+
+            // 3) si el hero es demasiado bajo, evitar desbordes
+            if (minAfterContent > maxTop) top = Math.max(minTop, maxTop);
+
+            // aplicar
+            btn.style.top = top + 'px';
+            btn.style.left = '50%';
+            btn.style.transform = 'translate(-50%, -50%)';
+        }
+
+        // --- Scheduler robusto ---
+        var schedule = function(){ requestAnimationFrame(function(){ setTimeout(positionCTA, 0); }); };
+
+        // Recalcular cuando el slider termine de construir DOM (tu index.js lo hace tras cargar)
+        if (slider && 'MutationObserver' in window){
+            var mo = new MutationObserver(schedule);
+            mo.observe(slider, {subtree:true, childList:true, attributes:true, attributeFilter:['class']});
+        }
+
+        // Recalcular en resize/orientación
+        window.addEventListener('resize', schedule);
+        window.addEventListener('orientationchange', schedule);
+
+        // Recalcular tras load (cuando imágenes ajustan la altura)
+        window.addEventListener('load', function(){
+            // asegurar una recalculación tardía por si el slider se arma al final
+            schedule();
+            setTimeout(schedule, 100);   // layout tardío
+            setTimeout(schedule, 300);   // imágenes lentas
+        });
+
+        // Intentos de arranque hasta que exista overlay activo (máx 20 intentos)
+        var tries = 0, maxTries = 20;
+        (function bootLoop(){
+            tries++; schedule();
+            if (getActiveOverlay() || tries >= maxTries) return;
+            setTimeout(bootLoop, 75);
+        })();
+    })();
+</script>
+
+
+<!-- Header BG on scroll (ligero) -->
 <script>
     (function() {
-        const header = document.querySelector("header");
+        var header = document.querySelector("header");
         if (!header) return;
-
-        // parsea "rgb(...)" o "rgba(...)" y devuelve [r,g,b]
-        function parseRGB(str) {
-            const nums = str.match(/\d+/g);
-            return nums ? nums.slice(0,3).map(Number) : [255,255,255];
+        function parseRGB(str){ var m = str.match(/\\d+/g); return m ? m.slice(0,3).map(Number) : [255,255,255]; }
+        function updateHeaderTextColor(){
+            var bg = getComputedStyle(header).backgroundColor;
+            var c = parseRGB(bg), r=c[0], g=c[1], b=c[2];
+            var lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+            if (lum < 0.5) { header.classList.add("dark-bg"); header.classList.remove("light-bg"); }
+            else { header.classList.add("light-bg"); header.classList.remove("dark-bg"); }
         }
-
-        function updateHeaderTextColor() {
-            const bg = getComputedStyle(header).backgroundColor;
-            const [r,g,b] = parseRGB(bg);
-            // luminancia relativa (0 oscuro → 1 claro)
-            const lum = (0.299*r + 0.587*g + 0.114*b) / 255;
-            if (lum < 0.5) {
-                header.classList.add("dark-bg");
-                header.classList.remove("light-bg");
-            } else {
-                header.classList.add("light-bg");
-                header.classList.remove("dark-bg");
-            }
-        }
-
-        function onScroll() {
-            const o = Math.min(window.scrollY / 300, 0.9);
-            header.style.backgroundColor = `rgba(0,0,0,${o})`;
+        function onScroll(){
+            var o = Math.min(window.scrollY / 300, 0.9);
+            header.style.backgroundColor = 'rgba(0,0,0,' + o + ')';
             updateHeaderTextColor();
         }
-
         window.addEventListener("scroll", onScroll);
-        // iniciar estado al cargar
         onScroll();
     })();
 </script>
 
-<!-- HERO SLIDER JS -->
-<script>
-
-    const sliderContainer = document.getElementById("dynamic-slider");
-    const dotsContainer   = document.getElementById("slider-dots");
-    let currentSlide = 0;
-
-    function renderSlides() {
-        sliderContainer.innerHTML = "";
-        dotsContainer  .innerHTML = "";
-
-        sliderImages.forEach((src, i) => {
-            // Extraemos el nombre de la carpeta: la segunda parte de "assets/CARPETA/archivo"
-            const parts = src.split("/");
-            const projectName = parts.length > 1 ? parts[1] : `Proyecto ${i+1}`;
-
-            const slide = document.createElement("div");
-            slide.className = "slide" + (i === 0 ? " active" : "");
-            slide.innerHTML = `
-  <img class="hero-image" src="${src}" alt="Slide ${i+1}">
-  <div class="hero-overlay">
-    <h1>${projectName}</h1>
-    <p>Posible ubicación ${i + 1}?</p>
-
-  </div>
-`;
-
-
-            sliderContainer.appendChild(slide);
-
-            const dot = document.createElement("span");
-            dot.className = "dot" + (i === 0 ? " active" : "");
-            dot.addEventListener("click", () => goToSlide(i));
-            dotsContainer.appendChild(dot);
-        });
-    }
-
-    function goToSlide(idx) {
-        const slides = sliderContainer.querySelectorAll(".slide");
-        const dots   = dotsContainer.querySelectorAll(".dot");
-        slides[currentSlide].classList.remove("active");
-        dots  [currentSlide].classList.remove("active");
-        currentSlide = idx;
-        slides[currentSlide].classList.add("active");
-        dots  [currentSlide].classList.add("active");
-    }
-
-    document.getElementById("prev-slide")
-        .addEventListener("click", () =>
-            goToSlide((currentSlide - 1 + sliderImages.length) % sliderImages.length)
-        );
-
-    document.getElementById("next-slide")
-        .addEventListener("click", () =>
-            goToSlide((currentSlide + 1) % sliderImages.length)
-        );
-
-    renderSlides();
-</script>
-
-
-
-
-
-
-<!-- Ionicons -->
+<!-- Ionicons ES module + Bootstrap JS -->
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<!-- JS General -->
+
+<!-- Tu JS (intacto) -->
 <script src="./js/app.js"></script>
-<script src="./js/index.js"></script>
+<script src="./js/index.js"></script> <!-- el slider y listado siguen gobernados por este archivo --> <!-- :contentReference[oaicite:5]{index=5} -->
+
+<!-- Script de posicionamiento del CTA del héroe (equidistante entre título y fondo) -->
+<script>
+    (function(){
+        var hero = document.querySelector('.hero');
+        var btn  = document.getElementById('heroVerPropiedades');
+        var slider = document.getElementById('dynamic-slider');
+        var dots   = document.getElementById('slider-dots');
+        var prev   = document.getElementById('prev-slide');
+        var next   = document.getElementById('next-slide');
+        if(!hero || !btn) return;
+
+        function contentBottom(){
+            var activeOverlay = hero.querySelector('.slide.active .hero-overlay');
+            if(!activeOverlay) return null;
+            // tomamos el último párrafo si existe, si no, el h1
+            var target = activeOverlay.querySelector('p:last-of-type') || activeOverlay.querySelector('h1:last-of-type') || activeOverlay;
+            var rectTarget = target.getBoundingClientRect();
+            var rectHero   = hero.getBoundingClientRect();
+            return rectTarget.bottom - rectHero.top; // distancia desde el top del hero al final del contenido
+        }
+
+        function positionCTA(){
+            var cb = contentBottom();
+            if(cb == null) return; // aún no hay slide activa
+            var rectHero = hero.getBoundingClientRect();
+            var heroH = rectHero.height;
+            var midFromTop = cb + (heroH - cb)/2; // punto medio entre fin del contenido y borde inferior
+            // colocamos el centro del botón en ese punto
+            btn.style.top = midFromTop + 'px';
+            btn.style.left = '50%';
+            btn.style.transform = 'translate(-50%,-50%)';
+        }
+
+        function schedule(){
+            // recalcula después del layout/imagen
+            requestAnimationFrame(function(){ setTimeout(positionCTA, 0); });
+        }
+
+        // Reaccionar a cambios de slide y tamaño
+        window.addEventListener('resize', schedule);
+        window.addEventListener('orientationchange', schedule);
+        prev && prev.addEventListener('click', function(){ setTimeout(schedule, 120); });
+        next && next.addEventListener('click', function(){ setTimeout(schedule, 120); });
+        dots && dots.addEventListener('click', function(){ setTimeout(schedule, 120); });
+
+        // También observar cambios de clase "active" en las slides
+        if (slider && 'MutationObserver' in window){
+            var mo = new MutationObserver(schedule);
+            mo.observe(slider, {subtree:true, attributes:true, attributeFilter:['class']});
+        }
+
+        // Ajustar cuando carguen imágenes del hero
+        function wireImages(){
+            var imgs = hero.querySelectorAll('.slide img');
+            imgs.forEach(function(img){
+                if (img.complete) return;
+                img.addEventListener('load', schedule, { once:true });
+            });
+        }
+
+        // primer cálculo cuando el DOM del slider exista
+        document.addEventListener('DOMContentLoaded', function(){ wireImages(); schedule(); });
+        window.addEventListener('load', function(){ wireImages(); schedule(); });
+    })();
+</script>
 </body>
 </html>

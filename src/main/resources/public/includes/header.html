@@ -20,6 +20,11 @@
             });
         });
     </script>
+    <style>
+        .white-toggler .navbar-toggler-icon {
+            filter: brightness(0) invert(1);
+        }
+    </style>
 </head>
 <body>
 <header class="site-header fixed-top">
@@ -32,7 +37,7 @@
             </a>
 
             <!-- Toggler mobile -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <button class="navbar-toggler white-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
 

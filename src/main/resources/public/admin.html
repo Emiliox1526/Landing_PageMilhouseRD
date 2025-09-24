@@ -9,10 +9,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
 
-    <!-- Header CSS del proyecto -->
+    <!-- CSS del proyecto -->
     <link rel="stylesheet" href="css/header.css"/>
 
-    <!-- Fuente -->
+    <!-- Fuente (misma que en el proyecto) -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
 
     <!-- Leaflet (Mapa) -->
@@ -41,32 +41,28 @@
         .custom-padding { padding: 24px; }
         .section-card{ border-radius: 18px; background:var(--mh-bg); box-shadow:0 6px 20px rgba(16,24,40,.06); }
 
-        /* ===== Sección Propiedades (admin) ===== */
+        /* ===== Sección Propiedades ===== */
         .properties{ background:var(--mh-bg) !important; padding:2rem 1rem; border-radius:18px; }
 
-        /* ===== Filtros (mismos estilos que index) ===== */
-        #filtersCol{ position:sticky; top:88px; align-self:flex-start; }
+        /* ===== Filtros (coherente con index: colapsable en móvil, sticky en desktop) ===== */
+        #filtersCol{ align-self:flex-start; }
+        @media (min-width: 992px){ #filtersCol{ position: sticky; top: 88px; } }
+
         .filters-card .card-header{ background:transparent; border:0; padding:0 0 .75rem; }
         .filters-card .title{ font-weight:800; color:var(--mh-ink); margin:0; }
         .filters-card .form-label{ font-weight:500; color:var(--mh-navy); }
 
         .mh-input,.mh-select{
-            border-radius:14px !important;
-            border:1.5px solid var(--mh-line) !important;
-            background:#fff !important;
-            box-shadow:none !important;
-            padding:.62rem .85rem !important;
-            font-weight:600; color:var(--mh-ink);
+            border-radius:14px !important; border:1.5px solid var(--mh-line) !important; background:#fff !important;
+            box-shadow:none !important; padding:.62rem .85rem !important; font-weight:600; color:var(--mh-ink);
         }
         .mh-input:focus,.mh-select:focus{
-            outline:0; border-color:transparent !important;
-            box-shadow:0 0 0 3px rgba(15,27,45,.12) !important;
+            outline:0; border-color:transparent !important; box-shadow:0 0 0 3px rgba(15,27,45,.12) !important;
         }
         .mh-select{
             appearance:none;
             background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23142742' viewBox='0 0 16 16'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708L8.354 10.354a.5.5 0 0 1-.708 0L4.646 7.354a.5.5 0 0 1 0-.708z'/></svg>");
-            background-repeat:no-repeat; background-position:right .8rem center; background-size:16px 16px;
-            padding-right:2.2rem !important;
+            background-repeat:no-repeat; background-position:right .8rem center; background-size:16px 16px; padding-right:2.2rem !important;
         }
 
         .btn-primary{
@@ -75,12 +71,10 @@
         }
         .btn-primary:hover{ filter:brightness(1.05); }
         .btn-secondary{
-            background: linear-gradient(135deg, var(--mh-blue), var(--mh-navy-gradient));
-            color: #fff;
-            border-radius: 1.25rem;
-            border:0 !important;
+            background:#23324a; color:#fff; border-radius:1.25rem; border:0 !important;
         }
         .btn-secondary:hover{ filter:brightness(1.05); }
+
         /* Toolbar + segmented */
         .toolbar-card .card-body{ padding:.8rem 1rem; }
         .segmented{
@@ -111,46 +105,33 @@
         .properties .card img{ width:100%; height:100%; object-fit:cover; }
         .badge.text-bg-primary{ background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)) !important; }
         .badge.text-bg-secondary{ background:#23324a !important; }
-
-        .properties .card .card-menu{
-            position: absolute; right: 12px; bottom: 12px; z-index: 2;
-        }
+        .properties .card .card-menu{ position: absolute; right: 12px; bottom: 12px; z-index: 2; }
         .properties .card .card-body{ padding-bottom: 3rem; }
-        /* ===== Paginación ===== */
-        .ta-pagination .page-link{
-            border-radius:999px; border:1.5px solid var(--mh-line);
-            background:#fff; font-weight:700;
-        }
+
+        /* Paginación */
+        .ta-pagination .page-link{ border-radius:999px; border:1.5px solid var(--mh-line); background:#fff; font-weight:700; }
         .ta-pagination .page-item + .page-item .page-link{ margin-left:.4rem; }
-        .ta-pagination .page-item.active .page-link{
-            color:#fff; background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)); border-color:transparent;
-        }
-        .ta-pagination .page-item.disabled .page-link{
-            background:#f4f6fa; color:#9aa1b3; border-color:var(--mh-line);
-        }
-        /* ===== Modal ===== */
+        .ta-pagination .page-item.active .page-link{ color:#fff; background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)); border-color:transparent; }
+        .ta-pagination .page-item.disabled .page-link{ background:#f4f6fa; color:#9aa1b3; border-color:var(--mh-line); }
+
+        /* Modal responsivo y consistente */
         .modal-dialog{ margin: .5rem; }
         @media (min-width: 576px){ .modal-dialog{ margin: 1.25rem auto; } }
         .modal-body{ overflow-y: auto; }
 
         /* Mapa selector */
-        .map-picker{
-            height: 360px; border: 1px solid #fff; border-radius: 12px; overflow: hidden;
-        }
+        .map-picker{ height: 360px; border: 1px solid #fff; border-radius: 12px; overflow: hidden; }
 
-        /* ===== Chips (amenities/features) ===== */
+        /* Chips */
         .chip-input { gap:.5rem; }
         .chip-list{ display:flex; flex-wrap:wrap; gap:.5rem; }
         .chip{
             display:inline-flex; align-items:center; gap:.5rem;
-            background:#f1f3f5; border:1px solid #e5e7eb;
-            border-radius:999px; padding:.25rem .6rem; font-size:.875rem;
+            background:#f1f3f5; border:1px solid #e5e7eb; border-radius:999px; padding:.25rem .6rem; font-size:.875rem;
         }
-        .chip .chip-remove{
-            border:0; background:transparent; line-height:1; cursor:pointer; font-weight:700;
-        }
+        .chip .chip-remove{ border:0; background:transparent; line-height:1; cursor:pointer; font-weight:700; }
 
-        /* ===== Previews de imágenes ===== */
+        /* Previews de imágenes */
         .image-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:.75rem; }
         .image-item{ position:relative; border-radius:12px; overflow:hidden; border:1px solid #e9ecef; background:#f8f9fa; }
         .image-item img{ width:100%; height:100px; object-fit:cover; display:block; }
@@ -159,203 +140,131 @@
             width:28px; height:28px; display:flex; align-items:center; justify-content:center;
             background:rgba(0,0,0,.55); color:#fff; cursor:pointer;
         }
-        .form-text .limit { font-weight:600; }
-        .menu-action {
-            color: #000 !important;
-        }
 
-        .menu-action:hover,
-        .menu-action:focus,
-        .menu-action:active {
-            color: #000 !important;
-            background-color: rgba(0,0,0,0.05); /* opcional */
-        }
-        /* ===== Modal (coherente con el resto) ===== */
+        /* Modal refinado */
         #propertyModal .modal-dialog{
             margin: 1.25rem auto;
-            max-width: 1140px; /* similar a cards anchas */
-            height: calc(100dvh - 2.5rem); /* que entre en pantalla */
+            max-width: 1140px;
+            height: calc(100dvh - 2.5rem);
         }
-
         #propertyModal .modal-content{
-            border: 0;
-            border-radius: 20px;
-            background: #fff;
-            box-shadow: 0 12px 28px rgba(16,24,40,.10);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            border: 0; border-radius: 20px; background: #fff; box-shadow: 0 12px 28px rgba(16,24,40,.10);
+            display: flex; flex-direction: column; overflow: hidden;
         }
-
         #propertyModal .modal-header{
-            border: 0;
-            padding: 1rem 1.25rem;
-            background: linear-gradient(0deg, rgba(15,27,45,.03), rgba(15,27,45,.03));
+            border: 0; padding: 1rem 1.25rem;
+            background: var(--mh-navy, #142742); color: #fff;
         }
-
-        #propertyModal .modal-title{
-            font-weight: 800;
-            color: var(--mh-navy);
-        }
-
-        #propertyModal .btn-close{
-            filter: grayscale(100%);
-            opacity: .7;
-        }
+        #propertyModal .modal-title{ font-weight: 800; color: #fff; }
+        #propertyModal .btn-close{ filter: invert(1) brightness(200%); opacity: .9; }
         #propertyModal .btn-close:hover{ opacity: 1; }
+        #propertyModal .modal-body{ padding: 1.25rem; overflow: auto; flex: 1 1 auto; }
+        #propertyModal .modal-footer{ border-top: 1px solid var(--mh-line); padding: .85rem 1.25rem; background: #fff; }
 
-        #propertyModal .modal-body{
-            padding: 1.25rem;
-            overflow: auto;
-            max-height: none;
-            /* ocupa el espacio restante para que el footer no se corte */
-            flex: 1 1 auto;
+        /* Inputs del modal con look mh-* */
+        #propertyModal .form-label{ font-weight: 500; color: var(--mh-navy); }
+        #propertyModal .form-control,#propertyModal .form-select{
+            border-radius: 14px !important; border: 1.5px solid var(--mh-line) !important;
+            background: #fff !important; box-shadow: none !important; padding: .62rem .85rem !important;
+            font-weight: 600; color: var(--mh-ink);
         }
-
-        #propertyModal .modal-footer{
-            border-top: 1px solid var(--mh-line);
-            padding: .85rem 1.25rem;
-            background: #fff;
+        #propertyModal .form-control:focus,#propertyModal .form-select:focus{
+            outline: 0; border-color: transparent !important; box-shadow: 0 0 0 3px rgba(15,27,45,.12) !important;
         }
-
-        /* Inputs del modal con el mismo look mh-* */
-        #propertyModal .form-label{
-            font-weight: 500;
-            color: var(--mh-navy);
-        }
-
-        #propertyModal .form-control,
-        #propertyModal .form-select{
-            border-radius: 14px !important;
-            border: 1.5px solid var(--mh-line) !important;
-            background: #fff !important;
-            box-shadow: none !important;
-            padding: .62rem .85rem !important;
-            font-weight: 600;
-            color: var(--mh-ink);
-        }
-
-        #propertyModal .form-control:focus,
-        #propertyModal .form-select:focus{
-            outline: 0;
-            border-color: transparent !important;
-            box-shadow: 0 0 0 3px rgba(15,27,45,.12) !important;
-        }
-
-        /* Select con flecha como en .mh-select */
         #propertyModal .form-select{
             appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23142742' viewBox='0 0 16 16'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708L8.354 10.354a.5.5 0 0 1-.708 0L4.646 7.354a.5.5 0 0 1 0-.708z'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right .8rem center;
-            background-size: 16px 16px;
-            padding-right: 2.2rem !important;
-        }
-
-        /* Mapa con el mismo radio y borde suave */
-        #propertyModal .map-picker{
-            height: 360px;
-            border: 1px solid #fff;
-            border-radius: 12px;
-            overflow: hidden;
+            background-repeat: no-repeat; background-position: right .8rem center; background-size: 16px 16px; padding-right: 2.2rem !important;
         }
 
         /* Backdrop suave */
-        .modal-backdrop.show{
-            opacity: .4;
-        }
-        /* Header navy en el modal */
-        #propertyModal .modal-header{
-            background: var(--mh-navy, #142742);
-            color: #fff;
-        }
-
-        #propertyModal .modal-title{
-            color: #fff;
-        }
-
-        /* Cerrar en blanco */
-        #propertyModal .btn-close{
-            filter: invert(1) brightness(200%);
-            opacity: .9;
-        }
-        #propertyModal .btn-close:hover{ opacity: 1; }
-
+        .modal-backdrop.show{ opacity: .4; }
     </style>
 </head>
 <body class="admin-compact">
+<!-- HEADER include -->
 <div id="header-container"></div>
 
 <div class="container custom-padding">
-    <!-- Toolbar superior del admin -->
+    <!-- Toolbar superior -->
     <div class="section-card mb-3">
-        <div class="card-header">
-            <div class="d-flex align-items-center gap-2">
-
-
+        <div class="card-header bg-transparent border-0">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <button id="btnOpenCreateToolbar" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Crear propiedad
+                    </button>
+                    <button id="btnReloadList" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-repeat me-1"></i>Recargar
+                    </button>
+                </div>
+                <div class="small text-muted">
+                    <span id="resultsCount"></span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Sección propiedades con filtros (mismo layout que index) -->
+    <!-- Sección propiedades -->
     <section class="properties" id="properties">
         <div class="row">
-
-            <!-- Filtros (sidebar izquierda) -->
+            <!-- Filtros -->
             <aside class="col-lg-3 mb-3" id="filtersCol">
+                <!-- Botón colapsable en móvil -->
+                <button class="btn btn-primary w-100 d-lg-none mb-2" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#filtersCollapse"
+                        aria-expanded="false" aria-controls="filtersCollapse">
+                    <i class="bi bi-funnel me-2"></i> Filtros
+                </button>
 
-                <div class="section-card filters-card">
-                    <div class="card-header"><h3 class="title">Filtrar búsqueda</h3></div>
-                    <div class="card-body">
-                        <form id="filtersForm" class="row g-3 align-items-end" novalidate>
-                            <div class="col-12">
-                                <label for="q" class="form-label">Buscar</label>
-                                <input id="q" type="search" class="form-control mh-input" placeholder="Título, sector, ciudad…">
-                            </div>
-
-                            <div class="col-12">
-                                <label for="fType" class="form-label">Tipo de Propiedad</label>
-                                <select id="fType" class="form-select mh-select">
-                                    <option value="">Todos</option>
-                                    <option>Apartamento</option>
-                                    <option>Casa</option>
-                                    <option>Penthouse</option>
-                                    <option>Terreno</option>
-                                    <option>Solares</option>
-                                    <option>Villa</option>
-                                    <option>Local</option>
-                                </select>
-                            </div>
-
-                            <div class="col-12">
-                                <label for="fSaleType" class="form-label">Transacción</label>
-                                <select id="fSaleType" class="form-select mh-select">
-                                    <option value="">Venta / Alquiler</option>
-                                    <option>Venta</option>
-                                    <option>Alquiler</option>
-                                </select>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Rango de precio</label>
-                                <div class="row g-2">
-                                    <div class="col-6"><input id="fMin" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Mínimo"></div>
-                                    <div class="col-6"><input id="fMax" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Máximo"></div>
+                <div id="filtersCollapse" class="collapse d-lg-block show">
+                    <div class="section-card filters-card">
+                        <div class="card-header"><h3 class="title">Filtrar búsqueda</h3></div>
+                        <div class="card-body">
+                            <form id="filtersForm" class="row g-3 align-items-end" novalidate>
+                                <div class="col-12">
+                                    <label for="q" class="form-label">Buscar</label>
+                                    <input id="q" type="search" class="form-control mh-input" placeholder="Título, sector, ciudad…">
                                 </div>
-                            </div>
 
-                            <div class="col-12 d-grid gap-2">
-                                <button class="btn btn-primary" type="submit">Filtrar</button>
-                                <button class="btn btn-secondary" id="resetFilters" type="button">Reestablecer</button>
-                            </div>
-                        </form>
+                                <div class="col-12">
+                                    <label for="fType" class="form-label">Tipo de Propiedad</label>
+                                    <select id="fType" class="form-select mh-select">
+                                        <option value="">Todos</option>
+                                        <option>Apartamento</option><option>Casa</option><option>Penthouse</option>
+                                        <option>Terreno</option><option>Solares</option><option>Villa</option><option>Local</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="fSaleType" class="form-label">Transacción</label>
+                                    <select id="fSaleType" class="form-select mh-select">
+                                        <option value="">Venta / Alquiler</option>
+                                        <option>Venta</option><option>Alquiler</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Rango de precio</label>
+                                    <div class="row g-2">
+                                        <div class="col-6"><input id="fMin" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Mínimo"></div>
+                                        <div class="col-6"><input id="fMax" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Máximo"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 d-grid gap-2">
+                                    <button class="btn btn-primary" type="submit">Filtrar</button>
+                                    <button class="btn btn-secondary" id="resetFilters" type="button">Reestablecer</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </aside>
 
-            <!-- Listado + toolbar + paginación -->
+            <!-- Listado -->
             <div class="col-lg-9 pb-5">
-                <!-- Toolbar (orden / tamaño de página) -->
+                <!-- Toolbar de orden/tamaño -->
                 <div class="section-card toolbar-card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2 ta-toolbar">
                         <div class="d-flex flex-wrap align-items-center gap-3">
@@ -380,7 +289,7 @@
                                 </div>
                             </div>
 
-                            <!-- Selects ocultos compatibles -->
+                            <!-- Selects reales (ocultos) que usa admin.js -->
                             <label class="visually-hidden" for="sortBy">Orden</label>
                             <select id="sortBy" class="visually-hidden">
                                 <option value="createdAt-desc" selected>Más recientes</option>
@@ -398,17 +307,9 @@
                                 <option value="18">18</option>
                             </select>
                         </div>
-
-                        <div class="ms-auto small text-muted">
-                            <span id="resultsCount"></span>
-                        </div>
                     </div>
                 </div>
-                <div class="col-lg-9 pb-5">
-                    <button id="btnOpenCreateToolbar" class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-2"></i>Crear propiedad
-                    </button>
-                </div>
+
                 <!-- Tarjetas -->
                 <div id="propertiesContainer" class="row g-3"></div>
 
@@ -420,9 +321,8 @@
                         </nav>
                     </div>
                 </div>
-
-            </div>
-        </div>
+            </div> <!-- /col-lg-9 -->
+        </div> <!-- /row -->
     </section>
 </div>
 
@@ -447,11 +347,7 @@
                             <label for="type" class="form-label">Tipo</label>
                             <select id="type" class="form-select" required>
                                 <option value="" disabled selected>Seleccione...</option>
-                                <option>Casa</option>
-                                <option>Apartamento</option>
-                                <option>Penthouse</option>
-                                <option>Solares</option>
-                                <option>Villa</option>
+                                <option>Casa</option><option>Apartamento</option><option>Penthouse</option><option>Solares</option><option>Villa</option>
                             </select>
                             <div class="invalid-feedback">Seleccione un tipo.</div>
                         </div>
@@ -460,8 +356,7 @@
                             <label for="saleType" class="form-label">Transacción</label>
                             <select id="saleType" class="form-select" required>
                                 <option value="" disabled selected>Seleccione...</option>
-                                <option>Venta</option>
-                                <option>Alquiler</option>
+                                <option>Venta</option><option>Alquiler</option>
                             </select>
                             <div class="invalid-feedback">Seleccione venta o alquiler.</div>
                         </div>
@@ -553,14 +448,13 @@
                             <div id="amenitiesList" class="chip-list mt-2"></div>
                         </div>
 
-                        <!-- Tipologías / Unidades (solo para Apartamento/Penthouse) -->
+                        <!-- Tipologías / Unidades -->
                         <div id="unitsSection" class="col-12 d-none">
                             <label class="form-label d-flex align-items-center justify-content-between">
                                 <span>Tipologías / Unidades</span>
                                 <small class="text-muted">Solo para Apartamento y Penthouse. El precio del anuncio se fija al menor precio.</small>
                             </label>
 
-                            <!-- Formulario inline para agregar una unidad -->
                             <div class="section-card p-3 mb-3">
                                 <div class="row g-2 align-items-end">
                                     <div class="col-sm-3">
@@ -599,7 +493,6 @@
                                 </div>
                             </div>
 
-                            <!-- Lista / tabla de unidades -->
                             <div class="table-responsive">
                                 <table class="table table-sm align-middle">
                                     <thead>
@@ -612,7 +505,7 @@
                             </div>
                         </div>
 
-                        <!-- Imágenes desde PC -->
+                        <!-- Imágenes -->
                         <div class="col-12">
                             <label class="form-label">Imágenes (máx 10)</label>
                             <input id="imageFiles" type="file" class="form-control" multiple accept="image/*">
