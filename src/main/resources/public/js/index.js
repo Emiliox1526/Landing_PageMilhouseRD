@@ -36,8 +36,38 @@ function getMainImage(p) {
 function getLocationText(loc) {
     if (!loc) return '';
     if (typeof loc === 'string') return loc;
-    const parts = [loc.sector, loc.city, loc.province, loc.country].filter(Boolean);
-    return parts.join(', ');
+    if (typeof loc === 'object') {
+        const parts = [
+            loc.sector, loc.neighborhood, loc.barrio, loc.district,      // vecindario/sector
+            loc.city, loc.municipality,                                   // ciudad/municipio
+            loc.province, loc.state, loc.region,                          // provincia/estado/región
+            loc.country                                                   // país
+        ].filter(Boolean);
+        return parts.join(', ');
+    }
+    return '';
+}
+function resolveLocation(p) {
+    // 1) Si trae un texto ya preparado
+    if (p?.locationText && typeof p.locationText === 'string') return p.locationText;
+
+    // 2) Si 'location' o 'address' son string u objeto {city, sector, ...}
+    const fromLocation = getLocationText(p?.location);
+    if (fromLocation) return fromLocation;
+
+    const fromAddress = getLocationText(p?.address);
+    if (fromAddress) return fromAddress;
+
+    // 3) Si vienen los campos sueltos en la raíz
+    const parts = [
+        p?.sector, p?.neighborhood, p?.barrio, p?.district,
+        p?.city, p?.municipality,
+        p?.province, p?.state, p?.region,
+        p?.country
+    ].filter(Boolean);
+    if (parts.length) return parts.join(', ');
+
+    return '';
 }
 
 function formatPrice(p) {
@@ -103,7 +133,7 @@ async function cargarHeroRecientes() {
         recientes.forEach((p, i) => {
             const img = getMainImage(p);
             const title = escapeHtml(p.title || "Propiedad");
-            const location = escapeHtml(getLocationText(p.location));
+            const location = escapeHtml(resolveLocation(p));
 
             const slide = document.createElement("div");
             slide.className = "slide" + (i === 0 ? " active" : "");
@@ -310,7 +340,7 @@ function renderCards(items){
         const title        = escapeHtml(property?.title || 'Propiedad');
         const propType     = escapeHtml(property?.type || '');
         const saleType     = escapeHtml(property?.saleType || '');
-        const locationText = escapeHtml(getLocationText(property?.location));
+        const locationText = escapeHtml(resolveLocation(property));
         const priceText    = escapeHtml(formatPrice(property));
         const beds         = property?.bedrooms ?? null;
         const baths        = property?.bathrooms ?? null;
