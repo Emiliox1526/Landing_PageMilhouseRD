@@ -54,7 +54,14 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         container.innerHTML = `<div class="alert alert-danger my-4">${msg}</div>`;
     }
     const renderNotFound = () => renderError('Propiedad no encontrada.');
-
+    function toImageUrl(s, API_BASE='') {
+        if (!s) return '';
+        const str = String(s);
+        if (str.startsWith('data:') || /^https?:\/\//i.test(str)) return str;
+        if (str.startsWith('/api/images/')) return `${API_BASE}${str}`;
+        if (/^[a-f0-9]{24}$/i.test(str)) return `${API_BASE}/api/images/${str}`;
+        return `${API_BASE}${str}`;
+    }
     // ========= LIGHTBOX =========
     function openLightboxFull(allUrls, startIdx=0) {
         const lb       = $('#lightbox');
@@ -146,7 +153,8 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         const saleType = (p.saleType || '').toString().trim();         // Venta / Alquiler
 
 
-        const images = (p.images||[]).map(x => typeof x==='string' ? x : (x?.src||'')).filter(Boolean);
+        const imagesRaw = Array.isArray(p.images) ? p.images : [];
+        const images = imagesRaw.map(u => toImageUrl(u, API_BASE)).filter(Boolean);
         const mainImg = images[0] || '/assets/img/house.PNG';
 
         const features = Array.isArray(p.features)?p.features:[];

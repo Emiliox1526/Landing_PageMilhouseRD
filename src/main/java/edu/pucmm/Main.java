@@ -5,8 +5,10 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
 
+import edu.pucmm.config.MongoConfig;
 import edu.pucmm.controller.PropertyController;
 
+import edu.pucmm.controller.UploadController;
 import io.javalin.Javalin;
 import io.javalin.http.UploadedFile;
 import io.javalin.http.staticfiles.Location;
@@ -88,7 +90,8 @@ public class Main {
         }).start(port);
 
         // ========= Rutas de dominio =========
-        new PropertyController(properties).register(app);
+        new UploadController(MongoConfig.getGridFSBucket()).register(app);           // /api/uploads y /api/images/:id
+        new PropertyController(db.getCollection("properties")).register(app);
 
         // ========= Healthcheck =========
         app.get("/health", ctx -> ctx.json(Map.of("status", "ok")));

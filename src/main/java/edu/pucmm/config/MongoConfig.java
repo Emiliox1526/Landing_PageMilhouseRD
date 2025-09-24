@@ -7,18 +7,20 @@ import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
 
 /**
  * Configura un singleton de MongoClient utilizando la cadena de
  * conexión definida en la variable de entorno {@code MONGODB_URI}.
- * De este modo se puede conectar fácilmente a MongoDB Atlas u otra
- * instancia en la nube.
+ * Compatible con Atlas y Render.
  */
 public class MongoConfig {
 
     private static final String ENV_VAR = "MONGODB_URI";
     private static final MongoClient CLIENT;
     private static final MongoDatabase DATABASE;
+    private static final GridFSBucket BUCKET;
 
     static {
         String uri = System.getenv(ENV_VAR);
@@ -32,29 +34,28 @@ public class MongoConfig {
                 .build();
         CLIENT = MongoClients.create(settings);
         String dbName = connectionString.getDatabase();
-
-        System.out.println("🔗 URI leída: " + uri);
         if (dbName == null || dbName.trim().isEmpty()) {
             dbName = "Test";
         }
         DATABASE = CLIENT.getDatabase(dbName);
-        System.out.println("✅ Conectando a DB: " + dbName);
+        BUCKET = GridFSBuckets.create(DATABASE);
+        System.out.println("✅ Conectado a DB: " + dbName);
     }
 
-    private MongoConfig() { /* evita instanciación */ }
+    private MongoConfig() {}
 
-    /**
-     * Devuelve el cliente Mongo configurado.
-     */
+    /** Cliente Mongo */
     public static MongoClient getClient() {
         return CLIENT;
     }
 
-    /**
-     * Devuelve la base de datos por defecto indicada en la URI.
-     */
+    /** Base de datos por defecto */
     public static MongoDatabase getDatabase() {
         return DATABASE;
     }
-}
 
+    /** GridFS bucket para subir/descargar archivos */
+    public static GridFSBucket getGridFSBucket() {
+        return BUCKET;
+    }
+}

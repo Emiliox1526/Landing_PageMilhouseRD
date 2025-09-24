@@ -41,6 +41,7 @@ public class Property {
     private String descriptionParagraph;
     private List<String> features = new ArrayList<>();
     private List<String> amenities = new ArrayList<>();
+
     private List<String> images = new ArrayList<>();
 
     // Unidades / Tipología

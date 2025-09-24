@@ -102,7 +102,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const t = (typeSelect?.value || '').trim();
         return TYPES_WITH_UNITS.includes(t);
     }
-
+    function toImageUrl(s, API_BASE='') {
+        if (!s) return '';
+        const str = String(s);
+        if (str.startsWith('data:') || /^https?:\/\//i.test(str)) return str;
+        if (str.startsWith('/api/images/')) return `${API_BASE}${str}`;
+        if (/^[a-f0-9]{24}$/i.test(str)) return `${API_BASE}/api/images/${str}`;
+        // Fallback: por compatibilidad con datos viejos (ej. "/uploads/xxx.png")
+        return `${API_BASE}${str}`;
+    }
     function minUnitPrice(){
         const vals = unitsList.map(u => Number(u.price)).filter(Number.isFinite);
         return vals.length ? Math.min(...vals) : null;
@@ -180,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .replaceAll("'","&#039;");
     }
     function getMainImage(p){
-        if (Array.isArray(p?.images) && p.images[0]) return p.images[0];
+        if (Array.isArray(p?.images) && p.images[0]) return toImageUrl(p.images[0], API_BASE);
         return 'https://via.placeholder.com/800x450?text=Propiedad';
     }
     function getLocationText(loc){
@@ -558,15 +566,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function renderImagePreview(){
         imagePreviewEl.innerHTML = '';
-
-        // URLs existentes (edición)
         existingImageUrls.forEach((u, idx)=>{
             const item = document.createElement('div');
             item.className = 'image-item';
+            const src = toImageUrl(u, API_BASE);
             item.innerHTML = `
-        <img src="${escapeHtml(u)}" alt="img">
-        <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
-      `;
+    <img src="${src}" alt="img">
+    <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
+  `;
             item.querySelector('.remove').addEventListener('click', ()=>{
                 existingImageUrls.splice(idx,1);
                 renderImagePreview();
