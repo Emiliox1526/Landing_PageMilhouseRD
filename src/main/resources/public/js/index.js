@@ -74,14 +74,20 @@ function formatPrice(p) {
     if (p?.priceFormatted) return p.priceFormatted;
     if (typeof p?.price === 'number') {
         try {
-            const currency = p?.currency || 'USD';
-            return new Intl.NumberFormat('es-DO', { style: 'currency', currency }).format(p.price);
+            // 👇 fuerza pesos dominicanos como moneda por defecto
+            const currency = p?.currency || 'DOP';
+            return new Intl.NumberFormat('es-DO', {
+                style: 'currency',
+                currency,
+                minimumFractionDigits: 0
+            }).format(p.price);
         } catch {
-            return `$${p.price.toLocaleString()}`;
+            return `RD$ ${p.price.toLocaleString('es-DO')}`;
         }
     }
     return '';
 }
+
 
 /* ---------------------------- Fetch helper --------------------------- */
 async function fetchJSON(url) {
