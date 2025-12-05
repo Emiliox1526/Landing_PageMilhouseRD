@@ -133,6 +133,122 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ===== Gestión de campos según tipo de propiedad =====
+    function getPropertyTypeCategory(type) {
+        const t = (type || '').trim();
+        if (t === 'Solares') return 'solar';
+        if (t === 'Local Comercial') return 'commercial';
+        if (['Casa', 'Apartamento', 'Penthouse', 'Villa'].includes(t)) return 'residential';
+        return 'unknown';
+    }
+
+    function toggleFieldsByPropertyType() {
+        const type = typeSelect?.value || '';
+        const category = getPropertyTypeCategory(type);
+        
+        // Referencias a los campos del formulario
+        const bedroomsField = document.getElementById('bedrooms');
+        const bathroomsField = document.getElementById('bathrooms');
+        const parkingField = document.getElementById('parking');
+        const areaField = document.getElementById('area');
+        
+        // Referencias a los containers de los campos
+        const bedroomsContainer = bedroomsField?.closest('.col-md-4');
+        const bathroomsContainer = bathroomsField?.closest('.col-md-4');
+        const parkingContainer = parkingField?.closest('.col-md-4');
+        
+        // Referencias a secciones de amenidades
+        const amenitiesSection = document.getElementById('amenitiesSection');
+        
+        // Resetear estado de campos
+        const setFieldState = (field, container, required, visible) => {
+            if (!field || !container) return;
+            
+            if (visible) {
+                container.classList.remove('d-none');
+                if (required) {
+                    field.setAttribute('required', 'required');
+                } else {
+                    field.removeAttribute('required');
+                }
+            } else {
+                container.classList.add('d-none');
+                field.removeAttribute('required');
+                field.value = '';  // Clear value when field is hidden
+            }
+        };
+        
+        // Aplicar reglas según categoría
+        switch (category) {
+            case 'solar':
+                // Solares: solo área y precio
+                setFieldState(bedroomsField, bedroomsContainer, false, false);
+                setFieldState(bathroomsField, bathroomsContainer, false, false);
+                setFieldState(parkingField, parkingContainer, false, false);
+                if (areaField) {
+                    areaField.setAttribute('required', 'required');
+                    const areaLabel = document.querySelector('label[for="area"]');
+                    if (areaLabel) areaLabel.textContent = 'Área del solar (m²)';
+                }
+                // Ocultar amenidades para solares
+                if (amenitiesSection) amenitiesSection.classList.add('d-none');
+                break;
+                
+            case 'commercial':
+                // Locales comerciales: área, baños opcionales, NO habitaciones
+                setFieldState(bedroomsField, bedroomsContainer, false, false);
+                setFieldState(bathroomsField, bathroomsContainer, false, true);  // Opcional
+                setFieldState(parkingField, parkingContainer, false, true);     // Opcional
+                if (areaField) {
+                    areaField.setAttribute('required', 'required');
+                    const areaLabel = document.querySelector('label[for="area"]');
+                    if (areaLabel) areaLabel.textContent = 'Área del local (m²)';
+                }
+                // Mostrar amenidades pero con advertencia
+                if (amenitiesSection) {
+                    amenitiesSection.classList.remove('d-none');
+                    const amenityLabel = document.querySelector('label[for="amenityInput"]');
+                    if (amenityLabel) {
+                        amenityLabel.textContent = 'Amenidades (solo comerciales, ej: Estacionamiento, Seguridad)';
+                        amenityLabel.setAttribute('data-original-text', 'Amenidades');
+                    }
+                }
+                break;
+                
+            case 'residential':
+                // Propiedades residenciales: todos los campos
+                setFieldState(bedroomsField, bedroomsContainer, true, true);
+                setFieldState(bathroomsField, bathroomsContainer, true, true);
+                setFieldState(parkingField, parkingContainer, false, true);  // Opcional
+                if (areaField) {
+                    areaField.setAttribute('required', 'required');
+                    const areaLabel = document.querySelector('label[for="area"]');
+                    if (areaLabel) areaLabel.textContent = 'Área construida (m²)';
+                }
+                // Mostrar amenidades
+                if (amenitiesSection) {
+                    amenitiesSection.classList.remove('d-none');
+                    const amenityLabel = document.querySelector('label[for="amenityInput"]');
+                    if (amenityLabel) {
+                        const originalText = amenityLabel.getAttribute('data-original-text') || 'Amenidades';
+                        amenityLabel.textContent = originalText;
+                    }
+                }
+                break;
+                
+            default:
+                // Por defecto, mostrar todos los campos
+                setFieldState(bedroomsField, bedroomsContainer, false, true);
+                setFieldState(bathroomsField, bathroomsContainer, false, true);
+                setFieldState(parkingField, parkingContainer, false, true);
+                if (amenitiesSection) amenitiesSection.classList.remove('d-none');
+                break;
+        }
+        
+        // También aplicar la lógica de unidades
+        toggleUnitsUI();
+    }
+
     function clearUnitInputs(){
         unitName.value=''; unitFloor.value='';
         unitBedrooms.value=''; unitBathrooms.value='';
@@ -153,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // NUEVO: reset tipologías
         unitsList = [];
         renderUnitsList();
-        toggleUnitsUI();
+        toggleFieldsByPropertyType();
 
         modalEl.querySelector('.modal-title').textContent = 'Crear propiedad';
         getModal().show();
@@ -653,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
             price: Number.isFinite(Number(u.price)) ? Number(u.price) : undefined
         })) : [];
         renderUnitsList();
-        toggleUnitsUI();
+        toggleFieldsByPropertyType();
 
         if (supportsUnits()){
             const mu = minUnitPrice();
@@ -792,8 +908,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     let msg = editingId ? 'Error al actualizar' : 'Error al guardar';
                     try{
                         const err = await res.json();
-                        if (err?.errors) msg += ': ' + err.errors.join(', ');
-                        else if (err?.message) msg += ': ' + err.message;
+                        if (err?.errors && Array.isArray(err.errors)) {
+                            msg += ':\n\n' + err.errors.map((e, i) => `${i + 1}. ${e}`).join('\n');
+                        } else if (err?.message) {
+                            msg += ': ' + err.message;
+                        }
                     }catch{
                         msg += ` (status ${res.status})`;
                     }
@@ -958,7 +1077,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     typeSelect?.addEventListener('change', ()=>{
-        toggleUnitsUI();
+        toggleFieldsByPropertyType();
     });
 
     pageSizeSelect?.addEventListener('change', ()=>{

@@ -347,7 +347,7 @@
                             <label for="type" class="form-label">Tipo</label>
                             <select id="type" class="form-select" required>
                                 <option value="" disabled selected>Seleccione...</option>
-                                <option>Casa</option><option>Apartamento</option><option>Penthouse</option><option>Solares</option><option>Villa</option>
+                                <option>Casa</option><option>Apartamento</option><option>Penthouse</option><option>Solares</option><option>Villa</option><option>Local Comercial</option>
                             </select>
                             <div class="invalid-feedback">Seleccione un tipo.</div>
                         </div>
@@ -437,8 +437,8 @@
                         </div>
 
                         <!-- Amenidades -->
-                        <div class="col-12">
-                            <label class="form-label">Amenidades</label>
+                        <div class="col-12" id="amenitiesSection">
+                            <label class="form-label" for="amenityInput">Amenidades</label>
                             <div class="d-flex chip-input">
                                 <input id="amenityInput" class="form-control" placeholder="Ej: Planta eléctrica"/>
                                 <button type="button" id="addAmenityBtn" class="btn btn-outline-primary">

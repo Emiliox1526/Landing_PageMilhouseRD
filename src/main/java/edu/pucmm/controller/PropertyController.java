@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import edu.pucmm.util.PropertyValidator;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.NotFoundResponse;
@@ -21,7 +22,7 @@ public class PropertyController {
 
     // Tipos permitidos
     private static final List<String> ALLOWED_TYPES = List.of(
-            "Casa", "Apartamento", "Penthouse", "Solares", "Villa"
+            "Casa", "Apartamento", "Penthouse", "Solares", "Villa", "Local Comercial"
     );
 
     public PropertyController(MongoCollection<Document> collection) {
@@ -39,6 +40,13 @@ public class PropertyController {
 
             if (!ALLOWED_TYPES.contains(type)) {
                 throw new BadRequestResponse("type inválido. Permitidos: " + ALLOWED_TYPES);
+            }
+
+            // Validar la propiedad según su tipo
+            List<String> validationErrors = PropertyValidator.validate(body);
+            if (!validationErrors.isEmpty()) {
+                ctx.status(400).json(Map.of("errors", validationErrors));
+                return;
             }
 
             Document doc = buildDocFromBody(body);
@@ -71,6 +79,13 @@ public class PropertyController {
         app.put("/api/properties/{id}", ctx -> {
             String id = ctx.pathParam("id");
             Map<String, Object> body = parseBody(ctx.body());
+
+            // Validar la propiedad según su tipo
+            List<String> validationErrors = PropertyValidator.validate(body);
+            if (!validationErrors.isEmpty()) {
+                ctx.status(400).json(Map.of("errors", validationErrors));
+                return;
+            }
 
             ObjectId oid = parseOid(id);
             Document set = buildDocFromBody(body);
