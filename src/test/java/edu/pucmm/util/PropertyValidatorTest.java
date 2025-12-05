@@ -247,10 +247,12 @@ public class PropertyValidatorTest {
         assertTrue("Los locales comerciales pueden tener amenidades comerciales", errors.isEmpty());
     }
 
-    // ========== Tests de Validación de Precio vs Área ==========
+    // ========== Tests de Validación de Precio - REMOVED ==========
+    // Minimum/maximum price per square meter validation has been removed from the system
+    // Prices are now only validated to be greater than 0
     
     @Test
-    public void testPriceAreaRatio_TooLow_ShouldFail() {
+    public void testPriceValidation_OnlyRequiresPositive() {
         Map<String, Object> data = new HashMap<>();
         data.put("type", "Casa");
         data.put("title", "Casa");
@@ -258,55 +260,10 @@ public class PropertyValidatorTest {
         data.put("bedrooms", 3);
         data.put("bathrooms", 2);
         data.put("area", 150.0);
-        data.put("price", 50000.0);  // RD$333/m² - muy bajo (debería ser mínimo RD$5,800/m²)
+        data.put("price", 1.0);  // Cualquier precio positivo es válido ahora
         
         List<String> errors = PropertyValidator.validate(data);
-        assertFalse("Precio por m² muy bajo debe generar error", errors.isEmpty());
-        assertTrue("Debe contener error sobre precio por m² bajo", 
-            errors.stream().anyMatch(e -> e.contains("precio por m²") && e.contains("bajo")));
-    }
-    
-    @Test
-    public void testPriceAreaRatio_TooHigh_ShouldFail() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("type", "Apartamento");
-        data.put("title", "Apartamento");
-        data.put("saleType", "Venta");
-        data.put("bedrooms", 2);
-        data.put("bathrooms", 1);
-        data.put("area", 80.0);
-        data.put("price", 100000000.0);  // RD$1,250,000/m² - muy alto (máximo RD$870,000/m²)
-        
-        List<String> errors = PropertyValidator.validate(data);
-        assertFalse("Precio por m² muy alto debe generar error", errors.isEmpty());
-        assertTrue("Debe contener error sobre precio por m² alto", 
-            errors.stream().anyMatch(e -> e.contains("precio por m²") && e.contains("alto")));
-    }
-    
-    @Test
-    public void testSolar_PriceAreaRatio_Valid() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("type", "Solares");
-        data.put("title", "Solar");
-        data.put("saleType", "Venta");
-        data.put("area", 1000.0);
-        data.put("price", 5800000.0);  // RD$5,800/m² - válido para solares
-        
-        List<String> errors = PropertyValidator.validate(data);
-        assertTrue("Precio válido para solar no debe generar errores", errors.isEmpty());
-    }
-    
-    @Test
-    public void testLocalComercial_PriceAreaRatio_Valid() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("type", "Local Comercial");
-        data.put("title", "Local");
-        data.put("saleType", "Venta");
-        data.put("area", 200.0);
-        data.put("price", 11600000.0);  // RD$58,000/m² - válido para locales
-        
-        List<String> errors = PropertyValidator.validate(data);
-        assertTrue("Precio válido para local comercial no debe generar errores", errors.isEmpty());
+        assertTrue("Cualquier precio positivo debe ser aceptado", errors.isEmpty());
     }
 
     // ========== Tests de Casos Extremos ==========

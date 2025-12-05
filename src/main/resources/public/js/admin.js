@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_FILE_MB = 25; // Aumentado de 5MB a 25MB
     const USE_UPLOAD_API = true; // usa /api/uploads
     
+    // Batch sizes for optimized image processing
+    const IMAGE_RENDER_BATCH_SIZE = 10;  // Process 10 images at a time when rendering previews
+    const FILE_VALIDATION_BATCH_SIZE = 20;  // Validate 20 files at a time when adding new files
+    
     // Formatos de imagen soportados
     const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.tiff', '.tif'];
     const ALLOWED_MIME_TYPES = [
@@ -319,39 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // También aplicar la lógica de unidades
         toggleUnitsUI();
-    }
-
-    // Nueva función para actualizar hint de precio
-    function updatePriceHint(type) {
-        const priceRangeHint = document.getElementById('priceRangeHint');
-        if (!priceRangeHint) return;
-        
-        const area = parseFloat(document.getElementById('area')?.value) || 0;
-        let hint = '';
-        
-        switch (type) {
-            case 'Solar':
-                // Para solares, no mostrar rango de validación, solo informativo
-                hint = 'Ingrese el área y el precio por m². El precio total se calculará automáticamente.';
-                break;
-            case 'Local Comercial':
-                hint = area > 0
-                    ? `Rango sugerido: RD$${(area * 2900).toLocaleString('es-DO')} - RD$${(area * 580000).toLocaleString('es-DO')} (RD$2,900-580,000/m²)`
-                    : 'Rango típico: RD$2,900-580,000/m²';
-                break;
-            case 'Casa':
-            case 'Apartamento':
-            case 'Penthouse':
-            case 'Villa':
-                hint = area > 0
-                    ? `Rango sugerido: RD$${(area * 5800).toLocaleString('es-DO')} - RD$${(area * 870000).toLocaleString('es-DO')} (RD$5,800-870,000/m²)`
-                    : 'Rango típico: RD$5,800-870,000/m²';
-                break;
-            default:
-                hint = '';
-        }
-        
-        priceRangeHint.textContent = hint;
     }
 
     // Nueva función para calcular precio de solares automáticamente
@@ -809,43 +780,90 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function renderImagePreview(){
         imagePreviewEl.innerHTML = '';
-        existingImageUrls.forEach((u, idx)=>{
+        
+        // Create a document fragment to batch DOM updates
+        const fragment = document.createDocumentFragment();
+        
+        // Process existing images - store URLs in a closure to avoid index issues
+        existingImageUrls.forEach((imageUrl)=>{
             const item = document.createElement('div');
             item.className = 'image-item';
-            const src = toImageUrl(u, API_BASE);
+            const src = toImageUrl(imageUrl, API_BASE);
             item.innerHTML = `
     <img src="${src}" alt="img">
     <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
   `;
-            item.querySelector('.remove').addEventListener('click', ()=>{
-                existingImageUrls.splice(idx,1);
-                renderImagePreview();
-            });
-            imagePreviewEl.appendChild(item);
+            // Use the URL itself to find and remove the correct item
+            const removeHandler = (urlToRemove) => () => {
+                const urlIdx = existingImageUrls.indexOf(urlToRemove);
+                if (urlIdx !== -1) {
+                    existingImageUrls.splice(urlIdx, 1);
+                    renderImagePreview();
+                }
+            };
+            item.querySelector('.remove').addEventListener('click', removeHandler(imageUrl));
+            fragment.appendChild(item);
         });
 
-        // Archivos seleccionados (nuevos)
-        selectedFiles.forEach((obj, idx)=>{
-            const item = document.createElement('div');
-            item.className = 'image-item';
-            item.dataset.fileId = obj.id; // Add ID for progress tracking
+        // Archivos seleccionados (nuevos) - process in batches
+        let currentBatch = 0;
+        
+        const processBatch = () => {
+            const startIdx = currentBatch * IMAGE_RENDER_BATCH_SIZE;
+            const endIdx = Math.min(startIdx + IMAGE_RENDER_BATCH_SIZE, selectedFiles.length);
             
-            item.innerHTML = `
-        <img src="${obj.url}" alt="${escapeHtml(obj.file.name)}">
-        <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
-        <div class="progress-bar-container d-none">
-            <div class="progress-bar" style="width: 0%"></div>
-        </div>
-      `;
-            item.querySelector('.remove').addEventListener('click', ()=>{
-                URL.revokeObjectURL(obj.url);
-                selectedFiles.splice(idx,1);
-                renderImagePreview();
+            if (startIdx >= selectedFiles.length) {
+                // All batches processed, update count and we're done
+                updateImageCount();
+                return;
+            }
+            
+            // Process this batch
+            const batchFragment = document.createDocumentFragment();
+            for (let idx = startIdx; idx < endIdx; idx++) {
+                const obj = selectedFiles[idx];
+                const item = document.createElement('div');
+                item.className = 'image-item';
+                item.dataset.fileId = obj.id;
+                
+                item.innerHTML = `
+            <img src="${obj.url}" alt="${escapeHtml(obj.file.name)}">
+            <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
+            <div class="progress-bar-container d-none">
+                <div class="progress-bar" style="width: 0%"></div>
+            </div>
+          `;
+                // Use file ID to find and remove the correct file
+                const removeHandler = (fileId) => () => {
+                    const fileIdx = selectedFiles.findIndex(f => f.id === fileId);
+                    if (fileIdx !== -1) {
+                        URL.revokeObjectURL(selectedFiles[fileIdx].url);
+                        selectedFiles.splice(fileIdx, 1);
+                        renderImagePreview();
+                    }
+                };
+                item.querySelector('.remove').addEventListener('click', removeHandler(obj.id));
+                batchFragment.appendChild(item);
+            }
+            
+            imagePreviewEl.appendChild(batchFragment);
+            currentBatch++;
+            
+            // Schedule next batch using requestAnimationFrame for smooth rendering
+            requestAnimationFrame(() => {
+                setTimeout(processBatch, 0); // Small delay to keep UI responsive
             });
-            imagePreviewEl.appendChild(item);
-        });
-
-        updateImageCount();
+        };
+        
+        // Append existing images immediately
+        imagePreviewEl.appendChild(fragment);
+        
+        // Start processing new files in batches
+        if (selectedFiles.length > 0) {
+            processBatch();
+        } else {
+            updateImageCount();
+        }
     }
     
     // Update progress for a specific file during upload
@@ -896,45 +914,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const errors = [];
-        const accepted = incoming.slice(0, available).filter((f, idx) => {
-            // Validate MIME type
-            if (!ALLOWED_MIME_TYPES.includes(f.type.toLowerCase())) { 
-                errors.push(`"${f.name}": tipo no permitido (${f.type})`);
-                return false; 
+        const toProcess = incoming.slice(0, available);
+        
+        // Process files in batches to avoid blocking the UI
+        const processFileBatch = (startIdx) => {
+            const endIdx = Math.min(startIdx + FILE_VALIDATION_BATCH_SIZE, toProcess.length);
+            
+            for (let idx = startIdx; idx < endIdx; idx++) {
+                const f = toProcess[idx];
+                
+                // Validate MIME type
+                if (!ALLOWED_MIME_TYPES.includes(f.type.toLowerCase())) { 
+                    errors.push(`"${f.name}": tipo no permitido (${f.type})`);
+                    continue;
+                }
+                
+                // Validate file extension
+                const ext = f.name.toLowerCase().substring(f.name.lastIndexOf('.'));
+                if (!ALLOWED_IMAGE_EXTENSIONS.includes(ext)) {
+                    errors.push(`"${f.name}": extensión no permitida (${ext})`);
+                    continue;
+                }
+                
+                // Validate file size
+                if (f.size > MAX_FILE_MB * 1024 * 1024) { 
+                    errors.push(`"${f.name}": excede ${MAX_FILE_MB} MB (${(f.size / 1024 / 1024).toFixed(2)} MB)`);
+                    continue;
+                }
+                
+                // Validate file is not empty
+                if (f.size === 0) {
+                    errors.push(`"${f.name}": archivo vacío`);
+                    continue;
+                }
+                
+                // File is valid, add to selectedFiles
+                selectedFiles.push({ id: crypto.randomUUID(), file: f, url: URL.createObjectURL(f) });
             }
             
-            // Validate file extension
-            const ext = f.name.toLowerCase().substring(f.name.lastIndexOf('.'));
-            if (!ALLOWED_IMAGE_EXTENSIONS.includes(ext)) {
-                errors.push(`"${f.name}": extensión no permitida (${ext})`);
-                return false;
+            // Process next batch or finish
+            if (endIdx < toProcess.length) {
+                // Schedule next batch using setTimeout to keep UI responsive
+                setTimeout(() => processFileBatch(endIdx), 0);
+            } else {
+                // All files processed
+                if (errors.length > 0) {
+                    const errorMsg = 'Algunos archivos no son válidos:\n\n' + errors.join('\n');
+                    alert(errorMsg);
+                }
+                renderImagePreview();
             }
-            
-            // Validate file size
-            if (f.size > MAX_FILE_MB * 1024 * 1024) { 
-                errors.push(`"${f.name}": excede ${MAX_FILE_MB} MB (${(f.size / 1024 / 1024).toFixed(2)} MB)`);
-                return false; 
-            }
-            
-            // Validate file is not empty
-            if (f.size === 0) {
-                errors.push(`"${f.name}": archivo vacío`);
-                return false;
-            }
-            
-            return true;
-        });
-
-        if (errors.length > 0) {
-            const errorMsg = 'Algunos archivos no son válidos:\n\n' + errors.join('\n');
-            alert(errorMsg);
-        }
-
-
-        accepted.forEach(f=>{
-            selectedFiles.push({ id: crypto.randomUUID(), file: f, url: URL.createObjectURL(f) });
-        });
-        renderImagePreview();
+        };
+        
+        // Start processing batches
+        processFileBatch(0);
     }
     imageInput?.addEventListener('change', (e)=> addFiles(e.target.files));
 
@@ -1509,20 +1542,17 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleFieldsByPropertyType();
     });
     
-    // Actualizar hint de precio cuando cambie el área
+    // Actualizar cuando cambie el área (solo para solares con cálculo automático)
     document.getElementById('area')?.addEventListener('input', ()=>{
-        const type = typeSelect?.value || '';
-        updatePriceHint(type);
-        // Calcular precio para solares
-        if (type === 'Solar') {
+        // Solo calcular precio automático para solares
+        if (typeSelect?.value === 'Solar') {
             calculateSolarPrice();
         }
     });
 
     // Calcular precio automáticamente para solares cuando cambie precio por m²
     document.getElementById('pricePerSqm')?.addEventListener('input', ()=>{
-        const type = typeSelect?.value || '';
-        if (type === 'Solar') {
+        if (typeSelect?.value === 'Solar') {
             calculateSolarPrice();
         }
     });
