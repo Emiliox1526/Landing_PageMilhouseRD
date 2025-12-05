@@ -80,28 +80,29 @@ public class PropertyValidator {
 
         if (area == null || area <= 0) {
             errors.add("El área del solar es requerida y debe ser mayor a 0 m². " +
-                      "Ejemplo: ingrese un valor como 500 para un solar de 500 m²");
+                    "Ejemplo: ingrese un valor como 500 para un solar de 500 m²");
         }
         if (price == null || price <= 0) {
             errors.add("El precio es requerido y debe ser mayor a 0. " +
-                      "Ingrese el precio total en Pesos Dominicanos (RD$). " +
-                      "Ejemplo: RD$2,500,000 para un solar de 500 m²");
-        }
+                    "Ingrese el precio total en Pesos Dominicanos (RD$). " +
+                    "Ejemplo: RD$2,500,000 para un solar de 500 m²");
+        }  // ← ESTA LLAVE FALTABA
 
         // Campos no permitidos
         if (hasValue(data, "bedrooms")) {
             errors.add("Los solares/terrenos no deben tener habitaciones. " +
-                      "Este campo solo aplica para propiedades residenciales como casas o apartamentos");
+                    "Este campo solo aplica para propiedades residenciales como casas o apartamentos");
         }
         if (hasValue(data, "bathrooms")) {
             errors.add("Los solares/terrenos no deben tener baños. " +
-                      "Este campo solo aplica para propiedades residenciales o comerciales");
+                    "Este campo solo aplica para propiedades residenciales o comerciales");
         }
         if (hasValue(data, "amenities")) {
             errors.add("Los solares/terrenos no deben tener amenidades residenciales. " +
-                      "Elimine campos como piscina, jardín, etc.");
+                    "Elimine campos como piscina, jardín, etc.");
         }
     }
+
 
     /**
      * Valida una propiedad residencial (casa, apartamento, villa, penthouse).
