@@ -795,10 +795,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <img src="${src}" alt="img">
     <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
   `;
-            item.querySelector('.remove').addEventListener('click', ()=>{
-                existingImageUrls.splice(idx,1);
+            // Use closure to capture the correct index
+            const removeHandler = (capturedIdx) => () => {
+                existingImageUrls.splice(capturedIdx, 1);
                 renderImagePreview();
-            });
+            };
+            item.querySelector('.remove').addEventListener('click', removeHandler(idx));
             fragment.appendChild(item);
         });
 
@@ -831,11 +833,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="progress-bar" style="width: 0%"></div>
             </div>
           `;
-                item.querySelector('.remove').addEventListener('click', ()=>{
-                    URL.revokeObjectURL(obj.url);
-                    selectedFiles.splice(idx,1);
-                    renderImagePreview();
-                });
+                // Use file ID to find and remove the correct file
+                const removeHandler = (fileId) => () => {
+                    const fileIdx = selectedFiles.findIndex(f => f.id === fileId);
+                    if (fileIdx !== -1) {
+                        URL.revokeObjectURL(selectedFiles[fileIdx].url);
+                        selectedFiles.splice(fileIdx, 1);
+                        renderImagePreview();
+                    }
+                };
+                item.querySelector('.remove').addEventListener('click', removeHandler(obj.id));
                 batchFragment.appendChild(item);
             }
             
@@ -1538,17 +1545,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Actualizar cuando cambie el área (solo para solares con cálculo automático)
     document.getElementById('area')?.addEventListener('input', ()=>{
-        const type = typeSelect?.value || '';
-        // Calcular precio para solares
-        if (type === 'Solar') {
+        // Solo calcular precio automático para solares
+        if (typeSelect?.value === 'Solar') {
             calculateSolarPrice();
         }
     });
 
     // Calcular precio automáticamente para solares cuando cambie precio por m²
     document.getElementById('pricePerSqm')?.addEventListener('input', ()=>{
-        const type = typeSelect?.value || '';
-        if (type === 'Solar') {
+        if (typeSelect?.value === 'Solar') {
             calculateSolarPrice();
         }
     });
