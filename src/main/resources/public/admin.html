@@ -50,9 +50,18 @@
             --mh-line: #E2E8F0;              /* Light border */
             --mh-line-dark: #CBD5E1;         /* Medium border */
             
+            /* === SEMANTIC COLORS === */
+            --mh-success: #10B981;           /* Success messages */
+            --mh-warning: #F59E0B;           /* Warnings */
+            --mh-error: #EF4444;             /* Errors, destructive actions */
+            --mh-info: #3B82F6;              /* Information */
+            
+            /* === UI ELEMENTS === */
+            --select-arrow: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231E40AF' viewBox='0 0 16 16'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708L8.354 10.354a.5.5 0 0 1-.708 0L4.646 7.354a.5.5 0 0 1 0-.708z'/></svg>");
+            
             --header-h:68px;
         }
-        html,body{ background: var(--mh-bg) !important; font-family:"Montserrat",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--mh-ink); }
+        html,body{ background: var(--mh-bg) !important; font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: var(--mh-ink); }
 
         /* Header fijo sin tapar contenido */
         body.admin-compact{ padding-top: var(--header-h); }
@@ -119,7 +128,7 @@
         }
         .mh-select{
             appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231E40AF' viewBox='0 0 16 16'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708L8.354 10.354a.5.5 0 0 1-.708 0L4.646 7.354a.5.5 0 0 1 0-.708z'/></svg>");
+            background-image: var(--select-arrow);
             background-repeat: no-repeat; 
             background-position: right 0.8rem center; 
             background-size: 16px 16px; 
@@ -475,7 +484,7 @@
         }
         #propertyModal .form-select{
             appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231E40AF' viewBox='0 0 16 16'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708L8.354 10.354a.5.5 0 0 1-.708 0L4.646 7.354a.5.5 0 0 1 0-.708z'/></svg>");
+            background-image: var(--select-arrow);
             background-repeat: no-repeat; 
             background-position: right 0.8rem center; 
             background-size: 16px 16px; 
