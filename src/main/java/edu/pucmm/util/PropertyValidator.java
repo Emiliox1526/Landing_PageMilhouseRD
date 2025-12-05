@@ -62,8 +62,7 @@ public class PropertyValidator {
                 errors.add("Tipo de propiedad no reconocido: " + type);
         }
 
-        // Validación de precio vs área (común para todos)
-        validatePriceAreaRatio(data, errors);
+        // Minimum price validation removed - no longer validating price/area ratio
 
         return errors;
     }
@@ -179,79 +178,7 @@ public class PropertyValidator {
         }
     }
 
-    /**
-     * Valida que el precio tenga una relación lógica con los metros cuadrados.
-     * Evita valores incoherentes (ej: precio muy bajo o muy alto por m²)
-     * Nota: Todos los precios se manejan en Pesos Dominicanos (DOP/RD$)
-     */
-    private static void validatePriceAreaRatio(Map<String, Object> data, List<String> errors) {
-        Double price = getDouble(data, "price");
-        Double area = getDouble(data, "area");
 
-        if (price == null || area == null || area <= 0) {
-            return; // Ya validado en otras reglas
-        }
-
-        double pricePerSqm = price / area;
-        
-        // Rangos razonables para República Dominicana (RD$/m²)
-        // Nota: 1 USD ≈ 58 DOP (tasa de referencia)
-        String type = getString(data, "type");
-        double minPricePerSqm = 0;
-        double maxPricePerSqm = 0;
-
-        switch (type) {
-            case TYPE_SOLAR:
-            case TYPE_SOLARES:  // Backwards compatibility
-                minPricePerSqm = 500;      // Mínimo RD$500/m² para solares
-                maxPricePerSqm = 290000;   // Máximo RD$290,000/m² para solares premium
-                break;
-            case TYPE_LOCAL_COMERCIAL:
-                minPricePerSqm = 2900;     // Mínimo RD$2,900/m² para locales
-                maxPricePerSqm = 580000;   // Máximo RD$580,000/m² para locales premium
-                break;
-            case TYPE_CASA:
-            case TYPE_APARTAMENTO:
-            case TYPE_PENTHOUSE:
-            case TYPE_VILLA:
-                minPricePerSqm = 5800;     // Mínimo RD$5,800/m² para residencial
-                maxPricePerSqm = 870000;   // Máximo RD$870,000/m² para residencial de lujo
-                break;
-        }
-
-        if (pricePerSqm < minPricePerSqm) {
-            errors.add(String.format(
-                "El precio por m² es muy bajo (RD$%,.2f/m²). Mínimo esperado: RD$%,.0f/m². " +
-                "Ejemplo: Para un %s de %.0f m², el precio mínimo recomendado sería RD$%,.0f",
-                pricePerSqm, minPricePerSqm, getPropertyTypeName(type), area, minPricePerSqm * area
-            ));
-        }
-        if (pricePerSqm > maxPricePerSqm) {
-            errors.add(String.format(
-                "El precio por m² es muy alto (RD$%,.2f/m²). Máximo esperado: RD$%,.0f/m². " +
-                "Ejemplo: Para un %s de %.0f m², el precio máximo recomendado sería RD$%,.0f",
-                pricePerSqm, maxPricePerSqm, getPropertyTypeName(type), area, maxPricePerSqm * area
-            ));
-        }
-    }
-
-    /**
-     * Retorna el nombre descriptivo del tipo de propiedad para mensajes de error
-     */
-    private static String getPropertyTypeName(String type) {
-        if (type == null) return "propiedad";
-        switch (type) {
-            case TYPE_SOLAR:
-            case TYPE_SOLARES:
-                return "solar";
-            case TYPE_CASA: return "casa";
-            case TYPE_APARTAMENTO: return "apartamento";
-            case TYPE_PENTHOUSE: return "penthouse";
-            case TYPE_VILLA: return "villa";
-            case TYPE_LOCAL_COMERCIAL: return "local comercial";
-            default: return "propiedad";
-        }
-    }
 
     /**
      * Verifica si un tipo de propiedad es residencial.
