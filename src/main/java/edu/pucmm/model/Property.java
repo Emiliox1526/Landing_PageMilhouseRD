@@ -28,6 +28,9 @@ public class Property {
     // Precio principal (opcional si usas por unidad)
     private Double price;
     private String priceFormatted;
+    
+    // Precio por metro cuadrado (principalmente para solares)
+    private Double pricePerSqm;
 
     // Resumen general
     private Integer bedrooms;
@@ -78,6 +81,9 @@ public class Property {
 
     public String getPriceFormatted() { return priceFormatted; }
     public void setPriceFormatted(String priceFormatted) { this.priceFormatted = priceFormatted; }
+
+    public Double getPricePerSqm() { return pricePerSqm; }
+    public void setPricePerSqm(Double pricePerSqm) { this.pricePerSqm = pricePerSqm; }
 
     public Integer getBedrooms() { return bedrooms; }
     public void setBedrooms(Integer bedrooms) { this.bedrooms = bedrooms; }

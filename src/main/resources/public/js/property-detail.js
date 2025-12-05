@@ -49,6 +49,12 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         const s = String(t).toLowerCase();
         return ['apartamento','apartamentos','apartment','apto','penthouse','penthouses','ph'].some(k => s.includes(k));
     };
+    
+    const isSolarType = (t) => {
+        if (!t) return false;
+        const s = String(t).toLowerCase();
+        return ['solar', 'solares'].some(k => s.includes(k));
+    };
 
     function renderError(msg='No se pudo cargar la propiedad.'){
         container.innerHTML = `<div class="alert alert-danger my-4">${msg}</div>`;
@@ -152,7 +158,6 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         const code = p.code || (p._id || '').toString().slice(-6).toUpperCase();
         const saleType = (p.saleType || '').toString().trim();         // Venta / Alquiler
 
-
         const imagesRaw = Array.isArray(p.images) ? p.images : [];
         const images = imagesRaw.map(u => toImageUrl(u, API_BASE)).filter(Boolean);
         const mainImg = images[0] || '/assets/img/house.PNG';
@@ -168,6 +173,13 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         const related = Array.isArray(p.related)?p.related:[];
         const propType = (p.type || '').toString().trim();
         const units    = Array.isArray(p.units) ? p.units : [];
+        
+        // Calcular precio por metro cuadrado para solares si no existe
+        let pricePerSqm = p.pricePerSqm;
+        if (!pricePerSqm && isSolarType(propType) && p.price && p.area && p.area > 0) {
+            pricePerSqm = p.price / p.area;
+        }
+        const pricePerSqmText = pricePerSqm ? fmtCurrency(pricePerSqm) : null;
 // ——— Tasas anuales por banco (referencia) ———
 
 
@@ -410,7 +422,13 @@ ${p.descriptionParagraph ? `
             <span class="text-muted d-block mb-1">
               <span style="font-size: 1.2em;">🇩🇴</span> Precio en Pesos Dominicanos
             </span>
-            ${propType === 'Solar' && p.pricePerSqm ? `<div class="small text-muted mb-1">${fmtCurrency(p.pricePerSqm)}/m²</div>` : ''}
+            ${isSolarType(propType) && pricePerSqmText ? `
+              <div class="price-per-sqm-highlight mb-2">
+                <div class="small text-muted mb-1">Precio por Metro Cuadrado</div>
+                <div class="h3 m-0 fw-bold" style="color: var(--mh-blue);">${pricePerSqmText}/m²</div>
+              </div>
+              <div class="small text-muted mb-1">Precio Total</div>
+            ` : ''}
             <div class="h4 m-0 text-primary fw-bold">${priceText}</div>
           </div>`:''}
           <div class="d-grid gap-2">
