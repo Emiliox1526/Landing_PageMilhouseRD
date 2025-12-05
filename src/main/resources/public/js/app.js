@@ -203,35 +203,98 @@ document.addEventListener('DOMContentLoaded', () => {
     /* --- Envío del formulario de contacto vía Fetch (EmailJS API v1.0) --- */
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const params = {
-                service_id:   'service_r1yyn21',
-                template_id:  'template_qkhrmnq',
-                user_id:      'AwfMFTpcQlKMoFh6J',
-                template_params: {
-                    user_name:  this.user_name.value,
-                    user_email: this.user_email.value,
-                    message:    this.message.value
-                }
+        // Definir reglas de validación si FormValidator está disponible
+        if (typeof FormValidator !== 'undefined') {
+            const validationRules = {
+                user_name: [
+                    (value) => FormValidator.validateRequired(value, 'tu nombre'),
+                    (value) => FormValidator.validateLength(value, 'el nombre', { min: 2, max: 100 })
+                ],
+                user_email: [
+                    (value) => FormValidator.validateEmail(value)
+                ],
+                message: [
+                    (value) => FormValidator.validateRequired(value, 'el mensaje'),
+                    (value) => FormValidator.validateLength(value, 'el mensaje', { min: 10, max: 1000 })
+                ]
             };
-            fetch('https://api.emailjs.com/api/v1.0/email/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(params)
-            })
-                .then(res => {
-                    if (res.ok) {
-                        alert('✅ Mensaje enviado correctamente.');
-                        contactForm.reset();
-                    } else {
-                        return res.text().then(text => Promise.reject(text));
-                    }
-                })
-                .catch(err => {
-                    console.error('Error al enviar:', err);
-                    alert('❌ Error al enviar, inténtalo nuevamente.');
-                });
+            
+            // Agregar validación en tiempo real
+            const nameField = contactForm.querySelector('[name="user_name"]');
+            const emailField = contactForm.querySelector('[name="user_email"]');
+            const messageField = contactForm.querySelector('[name="message"]');
+            
+            if (nameField) FormValidator.addLiveValidation(nameField, validationRules.user_name);
+            if (emailField) FormValidator.addLiveValidation(emailField, validationRules.user_email);
+            if (messageField) FormValidator.addLiveValidation(messageField, validationRules.message);
+            
+            // Prevenir envío inválido
+            FormValidator.preventInvalidSubmit(contactForm, validationRules, function() {
+                sendContactForm(contactForm);
+            });
+        } else {
+            // Si no hay FormValidator, usar validación básica
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const userName = this.user_name?.value?.trim() || '';
+                const userEmail = this.user_email?.value?.trim() || '';
+                const message = this.message?.value?.trim() || '';
+                
+                if (!userName) {
+                    alert('Por favor ingresa tu nombre');
+                    return;
+                }
+                if (!userEmail) {
+                    alert('Por favor ingresa tu correo electrónico');
+                    return;
+                }
+                if (!message) {
+                    alert('Por favor ingresa tu mensaje');
+                    return;
+                }
+                
+                sendContactForm(this);
+            });
+        }
+    }
+    
+    function sendContactForm(form) {
+        const params = {
+            service_id:   'service_r1yyn21',
+            template_id:  'template_qkhrmnq',
+            user_id:      'AwfMFTpcQlKMoFh6J',
+            template_params: {
+                user_name:  form.user_name.value,
+                user_email: form.user_email.value,
+                message:    form.message.value
+            }
+        };
+        
+        fetch('https://api.emailjs.com/api/v1.0/email/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(params)
+        })
+        .then(res => {
+            if (res.ok) {
+                if (typeof FormValidator !== 'undefined') {
+                    FormValidator.showGlobalSuccess(form, 'Mensaje enviado correctamente. Te contactaremos pronto.');
+                } else {
+                    alert('✅ Mensaje enviado correctamente.');
+                }
+                form.reset();
+            } else {
+                return res.text().then(text => Promise.reject(text));
+            }
+        })
+        .catch(err => {
+            console.error('Error al enviar:', err);
+            if (typeof FormValidator !== 'undefined') {
+                FormValidator.showGlobalError(form, 'Error al enviar el mensaje. Por favor intenta nuevamente o contáctanos directamente.');
+            } else {
+                alert('❌ Error al enviar, inténtalo nuevamente.');
+            }
         });
     }
 
