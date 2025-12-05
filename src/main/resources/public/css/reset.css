@@ -3,12 +3,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Cinzel', serif; /* Fuente elegante en todo el sitio */
+    font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; /* Fuente moderna y legible en todo el sitio */
 }
 
 body {
-    background-color: #000;
-    color: #fff;
+    background-color: #E7EBF3;
+    color: #0B1220;
     line-height: 1.6;
 }
 html, body {

@@ -1,21 +1,27 @@
-/* Variables */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap');
+/* Variables - Updated with vibrant color palette */
 :root {
-    --vino: #212635;
+    /* Updated vibrant colors matching global.css */
+    --primary: #1E40AF;              /* Vibrant Blue */
+    --primary-light: #3B82F6;        /* Light Blue */
+    --secondary: #10B981;            /* Emerald Green */
+    --accent: #F59E0B;               /* Vibrant Amber */
+    
+    /* Legacy color mappings for compatibility */
+    --vino: #1E40AF;
     --blanco: #ffffff;
     --negro-opa: rgba(0,0,0,0.6);
-    --primary: #212635;
-    --mh-font:    'Montserrat', sans-serif;
-    --mh-gold:    #cfbb9b;
-    --mh-blue:    #7fa1a8;
-    --mh-navy:    #212635;
-    --mh-white:   #ffffff;
-    --mh-stone-white: #E7EBF3;
-    --mh-text-dark: #000000;
-    --color-primary:   #212635;
-    --color-secondary: #7fa1a8;
-    --color-accent:    #cfbb9b;
-    --solvia-red:      #212635;
+    
+    --mh-font: 'Montserrat', sans-serif;
+    --mh-primary: #1E40AF;
+    --mh-secondary: #10B981;
+    --mh-accent: #F59E0B;
+    --mh-white: #ffffff;
+    --mh-stone-white: #F8FAFC;
+    --mh-text-dark: #0B1220;
+    
+    --color-primary: #1E40AF;
+    --color-secondary: #10B981;
+    --color-accent: #F59E0B;
 }
 
 
@@ -35,18 +41,19 @@ main > section {
     background: var(--mh-stone-white) !important;
 }
 .featured-projects .container h2 {
-    margin-top: 2rem;    /* ajusta este valor al espacio que necesites */
-    margin-bottom: 1rem; /* opcional: espacio debajo del H2 */
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+    font-weight: 700;
 }
 .featured-projects .container h2 {
     padding-top: 2rem;
 }
-/* en index.css, tras el @import de Google Fonts */
+/* Fuente consistente */
 body {
-    font-family: 'Roboto Thin', sans-serif;
-    /* opcional: ajusta tamaño y altura de línea global */
+    font-family: 'Montserrat', sans-serif;
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 h1,h2,h3,h4,h5,h6 {

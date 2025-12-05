@@ -1,12 +1,12 @@
 /* header.css */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap');
 
 :root{
     --mh-font:'Montserrat',sans-serif;
-    --mh-gold:#cfbb9b;
-    --mh-blue:#7fa1a8;
-    --mh-navy:#212635;
-    --mh-navy-gradient:#2c3d69;
+    /* Updated vibrant colors */
+    --mh-primary:#1E40AF;           /* Vibrant Blue */
+    --mh-primary-light:#3B82F6;     /* Light Blue */
+    --mh-secondary:#10B981;         /* Emerald Green */
+    --mh-accent:#F59E0B;            /* Vibrant Amber */
     --mh-white:#ffffff;
 }
 
@@ -14,16 +14,16 @@
 .milhouse-brand{ color:#fff; }
 
 body{
-    font-family:'Roboto Thin',sans-serif;
-    font-size:16px; line-height:1.5; color:#000;
+    font-family:'Montserrat',sans-serif;
+    font-size:16px; line-height:1.6; color:#0B1220;
 }
 h1,h2,h3,h4,h5,h6{
     font-family:'Montserrat',sans-serif !important;
-    font-weight:500; color:#000;
+    font-weight:700; color:#1E293B;
 }
 p,li,span,a{
     font-family:'Montserrat',sans-serif !important;
-    font-weight:400; color:#000;
+    font-weight:400; color:#475569;
 }
 
 /* Aplico la fuente globalmente al header/navbar */
@@ -63,9 +63,9 @@ header.site-header .nav-right .nav-link.mh-admin-btn::after {
 /* HEADER pegado arriba */
 header.site-header{ position:fixed; top:0; left:0; width:100%; z-index:2000; }
 
-/* Fondo gradiente */
+/* Fondo gradiente con colores vibrantes */
 .navbar-gradiente{
-    background:linear-gradient(to right,var(--mh-navy-gradient) 0%,var(--mh-navy) 20%,var(--mh-navy) 100%) !important;
+    background:linear-gradient(135deg, var(--mh-primary) 0%, var(--mh-primary-light) 100%) !important;
 }
 
 /* Logo */
@@ -84,11 +84,15 @@ header.site-header{ position:fixed; top:0; left:0; width:100%; z-index:2000; }
     display:flex; align-items:center; gap:2rem;
 }
 .nav-center .nav-link{
-    color:var(--mh-blue) !important; font-weight:600; position:relative; padding-bottom:.5rem; display:flex; align-items:center;
+    color:var(--mh-white) !important; font-weight:600; position:relative; padding-bottom:.5rem; display:flex; align-items:center;
+    transition: all 0.3s ease;
 }
 .nav-center .nav-link ion-icon{ margin-right:.5rem; font-size:1.2rem; vertical-align:middle; }
 .nav-center .nav-link:hover::after,.nav-center .nav-link.active::after{
-    content:""; position:absolute; bottom:0; left:0; width:100%; height:4px; background-color:var(--mh-blue); border-radius:2px;
+    content:""; position:absolute; bottom:0; left:0; width:100%; height:3px; background-color:var(--mh-accent); border-radius:2px;
+}
+.nav-center .nav-link:hover{
+    color:var(--mh-accent) !important;
 }
 
 /* (Solo para menús del centro si los usas) */
