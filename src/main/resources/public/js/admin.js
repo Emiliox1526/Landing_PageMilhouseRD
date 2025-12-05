@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 container.classList.add('d-none');
                 field.removeAttribute('required');
-                field.value = '';  // Limpiar valor cuando se oculta
+                field.value = '';  // Clear value when field is hidden
             }
         };
         
@@ -208,8 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (amenitiesSection) {
                     amenitiesSection.classList.remove('d-none');
                     const amenityLabel = document.querySelector('label[for="amenityInput"]');
-                    if (amenityLabel && !amenityLabel.textContent.includes('comerciales')) {
+                    if (amenityLabel) {
                         amenityLabel.textContent = 'Amenidades (solo comerciales, ej: Estacionamiento, Seguridad)';
+                        amenityLabel.setAttribute('data-original-text', 'Amenidades');
                     }
                 }
                 break;
@@ -229,7 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     amenitiesSection.classList.remove('d-none');
                     const amenityLabel = document.querySelector('label[for="amenityInput"]');
                     if (amenityLabel) {
-                        amenityLabel.textContent = 'Amenidades';
+                        const originalText = amenityLabel.getAttribute('data-original-text') || 'Amenidades';
+                        amenityLabel.textContent = originalText;
                     }
                 }
                 break;

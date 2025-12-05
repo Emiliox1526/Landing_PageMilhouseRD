@@ -23,6 +23,11 @@ public class PropertyValidator {
             TYPE_CASA, TYPE_APARTAMENTO, TYPE_PENTHOUSE, TYPE_VILLA
     );
 
+    // Amenidades residenciales no permitidas en locales comerciales
+    private static final List<String> RESIDENTIAL_AMENITIES = List.of(
+            "Piscina", "Jardín", "Terraza privada", "Balcón", "Cuarto de servicio"
+    );
+
     /**
      * Valida una propiedad según su tipo.
      * @param data Mapa con los datos de la propiedad
@@ -140,16 +145,16 @@ public class PropertyValidator {
         }
 
         // Amenidades residenciales no permitidas
-        @SuppressWarnings("unchecked")
-        List<String> amenities = (List<String>) data.get("amenities");
-        if (amenities != null && !amenities.isEmpty()) {
-            List<String> residentialAmenities = List.of(
-                    "Piscina", "Jardín", "Terraza privada", "Balcón", "Cuarto de servicio"
-            );
-            for (String amenity : amenities) {
-                if (residentialAmenities.stream().anyMatch(ra -> 
-                    amenity.toLowerCase().contains(ra.toLowerCase()))) {
-                    errors.add("Los locales comerciales no deben tener amenidades residenciales como: " + amenity);
+        Object amenitiesObj = data.get("amenities");
+        if (amenitiesObj instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<String> amenities = (List<String>) amenitiesObj;
+            if (!amenities.isEmpty()) {
+                for (String amenity : amenities) {
+                    if (RESIDENTIAL_AMENITIES.stream().anyMatch(ra -> 
+                        amenity.toLowerCase().contains(ra.toLowerCase()))) {
+                        errors.add("Los locales comerciales no deben tener amenidades residenciales como: " + amenity);
+                    }
                 }
             }
         }
