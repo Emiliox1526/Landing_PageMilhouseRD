@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===== Gestión de campos según tipo de propiedad =====
     function getPropertyTypeCategory(type) {
         const t = (type || '').trim();
-        if (t === 'Solares') return 'solar';
+        if (t === 'Solar' || t === 'Solares') return 'solar';  // Soporte para ambos nombres
         if (t === 'Local Comercial') return 'commercial';
         if (['Casa', 'Apartamento', 'Penthouse', 'Villa'].includes(t)) return 'residential';
         return 'unknown';
@@ -178,6 +178,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
+        // Actualizar hint de rango de precios
+        updatePriceHint(type);
+        
         // Aplicar reglas según categoría
         switch (category) {
             case 'solar':
@@ -188,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (areaField) {
                     areaField.setAttribute('required', 'required');
                     const areaLabel = document.querySelector('label[for="area"]');
-                    if (areaLabel) areaLabel.textContent = 'Área del solar (m²)';
+                    if (areaLabel) areaLabel.innerHTML = '📐 Área del solar (m²)';
                 }
                 // Ocultar amenidades para solares
                 if (amenitiesSection) amenitiesSection.classList.add('d-none');
@@ -202,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (areaField) {
                     areaField.setAttribute('required', 'required');
                     const areaLabel = document.querySelector('label[for="area"]');
-                    if (areaLabel) areaLabel.textContent = 'Área del local (m²)';
+                    if (areaLabel) areaLabel.innerHTML = '📐 Área del local (m²)';
                 }
                 // Mostrar amenidades pero con advertencia
                 if (amenitiesSection) {
@@ -223,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (areaField) {
                     areaField.setAttribute('required', 'required');
                     const areaLabel = document.querySelector('label[for="area"]');
-                    if (areaLabel) areaLabel.textContent = 'Área construida (m²)';
+                    if (areaLabel) areaLabel.innerHTML = '📐 Área construida (m²)';
                 }
                 // Mostrar amenidades
                 if (amenitiesSection) {
@@ -247,6 +250,40 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // También aplicar la lógica de unidades
         toggleUnitsUI();
+    }
+
+    // Nueva función para actualizar hint de precio
+    function updatePriceHint(type) {
+        const priceRangeHint = document.getElementById('priceRangeHint');
+        if (!priceRangeHint) return;
+        
+        const area = parseFloat(document.getElementById('area')?.value) || 0;
+        let hint = '';
+        
+        switch (type) {
+            case 'Solar':
+                hint = area > 0 
+                    ? `Rango sugerido: RD$${(area * 500).toLocaleString('es-DO')} - RD$${(area * 290000).toLocaleString('es-DO')} (RD$500-290,000/m²)`
+                    : 'Rango típico: RD$500-290,000/m²';
+                break;
+            case 'Local Comercial':
+                hint = area > 0
+                    ? `Rango sugerido: RD$${(area * 2900).toLocaleString('es-DO')} - RD$${(area * 580000).toLocaleString('es-DO')} (RD$2,900-580,000/m²)`
+                    : 'Rango típico: RD$2,900-580,000/m²';
+                break;
+            case 'Casa':
+            case 'Apartamento':
+            case 'Penthouse':
+            case 'Villa':
+                hint = area > 0
+                    ? `Rango sugerido: RD$${(area * 5800).toLocaleString('es-DO')} - RD$${(area * 870000).toLocaleString('es-DO')} (RD$5,800-870,000/m²)`
+                    : 'Rango típico: RD$5,800-870,000/m²';
+                break;
+            default:
+                hint = '';
+        }
+        
+        priceRangeHint.textContent = hint;
     }
 
     function clearUnitInputs(){
@@ -317,10 +354,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (p?.priceFormatted) return p.priceFormatted;
         if (typeof p?.price === 'number'){
             try{
-                const currency = p?.currency || 'USD';
-                return new Intl.NumberFormat('es-DO',{style:'currency',currency}).format(p.price);
+                const currency = p?.currency || 'DOP';  // Forzar DOP por defecto
+                return new Intl.NumberFormat('es-DO',{style:'currency',currency,minimumFractionDigits:0}).format(p.price);
             }catch{
-                return `$${p.price.toLocaleString()}`;
+                return `RD$${p.price.toLocaleString('es-DO')}`;
             }
         }
         return '';
@@ -620,7 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <td>${Number.isFinite(u.bathrooms)?u.bathrooms:''}</td>
       <td>${Number.isFinite(u.parking)?u.parking:''}</td>
       <td>${Number.isFinite(u.area)?u.area:''}</td>
-      <td>${Number.isFinite(u.price)?new Intl.NumberFormat('es-DO',{style:'currency',currency:'USD'}).format(u.price):''}</td>
+      <td>${Number.isFinite(u.price)?new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',minimumFractionDigits:0}).format(u.price):''}</td>
       <td class="text-end">
         <button type="button" class="btn btn-sm btn-outline-danger" data-action="del">Eliminar</button>
       </td>
@@ -1078,6 +1115,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     typeSelect?.addEventListener('change', ()=>{
         toggleFieldsByPropertyType();
+    });
+    
+    // Actualizar hint de precio cuando cambie el área
+    document.getElementById('area')?.addEventListener('input', ()=>{
+        const type = typeSelect?.value || '';
+        updatePriceHint(type);
     });
 
     pageSizeSelect?.addEventListener('change', ()=>{

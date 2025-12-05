@@ -51,6 +51,22 @@
         .filters-card .card-header{ background:transparent; border:0; padding:0 0 .75rem; }
         .filters-card .title{ font-weight:800; color:var(--mh-ink); margin:0; }
         .filters-card .form-label{ font-weight:500; color:var(--mh-navy); }
+        
+        /* Mejoras de contraste para accesibilidad */
+        .form-text, .text-muted, small.text-muted { 
+            color: #4a5568 !important; 
+            font-weight: 500;
+        }
+        #priceHint, #areaHint, #priceRangeHint {
+            color: #2d3748 !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        #priceRangeHint {
+            color: #059669 !important;
+            font-weight: 600;
+        }
 
         .mh-input,.mh-select{
             border-radius:14px !important; border:1.5px solid var(--mh-line) !important; background:#fff !important;
@@ -232,7 +248,7 @@
                                     <select id="fType" class="form-select mh-select">
                                         <option value="">Todos</option>
                                         <option>Apartamento</option><option>Casa</option><option>Penthouse</option>
-                                        <option>Terreno</option><option>Solares</option><option>Villa</option><option>Local</option>
+                                        <option>Solar</option><option>Villa</option><option>Local Comercial</option>
                                     </select>
                                 </div>
 
@@ -347,7 +363,7 @@
                             <label for="type" class="form-label">Tipo</label>
                             <select id="type" class="form-select" required>
                                 <option value="" disabled selected>Seleccione...</option>
-                                <option>Casa</option><option>Apartamento</option><option>Penthouse</option><option>Solares</option><option>Villa</option><option>Local Comercial</option>
+                                <option>Casa</option><option>Apartamento</option><option>Penthouse</option><option>Solar</option><option>Villa</option><option>Local Comercial</option>
                             </select>
                             <div class="invalid-feedback">Seleccione un tipo.</div>
                         </div>
@@ -362,13 +378,17 @@
                         </div>
                         <div class="col-md-6">
                             <label for="price" class="form-label d-flex align-items-center gap-2">
-                                <span>Precio</span>
+                                <span>💰 Precio (RD$)</span>
                                 <small id="priceAutoNote" class="text-muted d-none">
                                     (se calculará automáticamente por unidades: menor precio)
                                 </small>
                             </label>
-                            <input type="number" class="form-control" id="price" required min="0" step="0.01" />
-                            <div class="invalid-feedback">Ingrese un precio válido.</div>
+                            <input type="number" class="form-control" id="price" required min="0" step="0.01" placeholder="Ej: 2,500,000" />
+                            <small class="form-text text-muted" id="priceHint">
+                                Ingrese el precio total en Pesos Dominicanos (RD$). 
+                                <span id="priceRangeHint"></span>
+                            </small>
+                            <div class="invalid-feedback">Ingrese un precio válido en RD$.</div>
                         </div>
 
                         <div class="col-md-4">
@@ -385,8 +405,9 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="area" class="form-label">Área (m²)</label>
-                            <input type="number" class="form-control" id="area" min="0" step="0.01" />
+                            <label for="area" class="form-label">📐 Área (m²)</label>
+                            <input type="number" class="form-control" id="area" min="0" step="0.01" placeholder="Ej: 150" />
+                            <small class="form-text text-muted" id="areaHint">Ingrese el área en metros cuadrados.</small>
                         </div>
                         <div class="col-md-6">
                             <label for="address" class="form-label">Dirección</label>

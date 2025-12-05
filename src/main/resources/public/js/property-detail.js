@@ -32,9 +32,9 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
     const UPLOADS = `${API_BASE}/uploads`;
 
     // Helpers
-    const fmtCurrency = (v, currency='USD', locale='en-US') =>
+    const fmtCurrency = (v, currency='DOP', locale='es-DO') =>
         (typeof v === 'number' && !Number.isNaN(v))
-            ? new Intl.NumberFormat(locale,{style:'currency',currency,maximumFractionDigits:0}).format(v)
+            ? new Intl.NumberFormat(locale,{style:'currency',currency,minimumFractionDigits:0}).format(v)
             : (typeof v === 'string' ? v : '');
 
     const textOrDash = v => (v ?? '') === '' ? '—' : v;
@@ -406,7 +406,12 @@ ${p.descriptionParagraph ? `
     <div class="col-12 col-lg-4 order-lg-2 ps-lg-0 ms-lg-auto aside-sticky">
       <div class="card section-card w-100">
         <div class="card-body">
-          ${priceText ? `<div class="mb-2"><span class="text-muted">Desde</span><div class="h4 m-0">RD${priceText}</div></div>`:''}
+          ${priceText ? `<div class="mb-2">
+            <span class="text-muted d-block mb-1">
+              <span style="font-size: 1.2em;">🇩🇴</span> Precio en Pesos Dominicanos
+            </span>
+            <div class="h4 m-0 text-primary fw-bold">${priceText}</div>
+          </div>`:''}
           <div class="d-grid gap-2">
             <a class="btn btn-primary" href="tel:+18090000000"><i class="bi bi-telephone-fill me-1"></i> Llamar</a>
             <a class="btn btn-primary" href="https://wa.me/18090000000" target="_blank"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a>
@@ -423,7 +428,7 @@ ${p.descriptionParagraph ? `
 
         (() => {
             const propType      = (p.type || '').toString().trim();
-            const currencyGuess = /\bRD\$|DOP\b/i.test(p.priceFormatted || '') ? 'DOP' : 'USD';
+            const currencyGuess = 'DOP';  // Siempre usar DOP (Pesos Dominicanos)
             const units         = Array.isArray(p.units) ? p.units : [];
             const basePrice     = (typeof p.price === 'number' && p.price > 0) ? p.price : 0;
 
@@ -486,8 +491,8 @@ ${p.descriptionParagraph ? `
     function mountLoanCalculator(root, opts){
         if (!root) return;
 
-        const fmt = (v)=> fmtCurrency(v, opts.currency === 'DOP' ? 'DOP' : 'USD');
-        const sym = (opts.currency === 'DOP') ? 'RD$' : 'RD$';
+        const fmt = (v)=> fmtCurrency(v, 'DOP');  // Siempre DOP
+        const sym = 'RD$';  // Símbolo de Peso Dominicano
 
         const elBank    = root.querySelector('#lcBank');
         const elAprNote = root.querySelector('#lcAprNote');
