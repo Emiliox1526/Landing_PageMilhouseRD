@@ -169,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const t = (type || '').trim();
         if (t === 'Solar' || t === 'Solares') return 'solar';  // Soporte para ambos nombres
         if (t === 'Local Comercial') return 'commercial';
-        if (['Casa', 'Apartamento', 'Penthouse', 'Villa'].includes(t)) return 'residential';
+        if (t === 'Apartamento') return 'apartment';  // Apartamento tiene su propia categoría
+        if (['Casa', 'Penthouse', 'Villa'].includes(t)) return 'residential';
         return 'unknown';
     }
 
@@ -269,6 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(bathroomsField, bathroomsContainer, false, false);
                 setFieldState(parkingField, parkingContainer, false, false);
                 if (areaField) {
+                    const areaContainer = areaField.closest('.col-md-6');
+                    if (areaContainer) areaContainer.classList.remove('d-none');
                     areaField.setAttribute('required', 'required');
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del solar (m²)';
@@ -293,12 +296,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 calculateSolarPrice();
                 break;
                 
+            case 'apartment':
+                // Apartamento: solo habitaciones, baños/parqueos/área van en unidades
+                setFieldState(bedroomsField, bedroomsContainer, true, true);
+                setFieldState(bathroomsField, bathroomsContainer, false, false);  // Oculto, va en unidades
+                setFieldState(parkingField, parkingContainer, false, false);     // Oculto, va en unidades
+                // Ocultar campo de área, va en unidades
+                const areaContainer = areaField?.closest('.col-md-6');
+                if (areaField && areaContainer) {
+                    areaContainer.classList.add('d-none');
+                    areaField.removeAttribute('required');
+                    areaField.value = '';
+                }
+                // Ocultar precio por m² para apartamentos
+                hidePricePerSqmField();
+                // Mostrar amenidades
+                if (amenitiesSection) {
+                    amenitiesSection.classList.remove('d-none');
+                    const amenityLabel = document.querySelector('label[for="amenityInput"]');
+                    if (amenityLabel) {
+                        const originalText = amenityLabel.getAttribute('data-original-text') || 'Amenidades';
+                        amenityLabel.textContent = originalText;
+                    }
+                }
+                break;
+                
             case 'commercial':
                 // Locales comerciales: área, baños opcionales, NO habitaciones
                 setFieldState(bedroomsField, bedroomsContainer, false, false);
                 setFieldState(bathroomsField, bathroomsContainer, false, true);  // Opcional
                 setFieldState(parkingField, parkingContainer, false, true);     // Opcional
                 if (areaField) {
+                    const areaContainer = areaField.closest('.col-md-6');
+                    if (areaContainer) areaContainer.classList.remove('d-none');
                     areaField.setAttribute('required', 'required');
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del local (m²)';
@@ -322,6 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(bathroomsField, bathroomsContainer, true, true);
                 setFieldState(parkingField, parkingContainer, false, true);  // Opcional
                 if (areaField) {
+                    const areaContainer = areaField.closest('.col-md-6');
+                    if (areaContainer) areaContainer.classList.remove('d-none');
                     areaField.setAttribute('required', 'required');
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área construida (m²)';
@@ -344,6 +376,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(bedroomsField, bedroomsContainer, false, true);
                 setFieldState(bathroomsField, bathroomsContainer, false, true);
                 setFieldState(parkingField, parkingContainer, false, true);
+                if (areaField) {
+                    const areaContainer = areaField.closest('.col-md-6');
+                    if (areaContainer) areaContainer.classList.remove('d-none');
+                }
                 // Ocultar precio por m² para no solares
                 hidePricePerSqmField();
                 if (amenitiesSection) amenitiesSection.classList.remove('d-none');
