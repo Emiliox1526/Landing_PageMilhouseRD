@@ -128,6 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
         page: 1,
     };
 
+    // ===== Helper function to clear validation states from all fields =====
+    function clearAllFieldValidationStates(formElement) {
+        if (!formElement) return;
+        
+        const allInputFields = formElement.querySelectorAll('input, select, textarea');
+        allInputFields?.forEach(field => {
+            field.classList.remove('is-invalid', 'is-valid');
+        });
+    }
+
     // ===== Abrir modal (crear) =====
     function supportsUnits(){
         const t = (typeSelect?.value || '').trim();
@@ -278,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Clear Bootstrap validation feedback
                 const feedback = container.querySelector('.invalid-feedback');
-                if (feedback && !feedback.classList.contains('d-none')) {
+                if (feedback) {
                     feedback.style.display = 'none';
                 }
                 
@@ -492,10 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderUnitsList();
         
         // Clear all field values and validation states
-        const allInputFields = form?.querySelectorAll('input, select, textarea');
-        allInputFields?.forEach(field => {
-            field.classList.remove('is-invalid', 'is-valid');
-        });
+        clearAllFieldValidationStates(form);
         
         toggleFieldsByPropertyType();
 
@@ -1218,10 +1225,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Clear validation states from all fields
-        const allInputFields = form?.querySelectorAll('input, select, textarea');
-        allInputFields?.forEach(field => {
-            field.classList.remove('is-invalid', 'is-valid');
-        });
+        clearAllFieldValidationStates(form);
         
         fillFormFromProperty(p);
         const modal = getModal();
