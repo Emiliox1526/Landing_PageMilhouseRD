@@ -128,6 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
         page: 1,
     };
 
+    // ===== Helper function to clear validation states from all fields =====
+    function clearAllFieldValidationStates(formElement) {
+        if (!formElement) return;
+        
+        const allInputFields = formElement.querySelectorAll('input, select, textarea');
+        allInputFields?.forEach(field => {
+            field.classList.remove('is-invalid', 'is-valid');
+        });
+    }
+
     // ===== Abrir modal (crear) =====
     function supportsUnits(){
         const t = (typeSelect?.value || '').trim();
@@ -170,7 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (t === 'Solar' || t === 'Solares') return 'solar';  // Soporte para ambos nombres
         if (t === 'Local Comercial') return 'commercial';
         if (t === 'Apartamento') return 'apartment';  // Apartamento tiene su propia categoría
-        if (['Casa', 'Penthouse', 'Villa'].includes(t)) return 'residential';
+        if (t === 'Penthouse') return 'penthouse';  // Penthouse tiene su propia categoría (similar a apartamento)
+        if (['Casa', 'Villa'].includes(t)) return 'residential';
         return 'unknown';
     }
 
@@ -222,6 +233,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const type = typeSelect?.value || '';
         const category = getPropertyTypeCategory(type);
         
+        // Clear any form-level validation errors when changing types
+        if (form && typeof FormValidator !== 'undefined') {
+            FormValidator.clearFormErrors(form);
+        }
+        
+        // Remove was-validated class to reset Bootstrap validation
+        if (form) {
+            form.classList.remove('was-validated');
+        }
+        
         // Referencias a los campos del formulario
         const bedroomsField = document.getElementById('bedrooms');
         const bathroomsField = document.getElementById('bathrooms');
@@ -256,12 +277,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.classList.add('d-none');
                 field.removeAttribute('required');
                 field.value = '';  // Clear value when field is hidden
-                // Clear validation errors when field is hidden
+                
+                // Clear all validation states and error messages
+                field.classList.remove('is-invalid', 'is-valid');
+                
+                // Clear FormValidator errors if available
                 if (typeof FormValidator !== 'undefined') {
                     FormValidator.clearFieldError(field);
                 }
-                // Also clear Bootstrap validation states
-                field.classList.remove('is-invalid', 'is-valid');
+                
+                // Clear Bootstrap validation feedback
+                const feedback = container.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.style.display = 'none';
+                }
+                
+                // Remove any remaining error indicators
+                const validFeedback = container.querySelector('.valid-feedback');
+                if (validFeedback) {
+                    validFeedback.style.display = 'none';
+                }
             }
         };
         
@@ -313,6 +348,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     setFieldState(areaField, areaContainer, false, false);
                 }
                 // Ocultar precio por m² para apartamentos
+                hidePricePerSqmField();
+                // Mostrar amenidades
+                if (amenitiesSection) {
+                    amenitiesSection.classList.remove('d-none');
+                    const amenityLabel = document.querySelector('label[for="amenityInput"]');
+                    if (amenityLabel) {
+                        const originalText = amenityLabel.getAttribute('data-original-text') || 'Amenidades';
+                        amenityLabel.textContent = originalText;
+                    }
+                }
+                break;
+                
+            case 'penthouse':
+                // Penthouse: igual que apartamento, usa tipologías/unidades
+                setFieldState(bedroomsField, bedroomsContainer, false, false);
+                setFieldState(bathroomsField, bathroomsContainer, false, false);
+                setFieldState(parkingField, parkingContainer, false, false);
+                // Ocultar campo de área
+                if (areaField) {
+                    const areaContainer = areaField.closest('.col-md-6');
+                    setFieldState(areaField, areaContainer, false, false);
+                }
+                // Ocultar precio por m² para penthouses
                 hidePricePerSqmField();
                 // Mostrar amenidades
                 if (amenitiesSection) {
@@ -425,6 +483,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function openCreateModal(){
         form?.reset();
         form?.classList.remove('was-validated');
+        
+        // Clear all validation errors
+        if (typeof FormValidator !== 'undefined') {
+            FormValidator.clearFormErrors(form);
+        }
+        
         editingId = null;
         featuresList = [];
         amenitiesList = [];
@@ -436,6 +500,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // NUEVO: reset tipologías
         unitsList = [];
         renderUnitsList();
+        
+        // Clear all field values and validation states
+        clearAllFieldValidationStates(form);
+        
         toggleFieldsByPropertyType();
 
         modalEl.querySelector('.modal-title').textContent = 'Crear propiedad';
@@ -1150,6 +1218,15 @@ document.addEventListener('DOMContentLoaded', () => {
         editingId = id;
         modalEl.querySelector('.modal-title').textContent = 'Modificar propiedad';
         form?.classList.remove('was-validated');
+        
+        // Clear all validation errors before filling the form
+        if (typeof FormValidator !== 'undefined') {
+            FormValidator.clearFormErrors(form);
+        }
+        
+        // Clear validation states from all fields
+        clearAllFieldValidationStates(form);
+        
         fillFormFromProperty(p);
         const modal = getModal();
         if (modal) {
@@ -1621,6 +1698,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     typeSelect?.addEventListener('change', ()=>{
+        // Clear validation before toggling fields
+        if (form && typeof FormValidator !== 'undefined') {
+            FormValidator.clearFormErrors(form);
+        }
+        
+        // Remove was-validated class when type changes
+        if (form) {
+            form.classList.remove('was-validated');
+        }
+        
         toggleFieldsByPropertyType();
     });
     
