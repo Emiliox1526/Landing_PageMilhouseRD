@@ -142,6 +142,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'unknown';
     }
 
+    // Helper function to hide price per sqm field and restore price field to editable
+    function hidePricePerSqmField() {
+        const pricePerSqmContainer = document.getElementById('pricePerSqmContainer');
+        const pricePerSqmField = document.getElementById('pricePerSqm');
+        const priceAutoCalculated = document.getElementById('priceAutoCalculated');
+        
+        if (pricePerSqmContainer) {
+            pricePerSqmContainer.style.display = 'none';
+            if (pricePerSqmField) {
+                pricePerSqmField.removeAttribute('required');
+                pricePerSqmField.value = '';
+            }
+        }
+        if (priceInput) {
+            priceInput.removeAttribute('readonly');
+            priceInput.style.backgroundColor = '';
+        }
+        if (priceAutoCalculated) {
+            priceAutoCalculated.classList.add('d-none');
+        }
+    }
+
     function toggleFieldsByPropertyType() {
         const type = typeSelect?.value || '';
         const category = getPropertyTypeCategory(type);
@@ -151,6 +173,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const bathroomsField = document.getElementById('bathrooms');
         const parkingField = document.getElementById('parking');
         const areaField = document.getElementById('area');
+        
+        // Referencias a campos específicos de solares
+        const pricePerSqmContainer = document.getElementById('pricePerSqmContainer');
+        const pricePerSqmField = document.getElementById('pricePerSqm');
+        const priceAutoCalculated = document.getElementById('priceAutoCalculated');
         
         // Referencias a los containers de los campos
         const bedroomsContainer = bedroomsField?.closest('.col-md-4');
@@ -184,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Aplicar reglas según categoría
         switch (category) {
             case 'solar':
-                // Solares: solo área y precio
+                // Solares: solo área y precio por m²
                 setFieldState(bedroomsField, bedroomsContainer, false, false);
                 setFieldState(bathroomsField, bathroomsContainer, false, false);
                 setFieldState(parkingField, parkingContainer, false, false);
@@ -193,8 +220,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del solar (m²)';
                 }
+                // Mostrar campo de precio por m² y hacer precio de solo lectura
+                if (pricePerSqmContainer) {
+                    pricePerSqmContainer.style.display = '';
+                    if (pricePerSqmField) {
+                        pricePerSqmField.setAttribute('required', 'required');
+                    }
+                }
+                if (priceInput) {
+                    priceInput.setAttribute('readonly', 'readonly');
+                    priceInput.style.backgroundColor = '#f8f9fa';
+                }
+                if (priceAutoCalculated) {
+                    priceAutoCalculated.classList.remove('d-none');
+                }
                 // Ocultar amenidades para solares
                 if (amenitiesSection) amenitiesSection.classList.add('d-none');
+                // Calcular precio automáticamente
+                calculateSolarPrice();
                 break;
                 
             case 'commercial':
@@ -207,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del local (m²)';
                 }
+                // Ocultar precio por m² para no solares
+                hidePricePerSqmField();
                 // Mostrar amenidades pero con advertencia
                 if (amenitiesSection) {
                     amenitiesSection.classList.remove('d-none');
@@ -228,6 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área construida (m²)';
                 }
+                // Ocultar precio por m² para no solares
+                hidePricePerSqmField();
                 // Mostrar amenidades
                 if (amenitiesSection) {
                     amenitiesSection.classList.remove('d-none');
@@ -244,6 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(bedroomsField, bedroomsContainer, false, true);
                 setFieldState(bathroomsField, bathroomsContainer, false, true);
                 setFieldState(parkingField, parkingContainer, false, true);
+                // Ocultar precio por m² para no solares
+                hidePricePerSqmField();
                 if (amenitiesSection) amenitiesSection.classList.remove('d-none');
                 break;
         }
@@ -262,9 +311,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         switch (type) {
             case 'Solar':
-                hint = area > 0 
-                    ? `Rango sugerido: RD$${(area * 500).toLocaleString('es-DO')} - RD$${(area * 290000).toLocaleString('es-DO')} (RD$500-290,000/m²)`
-                    : 'Rango típico: RD$500-290,000/m²';
+                // Para solares, no mostrar rango de validación, solo informativo
+                hint = 'Ingrese el área y el precio por m². El precio total se calculará automáticamente.';
                 break;
             case 'Local Comercial':
                 hint = area > 0
@@ -284,6 +332,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         priceRangeHint.textContent = hint;
+    }
+
+    // Nueva función para calcular precio de solares automáticamente
+    function calculateSolarPrice() {
+        const type = typeSelect?.value || '';
+        if (type !== 'Solar') return;
+        
+        const areaField = document.getElementById('area');
+        const pricePerSqmField = document.getElementById('pricePerSqm');
+        const priceField = document.getElementById('price');
+        
+        if (!areaField || !pricePerSqmField || !priceField) return;
+        
+        const area = parseFloat(areaField.value) || 0;
+        const pricePerSqm = parseFloat(pricePerSqmField.value) || 0;
+        
+        if (area > 0 && pricePerSqm > 0) {
+            const totalPrice = area * pricePerSqm;
+            priceField.value = totalPrice.toFixed(2);
+        } else {
+            priceField.value = '';
+        }
     }
 
     function clearUnitInputs(){
@@ -794,6 +864,17 @@ document.addEventListener('DOMContentLoaded', () => {
         form.longitude.value = Number.isFinite(plng) ? plng : '';
 
         form.descriptionParagraph.value = p.descriptionParagraph ?? '';
+        
+        // Precio por m² para solares
+        const pricePerSqmField = document.getElementById('pricePerSqm');
+        if (pricePerSqmField && p.pricePerSqm) {
+            pricePerSqmField.value = Number.isFinite(p.pricePerSqm) ? p.pricePerSqm : '';
+        } else if (pricePerSqmField && p.type === 'Solar' && p.area > 0 && p.price > 0) {
+            // Calcular precio por m² si no está guardado pero tenemos área y precio
+            const calculatedPricePerSqm = p.price / p.area;
+            pricePerSqmField.value = Number.isFinite(calculatedPricePerSqm) ? calculatedPricePerSqm.toFixed(2) : '';
+        }
+        
         // tipologia
         unitsList = Array.isArray(p.units) ? p.units.map(u => ({
             id: crypto.randomUUID(),
@@ -901,6 +982,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     amenities: amenitiesList,
                     images
                 };
+                
+                // Añadir pricePerSqm para solares con validación
+                const pricePerSqmField = document.getElementById('pricePerSqm');
+                if (form.type.value === 'Solar' && pricePerSqmField?.value) {
+                    const pricePerSqm = parseFloat(pricePerSqmField.value);
+                    if (!isNaN(pricePerSqm) && pricePerSqm > 0) {
+                        data.pricePerSqm = pricePerSqm;
+                    }
+                }
 
                 Object.keys(data).forEach(k=>{
                     const v = data[k];
@@ -1191,6 +1281,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('area')?.addEventListener('input', ()=>{
         const type = typeSelect?.value || '';
         updatePriceHint(type);
+        // Calcular precio para solares
+        if (type === 'Solar') {
+            calculateSolarPrice();
+        }
+    });
+
+    // Calcular precio automáticamente para solares cuando cambie precio por m²
+    document.getElementById('pricePerSqm')?.addEventListener('input', ()=>{
+        const type = typeSelect?.value || '';
+        if (type === 'Solar') {
+            calculateSolarPrice();
+        }
     });
 
     pageSizeSelect?.addEventListener('change', ()=>{
