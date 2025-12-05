@@ -51,6 +51,22 @@
         .filters-card .card-header{ background:transparent; border:0; padding:0 0 .75rem; }
         .filters-card .title{ font-weight:800; color:var(--mh-ink); margin:0; }
         .filters-card .form-label{ font-weight:500; color:var(--mh-navy); }
+        
+        /* Mejoras de contraste para accesibilidad */
+        .form-text, .text-muted, small.text-muted { 
+            color: #4a5568 !important; 
+            font-weight: 500;
+        }
+        #priceHint, #areaHint, #priceRangeHint {
+            color: #2d3748 !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        #priceRangeHint {
+            color: #059669 !important;
+            font-weight: 600;
+        }
 
         .mh-input,.mh-select{
             border-radius:14px !important; border:1.5px solid var(--mh-line) !important; background:#fff !important;

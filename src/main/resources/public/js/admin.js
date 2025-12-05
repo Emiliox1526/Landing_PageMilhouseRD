@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===== Gestión de campos según tipo de propiedad =====
     function getPropertyTypeCategory(type) {
         const t = (type || '').trim();
-        if (t === 'Solar') return 'solar';  // Cambiado de 'Solares' a 'Solar'
+        if (t === 'Solar' || t === 'Solares') return 'solar';  // Soporte para ambos nombres
         if (t === 'Local Comercial') return 'commercial';
         if (['Casa', 'Apartamento', 'Penthouse', 'Villa'].includes(t)) return 'residential';
         return 'unknown';
