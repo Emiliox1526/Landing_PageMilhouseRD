@@ -256,6 +256,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.classList.add('d-none');
                 field.removeAttribute('required');
                 field.value = '';  // Clear value when field is hidden
+                // Clear validation errors when field is hidden
+                if (typeof FormValidator !== 'undefined') {
+                    FormValidator.clearFieldError(field);
+                }
+                // Also clear Bootstrap validation states
+                field.classList.remove('is-invalid', 'is-valid');
             }
         };
         
@@ -297,8 +303,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
                 
             case 'apartment':
-                // Apartamento: solo habitaciones, baños/parqueos/área van en unidades
-                setFieldState(bedroomsField, bedroomsContainer, true, true);
+                // Apartamento: habitaciones, baños, parqueos y área van en unidades (tipologías)
+                setFieldState(bedroomsField, bedroomsContainer, false, false);   // Oculto, va en unidades
                 setFieldState(bathroomsField, bathroomsContainer, false, false);  // Oculto, va en unidades
                 setFieldState(parkingField, parkingContainer, false, false);     // Oculto, va en unidades
                 // Ocultar campo de área, va en unidades
@@ -307,6 +313,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     areaContainer.classList.add('d-none');
                     areaField.removeAttribute('required');
                     areaField.value = '';
+                    // Clear validation errors for area field
+                    if (typeof FormValidator !== 'undefined') {
+                        FormValidator.clearFieldError(areaField);
+                    }
                 }
                 // Ocultar precio por m² para apartamentos
                 hidePricePerSqmField();
@@ -1310,9 +1320,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     type: form.type.value,
                     saleType: form.saleType.value,
                     price: parseFloat(form.price.value.replace(/[^0-9.]/g,'')),
-                    bedrooms: parseInt(form.bedrooms.value,10),
-                    bathrooms: parseInt(form.bathrooms.value,10),
-                    parking: parseInt(form.parking.value,10),
+                    bedrooms: form.bedrooms.value ? parseInt(form.bedrooms.value,10) : undefined,
+                    bathrooms: form.bathrooms.value ? parseInt(form.bathrooms.value,10) : undefined,
+                    parking: form.parking.value ? parseInt(form.parking.value,10) : undefined,
                     area: form.area.value ? parseFloat(form.area.value) : undefined,
                     address: form.address.value.trim(),
                     latitude: form.latitude.value ? parseFloat(form.latitude.value) : undefined,
@@ -1334,7 +1344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 Object.keys(data).forEach(k=>{
                     const v = data[k];
-                    if (v === undefined || v === '' || (Array.isArray(v) && v.length===0)) delete data[k];
+                    if (v === undefined || v === '' || (typeof v === 'number' && isNaN(v)) || (Array.isArray(v) && v.length===0)) delete data[k];
                 });
                 if (supportsUnits() && unitsList.length){
                     // fuerza precio auto por menor unidad
