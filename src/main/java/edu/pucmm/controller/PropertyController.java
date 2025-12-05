@@ -127,12 +127,23 @@ public class PropertyController {
         catch (IllegalArgumentException e) { throw new BadRequestResponse("ID inválido"); }
     }
 
+    /**
+     * Construye un documento MongoDB desde el cuerpo de la petición.
+     * 
+     * Para propiedades tipo Solar/Solares:
+     * - Si no se proporciona pricePerSqm pero sí price y area, se calcula automáticamente
+     * - El cálculo es: pricePerSqm = price / area
+     * 
+     * @param body Map con los datos de la propiedad
+     * @return Document de MongoDB con los campos procesados
+     */
     private Document buildDocFromBody(Map<String, Object> body) {
         Number price     = toNumber(body.get("price"));
+        Number pricePerSqm = toNumber(body.get("pricePerSqm"));
         Integer bedrooms = toInteger(body.get("bedrooms"));
         Integer bathrooms= toInteger(body.get("bathrooms"));
         Integer parking  = toInteger(body.get("parking"));
-        Integer area     = toInteger(body.get("area"));
+        Double area      = toDouble(body.get("area"));  // Changed to Double to match Property model
         Double latitude  = toDouble(body.get("latitude"));
         Double longitude = toDouble(body.get("longitude"));
 
@@ -142,6 +153,12 @@ public class PropertyController {
 
         Object unitsObj = body.get("units");
         List<?> units = (unitsObj instanceof List) ? (List<?>) unitsObj : null;
+        
+        // Calcular pricePerSqm para solares si no se proporciona explícitamente
+        String type = body.get("type") != null ? String.valueOf(body.get("type")).trim() : "";
+        if (isSolarType(type) && pricePerSqm == null && price != null && area != null && area > 0) {
+            pricePerSqm = price.doubleValue() / area;
+        }
 
         Document doc = new Document();
         putIfNotBlank(doc, "title", body.get("title"));
@@ -151,6 +168,7 @@ public class PropertyController {
         putIfNotBlank(doc, "descriptionParagraph", body.get("descriptionParagraph"));
 
         if (price != null)     doc.append("price", price);
+        if (pricePerSqm != null) doc.append("pricePerSqm", pricePerSqm);
         if (bedrooms != null)  doc.append("bedrooms", bedrooms);
         if (bathrooms != null) doc.append("bathrooms", bathrooms);
         if (parking != null)   doc.append("parking", parking);
@@ -207,5 +225,17 @@ public class PropertyController {
         Document d = collection.find(Filters.eq("_id", oid)).first();
         if (d == null) throw new NotFoundResponse("No existe");
         return d;
+    }
+    
+    /**
+     * Verifica si el tipo de propiedad es Solar o Solares
+     * 
+     * @param type Tipo de propiedad (ej: "Solar", "Solares", "Casa", etc.)
+     * @return true si es tipo Solar/Solares, false en caso contrario
+     */
+    private boolean isSolarType(String type) {
+        if (type == null) return false;
+        String normalized = type.trim();
+        return "Solar".equalsIgnoreCase(normalized) || "Solares".equalsIgnoreCase(normalized);
     }
 }

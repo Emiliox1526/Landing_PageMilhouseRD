@@ -28,6 +28,14 @@ public class Property {
     // Precio principal (opcional si usas por unidad)
     private Double price;
     private String priceFormatted;
+    
+    /**
+     * Precio por metro cuadrado (RD$/m²)
+     * - Principalmente usado para propiedades tipo Solar/Solares
+     * - Se calcula automáticamente si no se proporciona: price / area
+     * - Se muestra destacado en la pantalla de detalles para solares
+     */
+    private Double pricePerSqm;
 
     // Resumen general
     private Integer bedrooms;
@@ -78,6 +86,9 @@ public class Property {
 
     public String getPriceFormatted() { return priceFormatted; }
     public void setPriceFormatted(String priceFormatted) { this.priceFormatted = priceFormatted; }
+
+    public Double getPricePerSqm() { return pricePerSqm; }
+    public void setPricePerSqm(Double pricePerSqm) { this.pricePerSqm = pricePerSqm; }
 
     public Integer getBedrooms() { return bedrooms; }
     public void setBedrooms(Integer bedrooms) { this.bedrooms = bedrooms; }

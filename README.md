@@ -2,6 +2,24 @@
 
 Sistema de administración de propiedades inmobiliarias con soporte avanzado de subida de imágenes.
 
+## 🏖️ Características de Propiedades Tipo Solar
+
+### Precio por Metro Cuadrado
+
+Para propiedades de tipo **Solar** o **Solares**, el sistema incluye funcionalidad especial para mostrar el precio por metro cuadrado:
+
+- **Cálculo Automático**: Si no se especifica, el sistema calcula automáticamente el precio por m² dividiendo el precio total entre el área
+- **Visualización Destacada**: En la pantalla de detalles, el precio por m² se muestra prominentemente arriba del precio total
+- **Formato Claro**: Se presenta en formato de moneda dominicana (RD$) con la etiqueta "/m²"
+- **Sin Afectar Otros Tipos**: Esta funcionalidad solo aplica a propiedades tipo Solar/Solares, sin modificar la visualización de otros tipos
+
+#### Ejemplo de Uso
+
+Al crear o editar una propiedad tipo Solar:
+1. El campo `pricePerSqm` puede especificarse manualmente en el backend
+2. Si no se especifica, se calcula automáticamente: `pricePerSqm = price / area`
+3. En la página de detalles, se muestra destacado con un fondo de color y borde distintivo
+
 ## 📸 Sistema de Subida de Imágenes
 
 ### Características
