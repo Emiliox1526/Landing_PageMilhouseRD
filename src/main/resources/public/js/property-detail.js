@@ -204,7 +204,7 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
   <div class="row align-items-start gx-lg-4">
 <!-- Stats -->
       <div class="row g-3 my-2">
-  <div class="col-6 col-sm-3">
+  ${propType !== 'Solar' ? `<div class="col-6 col-sm-3">
     <div class="stat">
       <div class="h5 m-0">
         <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#ecbb6c" style="vertical-align:middle;margin-right:5px">
@@ -239,7 +239,7 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
   <div class="lbl">Parqueos</div>
 </div>
 
-  </div>
+  </div>` : ''}
 
   <div class="col-6 col-sm-3">
     <div class="stat">
