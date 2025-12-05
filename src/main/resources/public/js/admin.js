@@ -268,6 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (visible) {
                 container.classList.remove('d-none');
+                field.removeAttribute('disabled');  // Enable field when visible
                 if (required) {
                     field.setAttribute('required', 'required');
                 } else {
@@ -276,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 container.classList.add('d-none');
                 field.removeAttribute('required');
+                field.setAttribute('disabled', 'disabled');  // Disable field when hidden to prevent validation
                 field.value = '';  // Clear value when field is hidden
                 
                 // Clear all validation states and error messages
@@ -312,8 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, false);
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
-                    areaField.setAttribute('required', 'required');
+                    setFieldState(areaField, areaContainer, true, true);  // Use setFieldState to properly enable the field
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del solar (m²)';
                 }
@@ -390,8 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, true);     // Opcional
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
-                    areaField.setAttribute('required', 'required');
+                    setFieldState(areaField, areaContainer, true, true);  // Use setFieldState to properly enable the field
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del local (m²)';
                 }
@@ -415,8 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, true);  // Opcional
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
-                    areaField.setAttribute('required', 'required');
+                    setFieldState(areaField, areaContainer, true, true);  // Use setFieldState to properly enable the field
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área construida (m²)';
                 }
@@ -440,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, true);
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
+                    setFieldState(areaField, areaContainer, false, true);  // Use setFieldState to properly enable the field
                 }
                 // Ocultar precio por m² para no solares
                 hidePricePerSqmField();
