@@ -356,6 +356,167 @@ public class PropertyValidatorTest {
         assertFalse(PropertyValidator.isCommercialType("Solares"));
     }
 
+    // ========== Tests para Apartamento/Penthouse con Unidades ==========
+    
+    @Test
+    public void testApartamento_WithUnits_Valid() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Apartamento");
+        data.put("title", "Edificio con apartamentos");
+        data.put("saleType", "Venta");
+        data.put("price", 3500000.0);  // Precio del apartamento más económico
+        
+        // Unidades con sus características
+        List<Map<String, Object>> units = List.of(
+            Map.of("name", "Tipo A", "bedrooms", 2, "bathrooms", 2, "area", 85.0, "price", 3500000.0),
+            Map.of("name", "Tipo B", "bedrooms", 3, "bathrooms", 2, "area", 120.0, "price", 4200000.0)
+        );
+        data.put("units", units);
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertTrue("Un apartamento con unidades válidas no debe tener errores", errors.isEmpty());
+    }
+    
+    @Test
+    public void testPenthouse_WithUnits_Valid() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Penthouse");
+        data.put("title", "Penthouse de lujo");
+        data.put("saleType", "Venta");
+        data.put("price", 15000000.0);
+        
+        List<Map<String, Object>> units = List.of(
+            Map.of("name", "PH-A", "bedrooms", 3, "bathrooms", 3, "area", 250.0, "price", 15000000.0),
+            Map.of("name", "PH-B", "bedrooms", 4, "bathrooms", 4, "area", 300.0, "price", 18000000.0)
+        );
+        data.put("units", units);
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertTrue("Un penthouse con unidades válidas no debe tener errores", errors.isEmpty());
+    }
+    
+    @Test
+    public void testApartamento_WithUnits_NoRootLevelFieldsRequired() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Apartamento");
+        data.put("title", "Apartamentos modernos");
+        data.put("saleType", "Venta");
+        data.put("price", 2800000.0);
+        // NO se incluyen bedrooms, bathrooms, area a nivel raíz
+        
+        List<Map<String, Object>> units = List.of(
+            Map.of("name", "Estudio", "bedrooms", 0, "bathrooms", 1, "area", 45.0, "price", 2800000.0),
+            Map.of("name", "1 habitación", "bedrooms", 1, "bathrooms", 1, "area", 60.0, "price", 3200000.0)
+        );
+        data.put("units", units);
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertTrue("Apartamento con unidades no debe requerir bedrooms/bathrooms/area a nivel raíz", 
+                   errors.isEmpty());
+    }
+    
+    @Test
+    public void testApartamento_WithEmptyUnits_ShouldFail() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Apartamento");
+        data.put("title", "Apartamento");
+        data.put("saleType", "Venta");
+        data.put("price", 3500000.0);
+        data.put("units", List.of());  // Array vacío
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertFalse("Apartamento con array de unidades vacío debe fallar", errors.isEmpty());
+        assertTrue("Debe requerir al menos una unidad", 
+                   errors.stream().anyMatch(e -> e.toLowerCase().contains("unidad")));
+    }
+    
+    @Test
+    public void testApartamento_WithIncompleteUnit_ShouldFail() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Apartamento");
+        data.put("title", "Apartamento");
+        data.put("saleType", "Venta");
+        data.put("price", 3500000.0);
+        
+        // Unidad sin area
+        List<Map<String, Object>> units = List.of(
+            Map.of("name", "Tipo A", "bedrooms", 2, "bathrooms", 2)
+        );
+        data.put("units", units);
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertFalse("Unidad sin área debe fallar", errors.isEmpty());
+        assertTrue("Debe contener error sobre área en la unidad", 
+                   errors.stream().anyMatch(e -> e.toLowerCase().contains("área")));
+    }
+    
+    @Test
+    public void testApartamento_WithoutUnits_Legacy_RequiresRootFields() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Apartamento");
+        data.put("title", "Apartamento individual");
+        data.put("saleType", "Venta");
+        data.put("price", 3500000.0);
+        // NO hay campo units - caso legacy
+        data.put("bedrooms", 2);
+        data.put("bathrooms", 2);
+        data.put("area", 85.0);
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertTrue("Apartamento legacy con campos a nivel raíz debe ser válido", errors.isEmpty());
+    }
+    
+    @Test
+    public void testApartamento_WithoutUnits_Legacy_MissingFields_ShouldFail() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Apartamento");
+        data.put("title", "Apartamento");
+        data.put("saleType", "Venta");
+        data.put("price", 3500000.0);
+        // NO hay campo units NI campos a nivel raíz
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertFalse("Apartamento legacy sin campos debe fallar", errors.isEmpty());
+        
+        // Verificar errores requeridos en una sola pasada
+        String errorsText = String.join(" ", errors);
+        assertTrue("Debe contener error sobre habitaciones", errorsText.contains("habitaciones"));
+        assertTrue("Debe contener error sobre baños", errorsText.contains("baños"));
+        assertTrue("Debe contener error sobre área", errorsText.contains("área"));
+    }
+    
+    @Test
+    public void testPenthouse_WithoutUnits_Legacy_Valid() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Penthouse");
+        data.put("title", "Penthouse exclusivo");
+        data.put("saleType", "Venta");
+        data.put("bedrooms", 3);
+        data.put("bathrooms", 3);
+        data.put("area", 200.0);
+        data.put("price", 14500000.0);
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertTrue("Penthouse legacy con campos a nivel raíz debe ser válido", errors.isEmpty());
+    }
+    
+    @Test
+    public void testCasa_AlwaysRequiresRootFields() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Casa");
+        data.put("title", "Casa");
+        data.put("saleType", "Venta");
+        data.put("price", 5000000.0);
+        // Casa no soporta unidades, siempre debe tener campos a nivel raíz
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertFalse("Casa sin campos a nivel raíz debe fallar", errors.isEmpty());
+        assertTrue("Debe contener errores sobre campos requeridos", 
+                   errors.stream().anyMatch(e -> e.contains("habitaciones") || 
+                                                 e.contains("baños") || 
+                                                 e.contains("área")));
+    }
+
     // ========== Test para nombre unificado "Solar" ==========
     
     @Test

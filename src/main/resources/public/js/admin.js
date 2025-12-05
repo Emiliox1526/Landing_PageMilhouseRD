@@ -1437,6 +1437,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         price: Number.isFinite(u.price) ? u.price : undefined
                     }));
                     data.price = mu; // precio del anuncio = menor unidad
+                    // Para Apartamento/Penthouse con unidades, no enviar bedrooms/bathrooms/area a nivel raíz
+                    delete data.bedrooms;
+                    delete data.bathrooms;
+                    delete data.area;
                 } else {
                     // si el tipo no soporta tipologías, no enviar units
                     if ('units' in data) delete data.units;

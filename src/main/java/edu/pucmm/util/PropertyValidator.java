@@ -107,26 +107,41 @@ public class PropertyValidator {
      * Valida una propiedad residencial (casa, apartamento, villa, penthouse).
      * - Requiere: habitaciones, baños, área construida, precio en RD$
      * - Permite: amenidades relevantes
+     * - Para Apartamento/Penthouse con unidades/tipologías:
+     *   Los campos bedrooms, bathrooms, area son opcionales a nivel raíz,
+     *   pero se requieren dentro de cada unidad.
      */
     private static void validateResidential(Map<String, Object> data, List<String> errors) {
-        // Campos requeridos
-        Integer bedrooms = getInteger(data, "bedrooms");
-        Integer bathrooms = getInteger(data, "bathrooms");
-        Double area = getDouble(data, "area");
-        Double price = getDouble(data, "price");
+        String type = getString(data, "type");
+        boolean hasUnits = hasUnits(data);
+        boolean isApartmentOrPenthouse = TYPE_APARTAMENTO.equals(type) || TYPE_PENTHOUSE.equals(type);
+        
+        // Para Apartamento/Penthouse con unidades, no exigir campos a nivel raíz
+        if (isApartmentOrPenthouse && hasUnits) {
+            // Validar que cada unidad tenga los campos requeridos
+            validateUnits(data, errors);
+        } else {
+            // Caso legacy o propiedades sin unidades: exigir campos a nivel raíz
+            Integer bedrooms = getInteger(data, "bedrooms");
+            Integer bathrooms = getInteger(data, "bathrooms");
+            Double area = getDouble(data, "area");
 
-        if (bedrooms == null || bedrooms < 0) {
-            errors.add("El número de habitaciones es requerido y debe ser mayor o igual a 0. " +
-                      "Ejemplo: ingrese 3 para una propiedad de 3 habitaciones, o 0 para un estudio");
+            if (bedrooms == null || bedrooms < 0) {
+                errors.add("El número de habitaciones es requerido y debe ser mayor o igual a 0. " +
+                          "Ejemplo: ingrese 3 para una propiedad de 3 habitaciones, o 0 para un estudio");
+            }
+            if (bathrooms == null || bathrooms <= 0) {
+                errors.add("El número de baños es requerido y debe ser mayor a 0. " +
+                          "Ejemplo: ingrese 2 para una propiedad con 2 baños completos");
+            }
+            if (area == null || area <= 0) {
+                errors.add("El área construida es requerida y debe ser mayor a 0 m². " +
+                          "Ejemplo: ingrese 150 para una casa de 150 m² construidos");
+            }
         }
-        if (bathrooms == null || bathrooms <= 0) {
-            errors.add("El número de baños es requerido y debe ser mayor a 0. " +
-                      "Ejemplo: ingrese 2 para una propiedad con 2 baños completos");
-        }
-        if (area == null || area <= 0) {
-            errors.add("El área construida es requerida y debe ser mayor a 0 m². " +
-                      "Ejemplo: ingrese 150 para una casa de 150 m² construidos");
-        }
+        
+        // El precio siempre es requerido
+        Double price = getDouble(data, "price");
         if (price == null || price <= 0) {
             errors.add("El precio es requerido y debe ser mayor a 0. " +
                       "Ingrese el precio total en Pesos Dominicanos (RD$). " +
@@ -247,5 +262,69 @@ public class PropertyValidator {
         }
         String str = String.valueOf(value).trim();
         return !str.isEmpty();
+    }
+
+    /**
+     * Verifica si la propiedad tiene unidades/tipologías.
+     * Se considera que tiene unidades si el array "units" o "tipologias" 
+     * existe como clave (incluso si está vacío), lo que indica que
+     * el usuario intenta usar el modo de unidades.
+     */
+    private static boolean hasUnits(Map<String, Object> data) {
+        return data.containsKey("units") || data.containsKey("tipologias");
+    }
+
+    /**
+     * Valida el array de unidades/tipologías para propiedades tipo Apartamento/Penthouse.
+     * Cada unidad debe tener: bedrooms >= 0, bathrooms > 0, area > 0
+     */
+    private static void validateUnits(Map<String, Object> data, List<String> errors) {
+        Object unitsObj = data.get("units");
+        if (unitsObj == null) {
+            unitsObj = data.get("tipologias");
+        }
+        
+        if (!(unitsObj instanceof List)) {
+            errors.add("Se requiere al menos una unidad/tipología con sus características " +
+                      "(habitaciones, baños, área). Agregue las unidades disponibles.");
+            return;
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> units = (List<Map<String, Object>>) unitsObj;
+        
+        if (units.isEmpty()) {
+            errors.add("Se requiere al menos una unidad/tipología con sus características " +
+                      "(habitaciones, baños, área). Agregue las unidades disponibles.");
+            return;
+        }
+        
+        for (int i = 0; i < units.size(); i++) {
+            Object unitObj = units.get(i);
+            if (!(unitObj instanceof Map)) {
+                continue; // Saltar elementos inválidos
+            }
+            
+            @SuppressWarnings("unchecked")
+            Map<String, Object> unit = (Map<String, Object>) unitObj;
+            String unitName = getString(unit, "name");
+            String unitLabel = unitName != null && !unitName.isEmpty() 
+                ? "Unidad '" + unitName + "'" 
+                : "Unidad #" + (i + 1);
+            
+            Integer bedrooms = getInteger(unit, "bedrooms");
+            Integer bathrooms = getInteger(unit, "bathrooms");
+            Double area = getDouble(unit, "area");
+            
+            if (bedrooms == null || bedrooms < 0) {
+                errors.add(unitLabel + ": El número de habitaciones es requerido y debe ser >= 0");
+            }
+            if (bathrooms == null || bathrooms <= 0) {
+                errors.add(unitLabel + ": El número de baños es requerido y debe ser > 0");
+            }
+            if (area == null || area <= 0) {
+                errors.add(unitLabel + ": El área construida es requerida y debe ser > 0 m²");
+            }
+        }
     }
 }
