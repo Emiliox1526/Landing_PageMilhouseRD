@@ -99,7 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageDropZone  = document.getElementById('imageDropZone');
     const uploadProgress = document.getElementById('uploadProgress');
 
-    const getModal = () => new bootstrap.Modal(modalEl);
+    // Initialize Bootstrap Modal instance once and reuse it
+    let propertyModal = null;
+    const getModal = () => {
+        if (!propertyModal && modalEl) {
+            propertyModal = new bootstrap.Modal(modalEl);
+        }
+        return propertyModal;
+    };
 
     // ===== Estado =====
     let editingId = null;
@@ -185,6 +192,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (priceAutoCalculated) {
             priceAutoCalculated.classList.add('d-none');
+        }
+    }
+
+    // Helper function to update price hint based on property type
+    function updatePriceHint(type) {
+        const priceHintEl = document.getElementById('priceHint');
+        if (!priceHintEl) return;
+        
+        const category = getPropertyTypeCategory(type);
+        switch (category) {
+            case 'solar':
+                priceHintEl.textContent = 'El precio se calculará automáticamente (área × precio por m²).';
+                break;
+            case 'commercial':
+                priceHintEl.textContent = 'Ingrese el precio total del local comercial en Pesos Dominicanos (RD$).';
+                break;
+            case 'residential':
+                priceHintEl.textContent = 'Ingrese el precio total de la propiedad en Pesos Dominicanos (RD$).';
+                break;
+            default:
+                priceHintEl.textContent = 'Ingrese el precio total en Pesos Dominicanos (RD$).';
+                break;
         }
     }
 
@@ -370,7 +399,12 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleFieldsByPropertyType();
 
         modalEl.querySelector('.modal-title').textContent = 'Crear propiedad';
-        getModal().show();
+        const modal = getModal();
+        if (modal) {
+            modal.show();
+        } else {
+            console.error('[ADMIN] No se pudo abrir el modal: Bootstrap Modal no disponible');
+        }
     }
 
     btnOpenCreateToolbar?.addEventListener('click', openCreateModal);
@@ -1077,7 +1111,12 @@ document.addEventListener('DOMContentLoaded', () => {
         modalEl.querySelector('.modal-title').textContent = 'Modificar propiedad';
         form?.classList.remove('was-validated');
         fillFormFromProperty(p);
-        getModal().show();
+        const modal = getModal();
+        if (modal) {
+            modal.show();
+        } else {
+            console.error('[ADMIN] No se pudo abrir el modal: Bootstrap Modal no disponible');
+        }
         setTimeout(() => { map?.invalidateSize(); }, 50);
     }
 
@@ -1320,7 +1359,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Cerrar modal después de un breve delay para que se vea el mensaje de éxito
                     setTimeout(() => {
-                        getModal().hide();
+                        const modal = getModal();
+                        if (modal) {
+                            modal.hide();
+                        }
                     }, 1500);
                     
                     if (marker){ marker.remove(); marker = null; }
