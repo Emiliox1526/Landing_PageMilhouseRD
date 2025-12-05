@@ -29,7 +29,12 @@ public class Property {
     private Double price;
     private String priceFormatted;
     
-    // Precio por metro cuadrado (principalmente para solares)
+    /**
+     * Precio por metro cuadrado (RD$/m²)
+     * - Principalmente usado para propiedades tipo Solar/Solares
+     * - Se calcula automáticamente si no se proporciona: price / area
+     * - Se muestra destacado en la pantalla de detalles para solares
+     */
     private Double pricePerSqm;
 
     // Resumen general

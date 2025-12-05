@@ -50,6 +50,11 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         return ['apartamento','apartamentos','apartment','apto','penthouse','penthouses','ph'].some(k => s.includes(k));
     };
     
+    /**
+     * Verifica si una propiedad es de tipo Solar/Solares
+     * @param {string} t - Tipo de propiedad
+     * @returns {boolean} true si es tipo Solar/Solares, false en caso contrario
+     */
     const isSolarType = (t) => {
         if (!t) return false;
         const s = String(t).toLowerCase();
@@ -174,7 +179,12 @@ console.info(`[DETAIL] Script cargado @ ${new Date().toISOString()}`);
         const propType = (p.type || '').toString().trim();
         const units    = Array.isArray(p.units) ? p.units : [];
         
-        // Calcular precio por metro cuadrado para solares si no existe
+        /**
+         * Calcular precio por metro cuadrado para solares si no existe
+         * - Se calcula dividiendo el precio total entre el área
+         * - Solo aplica para propiedades tipo Solar/Solares
+         * - Se muestra destacado arriba del precio total
+         */
         let pricePerSqm = p.pricePerSqm;
         if (!pricePerSqm && isSolarType(propType) && p.price && p.area && p.area > 0) {
             pricePerSqm = p.price / p.area;
