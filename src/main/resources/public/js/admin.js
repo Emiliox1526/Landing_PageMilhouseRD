@@ -864,8 +864,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form){
         form.addEventListener('submit', async (e)=>{
             e.preventDefault();
+            
+            // Limpiar errores anteriores
+            if (typeof FormValidator !== 'undefined') {
+                FormValidator.clearFormErrors(form);
+            }
+            
             form.classList.add('was-validated');
-            if (!form.checkValidity()) return;
+            if (!form.checkValidity()) {
+                // Mostrar mensaje de error global usando FormValidator si está disponible
+                if (typeof FormValidator !== 'undefined') {
+                    FormValidator.showGlobalError(form, 'Por favor completa todos los campos requeridos antes de guardar');
+                } else {
+                    alert('Por favor completa todos los campos requeridos');
+                }
+                return;
+            }
 
             try{
                 const images = await getImagesForPayload();
@@ -896,7 +910,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // fuerza precio auto por menor unidad
                     const mu = minUnitPrice();
                     if (mu == null){
-                        alert('Agrega al menos una unidad con precio.');
+                        if (typeof FormValidator !== 'undefined') {
+                            FormValidator.showGlobalError(form, 'Agrega al menos una unidad con precio válido');
+                        } else {
+                            alert('Agrega al menos una unidad con precio.');
+                        }
                         return;
                     }
                     data.units = unitsList.map(u => ({
@@ -926,7 +944,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (res.ok){
                     await res.json().catch(()=>null);
-                    alert(editingId ? 'Propiedad actualizada' : 'Propiedad guardada correctamente');
+                    
+                    if (typeof FormValidator !== 'undefined') {
+                        FormValidator.showGlobalSuccess(form, editingId ? 'Propiedad actualizada correctamente' : 'Propiedad guardada correctamente');
+                    } else {
+                        alert(editingId ? 'Propiedad actualizada' : 'Propiedad guardada correctamente');
+                    }
+                    
                     editingId = null;
                     form.reset();
                     form.classList.remove('was-validated');
@@ -938,26 +962,72 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearSelectedFiles();
                     renderChipLists();
                     renderImagePreview();
-                    getModal().hide();
+                    
+                    // Cerrar modal después de un breve delay para que se vea el mensaje de éxito
+                    setTimeout(() => {
+                        getModal().hide();
+                    }, 1500);
+                    
                     if (marker){ marker.remove(); marker = null; }
                     await loadCards();
                 }else{
-                    let msg = editingId ? 'Error al actualizar' : 'Error al guardar';
+                    let msg = editingId ? 'Error al actualizar la propiedad' : 'Error al guardar la propiedad';
+                    let errorsList = [];
+                    
                     try{
                         const err = await res.json();
                         if (err?.errors && Array.isArray(err.errors)) {
-                            msg += ':\n\n' + err.errors.map((e, i) => `${i + 1}. ${e}`).join('\n');
+                            errorsList = err.errors;
+                            msg = errorsList[0]; // Mostrar el primer error como mensaje principal
+                            
+                            if (typeof FormValidator !== 'undefined') {
+                                // Mostrar mensaje global
+                                FormValidator.showGlobalError(form, msg);
+                                
+                                // Si hay más errores, agregarlos como una lista
+                                if (errorsList.length > 1) {
+                                    const existingAlert = form.querySelector('.validation-alert');
+                                    if (existingAlert) {
+                                        const errorListHtml = '<ul class="mt-2 mb-0">' + 
+                                            errorsList.map(e => `<li>${e}</li>`).join('') + 
+                                            '</ul>';
+                                        existingAlert.innerHTML = existingAlert.innerHTML.replace('</button>', '</button>' + errorListHtml);
+                                    }
+                                }
+                            } else {
+                                msg += ':\n\n' + errorsList.map((e, i) => `${i + 1}. ${e}`).join('\n');
+                                alert(msg);
+                            }
                         } else if (err?.message) {
                             msg += ': ' + err.message;
+                            if (typeof FormValidator !== 'undefined') {
+                                FormValidator.showGlobalError(form, msg);
+                            } else {
+                                alert(msg);
+                            }
                         }
                     }catch{
-                        msg += ` (status ${res.status})`;
+                        msg += ` (código de error ${res.status})`;
+                        if (typeof FormValidator !== 'undefined') {
+                            FormValidator.showGlobalError(form, msg);
+                        } else {
+                            alert(msg);
+                        }
                     }
-                    alert(msg);
+                    
+                    // Si no usamos FormValidator, mostrar alert tradicional
+                    if (typeof FormValidator === 'undefined' && errorsList.length === 0) {
+                        alert(msg);
+                    }
                 }
             }catch(err){
                 console.error('[ADMIN] Submit error:', err);
-                alert('Error procesando imágenes o enviando datos.');
+                const errorMsg = 'Error al procesar las imágenes o enviar los datos. Por favor intenta nuevamente.';
+                if (typeof FormValidator !== 'undefined') {
+                    FormValidator.showGlobalError(form, errorMsg);
+                } else {
+                    alert(errorMsg);
+                }
             }
         });
     }
