@@ -376,11 +376,22 @@
                             </select>
                             <div class="invalid-feedback">Seleccione venta o alquiler.</div>
                         </div>
-                        <div class="col-md-6">
+                        <!-- Campo de precio por m² para solares -->
+                        <div class="col-md-6" id="pricePerSqmContainer" style="display: none;">
+                            <label for="pricePerSqm" class="form-label">💰 Precio por m² (RD$/m²)</label>
+                            <input type="number" class="form-control" id="pricePerSqm" min="0" step="0.01" placeholder="Ej: 5,000" />
+                            <small class="form-text text-muted">Ingrese el precio por metro cuadrado. El precio total se calculará automáticamente.</small>
+                            <div class="invalid-feedback">Ingrese un precio válido por m².</div>
+                        </div>
+
+                        <div class="col-md-6" id="priceContainer">
                             <label for="price" class="form-label d-flex align-items-center gap-2">
-                                <span>💰 Precio (RD$)</span>
+                                <span id="priceLabel">💰 Precio (RD$)</span>
                                 <small id="priceAutoNote" class="text-muted d-none">
                                     (se calculará automáticamente por unidades: menor precio)
+                                </small>
+                                <small id="priceAutoCalculated" class="text-success d-none">
+                                    (calculado automáticamente)
                                 </small>
                             </label>
                             <input type="number" class="form-control" id="price" required min="0" step="0.01" placeholder="Ej: 2,500,000" />
