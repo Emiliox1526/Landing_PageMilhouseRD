@@ -785,10 +785,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const fragment = document.createDocumentFragment();
         
         // Process existing images - store URLs in a closure to avoid index issues
-        existingImageUrls.forEach((u)=>{
+        existingImageUrls.forEach((imageUrl)=>{
             const item = document.createElement('div');
             item.className = 'image-item';
-            const src = toImageUrl(u, API_BASE);
+            const src = toImageUrl(imageUrl, API_BASE);
             item.innerHTML = `
     <img src="${src}" alt="img">
     <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
@@ -801,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderImagePreview();
                 }
             };
-            item.querySelector('.remove').addEventListener('click', removeHandler(u));
+            item.querySelector('.remove').addEventListener('click', removeHandler(imageUrl));
             fragment.appendChild(item);
         });
 
