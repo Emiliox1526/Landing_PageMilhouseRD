@@ -142,6 +142,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'unknown';
     }
 
+    // Helper function to hide price per sqm field and restore price field to editable
+    function hidePricePerSqmField() {
+        const pricePerSqmContainer = document.getElementById('pricePerSqmContainer');
+        const pricePerSqmField = document.getElementById('pricePerSqm');
+        const priceAutoCalculated = document.getElementById('priceAutoCalculated');
+        
+        if (pricePerSqmContainer) {
+            pricePerSqmContainer.style.display = 'none';
+            if (pricePerSqmField) {
+                pricePerSqmField.removeAttribute('required');
+                pricePerSqmField.value = '';
+            }
+        }
+        if (priceInput) {
+            priceInput.removeAttribute('readonly');
+            priceInput.style.backgroundColor = '';
+        }
+        if (priceAutoCalculated) {
+            priceAutoCalculated.classList.add('d-none');
+        }
+    }
+
     function toggleFieldsByPropertyType() {
         const type = typeSelect?.value || '';
         const category = getPropertyTypeCategory(type);
@@ -206,10 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         pricePerSqmField.setAttribute('required', 'required');
                     }
                 }
-                if (priceContainer) {
-                    priceContainer.classList.remove('col-md-6');
-                    priceContainer.classList.add('col-md-6');
-                }
                 if (priceInput) {
                     priceInput.setAttribute('readonly', 'readonly');
                     priceInput.style.backgroundColor = '#f8f9fa';
@@ -234,20 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del local (m²)';
                 }
                 // Ocultar precio por m² para no solares
-                if (pricePerSqmContainer) {
-                    pricePerSqmContainer.style.display = 'none';
-                    if (pricePerSqmField) {
-                        pricePerSqmField.removeAttribute('required');
-                        pricePerSqmField.value = '';
-                    }
-                }
-                if (priceInput) {
-                    priceInput.removeAttribute('readonly');
-                    priceInput.style.backgroundColor = '';
-                }
-                if (priceAutoCalculated) {
-                    priceAutoCalculated.classList.add('d-none');
-                }
+                hidePricePerSqmField();
                 // Mostrar amenidades pero con advertencia
                 if (amenitiesSection) {
                     amenitiesSection.classList.remove('d-none');
@@ -270,20 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (areaLabel) areaLabel.innerHTML = '📐 Área construida (m²)';
                 }
                 // Ocultar precio por m² para no solares
-                if (pricePerSqmContainer) {
-                    pricePerSqmContainer.style.display = 'none';
-                    if (pricePerSqmField) {
-                        pricePerSqmField.removeAttribute('required');
-                        pricePerSqmField.value = '';
-                    }
-                }
-                if (priceInput) {
-                    priceInput.removeAttribute('readonly');
-                    priceInput.style.backgroundColor = '';
-                }
-                if (priceAutoCalculated) {
-                    priceAutoCalculated.classList.add('d-none');
-                }
+                hidePricePerSqmField();
                 // Mostrar amenidades
                 if (amenitiesSection) {
                     amenitiesSection.classList.remove('d-none');
@@ -301,20 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(bathroomsField, bathroomsContainer, false, true);
                 setFieldState(parkingField, parkingContainer, false, true);
                 // Ocultar precio por m² para no solares
-                if (pricePerSqmContainer) {
-                    pricePerSqmContainer.style.display = 'none';
-                    if (pricePerSqmField) {
-                        pricePerSqmField.removeAttribute('required');
-                        pricePerSqmField.value = '';
-                    }
-                }
-                if (priceInput) {
-                    priceInput.removeAttribute('readonly');
-                    priceInput.style.backgroundColor = '';
-                }
-                if (priceAutoCalculated) {
-                    priceAutoCalculated.classList.add('d-none');
-                }
+                hidePricePerSqmField();
                 if (amenitiesSection) amenitiesSection.classList.remove('d-none');
                 break;
         }
@@ -1005,10 +984,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     images
                 };
                 
-                // Añadir pricePerSqm para solares
+                // Añadir pricePerSqm para solares con validación
                 const pricePerSqmField = document.getElementById('pricePerSqm');
                 if (form.type.value === 'Solar' && pricePerSqmField?.value) {
-                    data.pricePerSqm = parseFloat(pricePerSqmField.value);
+                    const pricePerSqm = parseFloat(pricePerSqmField.value);
+                    if (!isNaN(pricePerSqm) && pricePerSqm > 0) {
+                        data.pricePerSqm = pricePerSqm;
+                    }
                 }
 
                 Object.keys(data).forEach(k=>{
