@@ -143,7 +143,7 @@ public class PropertyController {
         Integer bedrooms = toInteger(body.get("bedrooms"));
         Integer bathrooms= toInteger(body.get("bathrooms"));
         Integer parking  = toInteger(body.get("parking"));
-        Integer area     = toInteger(body.get("area"));
+        Double area      = toDouble(body.get("area"));  // Changed to Double to match Property model
         Double latitude  = toDouble(body.get("latitude"));
         Double longitude = toDouble(body.get("longitude"));
 

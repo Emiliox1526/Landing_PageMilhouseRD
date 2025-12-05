@@ -435,7 +435,7 @@ ${p.descriptionParagraph ? `
             ${isSolarType(propType) && pricePerSqmText ? `
               <div class="price-per-sqm-highlight mb-2">
                 <div class="small text-muted mb-1">Precio por Metro Cuadrado</div>
-                <div class="h3 m-0 fw-bold" style="color: var(--mh-blue);">${pricePerSqmText}/m²</div>
+                <div class="h3 m-0 fw-bold">${pricePerSqmText}/m²</div>
               </div>
               <div class="small text-muted mb-1">Precio Total</div>
             ` : ''}
