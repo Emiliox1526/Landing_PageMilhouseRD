@@ -268,6 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (visible) {
                 container.classList.remove('d-none');
+                field.removeAttribute('disabled');  // Enable field when visible
                 if (required) {
                     field.setAttribute('required', 'required');
                 } else {
@@ -276,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 container.classList.add('d-none');
                 field.removeAttribute('required');
+                field.setAttribute('disabled', 'disabled');  // Disable field when hidden to prevent validation
                 field.value = '';  // Clear value when field is hidden
                 
                 // Clear all validation states and error messages
