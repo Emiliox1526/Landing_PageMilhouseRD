@@ -410,7 +410,12 @@ ${p.descriptionParagraph ? `
             <span class="text-muted d-block mb-1">
               <span style="font-size: 1.2em;">🇩🇴</span> Precio en Pesos Dominicanos
             </span>
+            ${propType === 'Solar' && p.pricePerSqm ? `
+            <div class="small text-muted mb-1">${fmtCurrency(p.pricePerSqm)}/m²</div>
             <div class="h4 m-0 text-primary fw-bold">${priceText}</div>
+            ` : `
+            <div class="h4 m-0 text-primary fw-bold">${priceText}</div>
+            `}
           </div>`:''}
           <div class="d-grid gap-2">
             <a class="btn btn-primary" href="tel:+18090000000"><i class="bi bi-telephone-fill me-1"></i> Llamar</a>
