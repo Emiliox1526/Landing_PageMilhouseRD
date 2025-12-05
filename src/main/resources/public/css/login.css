@@ -1,4 +1,56 @@
+/* Login Page Styles */
 .login-container {
-    max-width: 400px;
+    max-width: 450px;
     margin-top: 120px;
+    margin-bottom: 60px;
 }
+
+.login-container h2 {
+    color: var(--mh-primary, #1E40AF);
+    font-weight: 800;
+    margin-bottom: var(--space-6, 1.5rem);
+    text-align: center;
+}
+
+.login-container .form-label {
+    font-weight: 600;
+    color: var(--mh-navy, #1E293B);
+    margin-bottom: var(--space-2, 0.5rem);
+}
+
+.login-container .form-control {
+    padding: var(--space-4, 1rem);
+    border: 2px solid var(--mh-line, #E2E8F0);
+    border-radius: var(--radius-lg, 0.75rem);
+    font-size: var(--fs-base, 1rem);
+    transition: all 0.3s ease;
+}
+
+.login-container .form-control:focus {
+    border-color: var(--mh-primary, #1E40AF);
+    box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+}
+
+.login-container .btn-primary {
+    background: linear-gradient(135deg, var(--mh-primary, #1E40AF), var(--mh-primary-light, #3B82F6));
+    border: none;
+    padding: var(--space-4, 1rem);
+    font-weight: 700;
+    font-size: var(--fs-lg, 1.125rem);
+    border-radius: var(--radius-lg, 0.75rem);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.login-container .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.login-container form {
+    background: var(--mh-white, #FFFFFF);
+    padding: var(--space-8, 2rem);
+    border-radius: var(--radius-xl, 1rem);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+

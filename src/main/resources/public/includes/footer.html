@@ -1,18 +1,17 @@
 <style>
-    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap");
 
-    /* ===== MilhouseRD Footer (solo dentro de .mhf-footer) ===== */
+    /* ===== MilhouseRD Footer - Updated with vibrant colors ===== */
     .mhf-footer{
-        /* tokens locales */
-        --mhf-navy:#0F1B2D;
-        --mhf-navy-2:#142742;
-        --mhf-gold:#C7A252;
+        /* Updated vibrant color tokens */
+        --mhf-primary:#1E40AF;        /* Vibrant Blue */
+        --mhf-primary-light:#3B82F6;  /* Light Blue */
+        --mhf-accent:#F59E0B;         /* Vibrant Amber */
 
         background: linear-gradient(
-                to right,
-                var(--mhf-navy-2) 0%,
-                var(--mhf-navy) 20%,
-                var(--mhf-navy) 100%
+                135deg,
+                var(--mhf-primary) 0%,
+                var(--mhf-primary-light) 100%
         ) !important;
 
         color:#fff;
@@ -52,7 +51,7 @@
         color:#fff;
     }
     .mhf-footer .mhf-social .btn:hover{
-        background:#fff; color:var(--mhf-navy); border-color:#fff;
+        background:var(--mhf-accent); color:#fff; border-color:var(--mhf-accent);
     }
     /* ===== FIX de color blanco en listas de contacto ===== */
     .mhf-footer .mhf-list,
@@ -73,10 +72,10 @@
     }
     .mhf-footer .mhf-newsletter .btn{
         border-radius:0 9999px 9999px 0;
-        background:linear-gradient(135deg,var(--mhf-gold),#E2CF92);
+        background:linear-gradient(135deg,var(--mhf-accent),#FBBF24);
         border:0; color:#fff; font-weight:800;
     }
-    .mhf-footer .mhf-newsletter .btn:hover{ filter:brightness(1.06); }
+    .mhf-footer .mhf-newsletter .btn:hover{ filter:brightness(1.1); }
 
     /* Franja inferior */
     .mhf-footer .mhf-bottom{
