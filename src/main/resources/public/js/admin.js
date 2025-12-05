@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Polyfill for crypto.randomUUID() for older browsers
+    if (!crypto.randomUUID) {
+        crypto.randomUUID = function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        };
+    }
+    
     const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     const API_BASE = isLocal ? 'http://localhost:7070' : ''; // en prod, vacío para usar el proxy de Netlify
     const API = `${API_BASE}/api`;
@@ -817,9 +828,14 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedFiles.forEach((obj, idx)=>{
             const item = document.createElement('div');
             item.className = 'image-item';
+            item.dataset.fileId = obj.id; // Add ID for progress tracking
+            
             item.innerHTML = `
         <img src="${obj.url}" alt="${escapeHtml(obj.file.name)}">
         <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
+        <div class="progress-bar-container d-none">
+            <div class="progress-bar" style="width: 0%"></div>
+        </div>
       `;
             item.querySelector('.remove').addEventListener('click', ()=>{
                 URL.revokeObjectURL(obj.url);
@@ -830,6 +846,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         updateImageCount();
+    }
+    
+    // Update progress for a specific file during upload
+    function updateFileProgress(fileId, status, progress = 0) {
+        const item = imagePreviewEl.querySelector(`[data-file-id="${fileId}"]`);
+        if (!item) return;
+        
+        const progressContainer = item.querySelector('.progress-bar-container');
+        const progressBar = item.querySelector('.progress-bar');
+        const removeBtn = item.querySelector('.remove');
+        
+        if (status === 'uploading') {
+            progressContainer?.classList.remove('d-none');
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+                progressBar.style.background = '#0d6efd'; // Blue for uploading
+            }
+            removeBtn?.setAttribute('disabled', 'disabled');
+        } else if (status === 'success') {
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.background = '#28a745'; // Green for success
+            }
+            setTimeout(() => {
+                progressContainer?.classList.add('d-none');
+            }, 1000);
+            removeBtn?.removeAttribute('disabled');
+        } else if (status === 'error') {
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.background = '#dc3545'; // Red for error
+            }
+            setTimeout(() => {
+                progressContainer?.classList.add('d-none');
+            }, 2000);
+            removeBtn?.removeAttribute('disabled');
+        }
     }
     function addFiles(fileList){
         const incoming = Array.from(fileList || []);
@@ -1082,8 +1135,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     async function getImagesForPayload(){
         if (selectedFiles.length === 0) return [...existingImageUrls];
-        const uploaded = await uploadSelectedFiles(selectedFiles.map(o=>o.file));
-        return [...existingImageUrls, ...uploaded].slice(0, MAX_IMAGES);
+        
+        // Show upload progress
+        if (uploadProgress) {
+            uploadProgress.classList.remove('d-none');
+            uploadProgress.textContent = 'Subiendo imágenes...';
+        }
+        
+        // Upload with progress tracking
+        const fileObjs = selectedFiles.map(obj => obj.file);
+        const progressCallback = (index, status, filename, error) => {
+            const fileObj = selectedFiles[index];
+            if (!fileObj) return;
+            
+            updateFileProgress(fileObj.id, status);
+            
+            if (uploadProgress) {
+                const completed = selectedFiles.filter((_, i) => i <= index).length;
+                const total = selectedFiles.length;
+                uploadProgress.textContent = `Subiendo ${completed}/${total} imágenes...`;
+            }
+        };
+        
+        const { urls, errors } = await uploadSelectedFilesWithProgress(fileObjs, progressCallback);
+        
+        // Hide progress indicator
+        if (uploadProgress) {
+            uploadProgress.classList.add('d-none');
+        }
+        
+        // Show errors if any
+        if (errors.length > 0) {
+            const errorMessages = errors.map(e => `${e.filename}: ${e.error}`).join('\n');
+            console.error('Upload errors:', errorMessages);
+            alert(`Algunas imágenes no se pudieron subir:\n\n${errorMessages}`);
+        }
+        
+        return [...existingImageUrls, ...urls].slice(0, MAX_IMAGES);
     }
 
     if (form){

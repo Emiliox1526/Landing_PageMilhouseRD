@@ -185,22 +185,22 @@ public class ImageValidator {
     /**
      * Gets the extension from a MIME type
      */
+    private static final Map<String, String> MIME_TO_EXTENSION = Map.of(
+        "image/jpeg", ".jpg",
+        "image/png", ".png",
+        "image/gif", ".gif",
+        "image/bmp", ".bmp",
+        "image/webp", ".webp",
+        "image/svg+xml", ".svg",
+        "image/tiff", ".tiff"
+    );
+    
     public static String getExtensionFromMimeType(String mimeType) {
         if (mimeType == null || mimeType.isEmpty()) {
             return "";
         }
         
-        Map<String, String> mimeToExt = Map.of(
-            "image/jpeg", ".jpg",
-            "image/png", ".png",
-            "image/gif", ".gif",
-            "image/bmp", ".bmp",
-            "image/webp", ".webp",
-            "image/svg+xml", ".svg",
-            "image/tiff", ".tiff"
-        );
-        
-        return mimeToExt.getOrDefault(mimeType.toLowerCase(), "");
+        return MIME_TO_EXTENSION.getOrDefault(mimeType.toLowerCase(), "");
     }
     
     /**

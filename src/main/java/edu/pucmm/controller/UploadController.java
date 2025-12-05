@@ -85,13 +85,16 @@ public class UploadController {
 
                     // Validate magic bytes (wrap in BufferedInputStream for mark/reset support)
                     try (var in = new BufferedInputStream(uf.content())) {
+                        // Mark the stream before validation so we can reset it
+                        in.mark(12);
+                        
                         if (!ImageValidator.validateMagicBytes(in, contentType)) {
                             errors.add("Archivo " + (i + 1) + " (" + filename + 
                                 "): el contenido no coincide con el tipo declarado (posible archivo malicioso)");
                             continue;
                         }
 
-                        // Reset stream and upload to GridFS
+                        // Reset stream to beginning for upload to GridFS
                         in.reset();
                         
                         Document meta = new Document("contentType", contentType)
