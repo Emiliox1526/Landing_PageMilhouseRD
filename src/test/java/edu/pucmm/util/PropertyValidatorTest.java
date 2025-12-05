@@ -477,12 +477,12 @@ public class PropertyValidatorTest {
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Apartamento legacy sin campos debe fallar", errors.isEmpty());
-        assertTrue("Debe contener error sobre habitaciones", 
-                   errors.stream().anyMatch(e -> e.contains("habitaciones")));
-        assertTrue("Debe contener error sobre baños", 
-                   errors.stream().anyMatch(e -> e.contains("baños")));
-        assertTrue("Debe contener error sobre área", 
-                   errors.stream().anyMatch(e -> e.contains("área")));
+        
+        // Verificar errores requeridos en una sola pasada
+        String errorsText = String.join(" ", errors);
+        assertTrue("Debe contener error sobre habitaciones", errorsText.contains("habitaciones"));
+        assertTrue("Debe contener error sobre baños", errorsText.contains("baños"));
+        assertTrue("Debe contener error sobre área", errorsText.contains("área"));
     }
     
     @Test

@@ -271,14 +271,7 @@ public class PropertyValidator {
      * el usuario intenta usar el modo de unidades.
      */
     private static boolean hasUnits(Map<String, Object> data) {
-        // Si la clave existe, es modo unidades (aunque el array esté vacío)
-        if (data.containsKey("units")) {
-            return true;
-        }
-        if (data.containsKey("tipologias")) {
-            return true;
-        }
-        return false;
+        return data.containsKey("units") || data.containsKey("tipologias");
     }
 
     /**
