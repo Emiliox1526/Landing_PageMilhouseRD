@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Property Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .field-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { padding: 8px; width: 100%; box-sizing: border-box; }
+        .d-none { display: none !important; }
+        button { margin: 10px 5px; padding: 10px 20px; cursor: pointer; }
+        .info { background: #e7f3ff; padding: 10px; margin: 10px 0; border-left: 4px solid #2196F3; }
+    </style>
+</head>
+<body>
+    <h1>Property Form Test</h1>
+    <div class="info" id="statusInfo">Select a property type to see field visibility changes</div>
+    
+    <div class="field-group">
+        <label for="type">Property Type:</label>
+        <select id="type">
+            <option value="">Select...</option>
+            <option value="Casa">Casa</option>
+            <option value="Apartamento">Apartamento</option>
+            <option value="Penthouse">Penthouse</option>
+            <option value="Solar">Solar</option>
+            <option value="Villa">Villa</option>
+            <option value="Local Comercial">Local Comercial</option>
+        </select>
+    </div>
+
+    <div class="field-group" id="bedroomsContainer">
+        <label for="bedrooms">Bedrooms:</label>
+        <input type="number" id="bedrooms" min="0">
+    </div>
+
+    <div class="field-group" id="bathroomsContainer">
+        <label for="bathrooms">Bathrooms:</label>
+        <input type="number" id="bathrooms" min="0">
+    </div>
+
+    <div class="field-group" id="parkingContainer">
+        <label for="parking">Parking:</label>
+        <input type="number" id="parking" min="0">
+    </div>
+
+    <div class="field-group" id="areaContainer">
+        <label for="area">Area (m²):</label>
+        <input type="number" id="area" min="0" step="0.01">
+    </div>
+
+    <div class="field-group d-none" id="unitsSection">
+        <label>Units/Tipología Section:</label>
+        <div class="info">This section shows units for Apartamento and Penthouse</div>
+    </div>
+
+    <script>
+        // Simplified version of the logic from admin.js
+        const typeSelect = document.getElementById('type');
+        const bedroomsContainer = document.getElementById('bedroomsContainer');
+        const bathroomsContainer = document.getElementById('bathroomsContainer');
+        const parkingContainer = document.getElementById('parkingContainer');
+        const areaContainer = document.getElementById('areaContainer');
+        const unitsSection = document.getElementById('unitsSection');
+        const statusInfo = document.getElementById('statusInfo');
+
+        const TYPES_WITH_UNITS = ['Apartamento','Penthouse'];
+
+        function getPropertyTypeCategory(type) {
+            const t = (type || '').trim();
+            if (t === 'Solar' || t === 'Solares') return 'solar';
+            if (t === 'Local Comercial') return 'commercial';
+            if (t === 'Apartamento') return 'apartment';
+            if (['Casa', 'Penthouse', 'Villa'].includes(t)) return 'residential';
+            return 'unknown';
+        }
+
+        function supportsUnits(){
+            const t = (typeSelect?.value || '').trim();
+            return TYPES_WITH_UNITS.includes(t);
+        }
+
+        function toggleFieldsByPropertyType() {
+            const type = typeSelect?.value || '';
+            const category = getPropertyTypeCategory(type);
+            
+            // Show/hide units section
+            if (supportsUnits()) {
+                unitsSection.classList.remove('d-none');
+            } else {
+                unitsSection.classList.add('d-none');
+            }
+
+            let status = `Category: ${category}`;
+            
+            switch (category) {
+                case 'apartment':
+                    // Apartamento: solo habitaciones, baños/parqueos/área van en unidades
+                    bedroomsContainer.classList.remove('d-none');
+                    bathroomsContainer.classList.add('d-none');
+                    parkingContainer.classList.add('d-none');
+                    areaContainer.classList.add('d-none');
+                    status += ' - Showing: Bedrooms only. Bathrooms, Parking, and Area are HIDDEN (in units).';
+                    break;
+                    
+                case 'solar':
+                    // Solares: solo área
+                    bedroomsContainer.classList.add('d-none');
+                    bathroomsContainer.classList.add('d-none');
+                    parkingContainer.classList.add('d-none');
+                    areaContainer.classList.remove('d-none');
+                    status += ' - Showing: Area only.';
+                    break;
+                    
+                case 'commercial':
+                    // Locales comerciales: área, baños opcionales, NO habitaciones
+                    bedroomsContainer.classList.add('d-none');
+                    bathroomsContainer.classList.remove('d-none');
+                    parkingContainer.classList.remove('d-none');
+                    areaContainer.classList.remove('d-none');
+                    status += ' - Showing: Area, Bathrooms (optional), Parking (optional). NO bedrooms.';
+                    break;
+                    
+                case 'residential':
+                    // Propiedades residenciales: todos los campos
+                    bedroomsContainer.classList.remove('d-none');
+                    bathroomsContainer.classList.remove('d-none');
+                    parkingContainer.classList.remove('d-none');
+                    areaContainer.classList.remove('d-none');
+                    status += ' - Showing: All fields (Bedrooms, Bathrooms, Parking, Area).';
+                    break;
+                    
+                default:
+                    // Por defecto, mostrar todos los campos
+                    bedroomsContainer.classList.remove('d-none');
+                    bathroomsContainer.classList.remove('d-none');
+                    parkingContainer.classList.remove('d-none');
+                    areaContainer.classList.remove('d-none');
+                    status += ' - Showing: All fields (default).';
+                    break;
+            }
+
+            statusInfo.textContent = status;
+        }
+
+        typeSelect.addEventListener('change', toggleFieldsByPropertyType);
+        
+        // Initial state
+        toggleFieldsByPropertyType();
+    </script>
+</body>
+</html>
