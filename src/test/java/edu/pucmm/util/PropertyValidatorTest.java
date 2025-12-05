@@ -247,9 +247,9 @@ public class PropertyValidatorTest {
         assertTrue("Los locales comerciales pueden tener amenidades comerciales", errors.isEmpty());
     }
 
-    // ========== Tests de Validación de Precio - ELIMINADOS ==========
-    // La validación de precio mínimo/máximo por m² ha sido eliminada del sistema
-    // Los precios ahora solo se validan que sean mayores a 0
+    // ========== Tests de Validación de Precio - REMOVED ==========
+    // Minimum/maximum price per square meter validation has been removed from the system
+    // Prices are now only validated to be greater than 0
     
     @Test
     public void testPriceValidation_OnlyRequiresPositive() {

@@ -62,7 +62,7 @@ public class PropertyValidator {
                 errors.add("Tipo de propiedad no reconocido: " + type);
         }
 
-        // Minimum price validation removed - no longer validating price/area ratio
+        // Price/area ratio validation removed - properties now only require price > 0
 
         return errors;
     }

@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_FILE_MB = 25; // Aumentado de 5MB a 25MB
     const USE_UPLOAD_API = true; // usa /api/uploads
     
+    // Batch sizes for optimized image processing
+    const IMAGE_RENDER_BATCH_SIZE = 10;  // Process 10 images at a time when rendering previews
+    const FILE_VALIDATION_BATCH_SIZE = 20;  // Validate 20 files at a time when adding new files
+    
     // Formatos de imagen soportados
     const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.tiff', '.tif'];
     const ALLOWED_MIME_TYPES = [
@@ -802,12 +806,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Archivos seleccionados (nuevos) - process in batches
-        const BATCH_SIZE = 10; // Process 10 images at a time
         let currentBatch = 0;
         
         const processBatch = () => {
-            const startIdx = currentBatch * BATCH_SIZE;
-            const endIdx = Math.min(startIdx + BATCH_SIZE, selectedFiles.length);
+            const startIdx = currentBatch * IMAGE_RENDER_BATCH_SIZE;
+            const endIdx = Math.min(startIdx + IMAGE_RENDER_BATCH_SIZE, selectedFiles.length);
             
             if (startIdx >= selectedFiles.length) {
                 // All batches processed, update count and we're done
@@ -912,11 +915,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const errors = [];
         const toProcess = incoming.slice(0, available);
-        const BATCH_SIZE = 20; // Validate in batches of 20 files
         
         // Process files in batches to avoid blocking the UI
         const processFileBatch = (startIdx) => {
-            const endIdx = Math.min(startIdx + BATCH_SIZE, toProcess.length);
+            const endIdx = Math.min(startIdx + FILE_VALIDATION_BATCH_SIZE, toProcess.length);
             
             for (let idx = startIdx; idx < endIdx; idx++) {
                 const f = toProcess[idx];
