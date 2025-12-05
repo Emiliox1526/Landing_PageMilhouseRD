@@ -99,7 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageDropZone  = document.getElementById('imageDropZone');
     const uploadProgress = document.getElementById('uploadProgress');
 
-    const getModal = () => new bootstrap.Modal(modalEl);
+    // Initialize Bootstrap Modal instance once and reuse it
+    let propertyModal = null;
+    const getModal = () => {
+        if (!propertyModal && modalEl) {
+            propertyModal = new bootstrap.Modal(modalEl);
+        }
+        return propertyModal;
+    };
 
     // ===== Estado =====
     let editingId = null;
