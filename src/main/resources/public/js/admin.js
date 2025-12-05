@@ -6,10 +6,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('[ADMIN] API_BASE:', API_BASE);
 
-    // --- Config imágenes ---
-    const MAX_IMAGES = 10;
-    const MAX_FILE_MB = 5;
+    // --- Config imágenes (actualizado para soportar más imágenes y formatos) ---
+    const MAX_IMAGES = 100; // Aumentado de 10 a 100
+    const MAX_FILE_MB = 25; // Aumentado de 5MB a 25MB
     const USE_UPLOAD_API = true; // usa /api/uploads
+    
+    // Formatos de imagen soportados
+    const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.tiff', '.tif'];
+    const ALLOWED_MIME_TYPES = [
+        'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 
+        'image/webp', 'image/svg+xml', 'image/tiff'
+    ];
 
     // UI básicos
     const btnOpenCreateToolbar = document.getElementById('btnOpenCreateToolbar');
@@ -74,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageInput     = document.getElementById('imageFiles');
     const imagePreviewEl = document.getElementById('imagePreview');
     const imageCountEl   = document.getElementById('imageCount');
+    const imageDropZone  = document.getElementById('imageDropZone');
+    const uploadProgress = document.getElementById('uploadProgress');
 
     const getModal = () => new bootstrap.Modal(modalEl);
 
@@ -828,13 +837,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const totalNow = existingImageUrls.length + selectedFiles.length;
         const available = MAX_IMAGES - totalNow;
-        if (available <= 0) { alert('Límite de imágenes alcanzado.'); return; }
+        if (available <= 0) { 
+            alert(`Límite de ${MAX_IMAGES} imágenes alcanzado.`); 
+            return; 
+        }
 
-        const accepted = incoming.slice(0, available).filter(f=>{
-            if (!f.type.startsWith('image/')) { alert(`"${f.name}" no es una imagen válida.`); return false; }
-            if (f.size > MAX_FILE_MB*1024*1024) { alert(`"${f.name}" excede ${MAX_FILE_MB} MB.`); return false; }
+        const errors = [];
+        const accepted = incoming.slice(0, available).filter((f, idx) => {
+            // Validate MIME type
+            if (!ALLOWED_MIME_TYPES.includes(f.type.toLowerCase())) { 
+                errors.push(`"${f.name}": tipo no permitido (${f.type})`);
+                return false; 
+            }
+            
+            // Validate file extension
+            const ext = f.name.toLowerCase().substring(f.name.lastIndexOf('.'));
+            if (!ALLOWED_IMAGE_EXTENSIONS.includes(ext)) {
+                errors.push(`"${f.name}": extensión no permitida (${ext})`);
+                return false;
+            }
+            
+            // Validate file size
+            if (f.size > MAX_FILE_MB * 1024 * 1024) { 
+                errors.push(`"${f.name}": excede ${MAX_FILE_MB} MB (${(f.size / 1024 / 1024).toFixed(2)} MB)`);
+                return false; 
+            }
+            
+            // Validate file is not empty
+            if (f.size === 0) {
+                errors.push(`"${f.name}": archivo vacío`);
+                return false;
+            }
+            
             return true;
         });
+
+        if (errors.length > 0) {
+            const errorMsg = 'Algunos archivos no son válidos:\n\n' + errors.join('\n');
+            alert(errorMsg);
+        }
+
 
         accepted.forEach(f=>{
             selectedFiles.push({ id: crypto.randomUUID(), file: f, url: URL.createObjectURL(f) });
@@ -842,6 +884,41 @@ document.addEventListener('DOMContentLoaded', () => {
         renderImagePreview();
     }
     imageInput?.addEventListener('change', (e)=> addFiles(e.target.files));
+
+    // ===== Drag and Drop para imágenes =====
+    if (imageDropZone && imageInput) {
+        // Click en la zona abre el selector de archivos
+        imageDropZone.addEventListener('click', () => {
+            imageInput.click();
+        });
+        
+        // Prevenir comportamiento por defecto del navegador
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            imageDropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+        
+        // Resaltar zona cuando se arrastra sobre ella
+        ['dragenter', 'dragover'].forEach(eventName => {
+            imageDropZone.addEventListener(eventName, () => {
+                imageDropZone.classList.add('drag-over');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            imageDropZone.addEventListener(eventName, () => {
+                imageDropZone.classList.remove('drag-over');
+            });
+        });
+        
+        // Manejar drop de archivos
+        imageDropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            addFiles(files);
+        });
+    }
 
     // ===== Prefill + edición =====
     function fillFormFromProperty(p){
@@ -927,13 +1004,80 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         });
     }
+    
+    // Upload images with progress tracking and concurrent processing
+    async function uploadSelectedFilesWithProgress(files, progressCallback) {
+        const BATCH_SIZE = 10; // Upload in batches of 10 to avoid overwhelming the server
+        const results = [];
+        const errors = [];
+        
+        for (let i = 0; i < files.length; i += BATCH_SIZE) {
+            const batch = files.slice(i, i + BATCH_SIZE);
+            const batchPromises = batch.map(async (file, batchIndex) => {
+                const fileIndex = i + batchIndex;
+                try {
+                    const fd = new FormData();
+                    fd.append('files', file);
+                    
+                    if (progressCallback) {
+                        progressCallback(fileIndex, 'uploading', file.name);
+                    }
+                    
+                    const res = await fetch(`${API_BASE}/api/uploads`, { 
+                        method: 'POST', 
+                        body: fd 
+                    });
+                    
+                    if (!res.ok) {
+                        const errorData = await res.json().catch(() => ({ message: `HTTP ${res.status}` }));
+                        throw new Error(errorData.message || `Upload failed with status ${res.status}`);
+                    }
+                    
+                    const data = await res.json();
+                    
+                    if (data && Array.isArray(data.urls) && data.urls.length > 0) {
+                        if (progressCallback) {
+                            progressCallback(fileIndex, 'success', file.name);
+                        }
+                        return { success: true, url: data.urls[0], warnings: data.warnings };
+                    } else {
+                        throw new Error('Invalid response from server');
+                    }
+                } catch (error) {
+                    if (progressCallback) {
+                        progressCallback(fileIndex, 'error', file.name, error.message);
+                    }
+                    return { success: false, error: error.message, filename: file.name };
+                }
+            });
+            
+            const batchResults = await Promise.all(batchPromises);
+            results.push(...batchResults);
+        }
+        
+        const urls = results.filter(r => r.success).map(r => r.url);
+        const failedFiles = results.filter(r => !r.success);
+        
+        return { urls, errors: failedFiles };
+    }
+    
+    // Legacy function for backward compatibility
     async function uploadSelectedFiles(files){
         const fd = new FormData();
         files.forEach(f => fd.append('files', f));
         const res = await fetch(`${API_BASE}/api/uploads`, { method:'POST', body: fd });
-        if (!res.ok) throw new Error(`upload ${res.status}`);
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || `upload ${res.status}`);
+        }
         const data = await res.json().catch(()=> ({}));
         if (!data || !Array.isArray(data.urls)) throw new Error('Respuesta inválida de /api/uploads');
+        
+        // Show warnings if any
+        if (data.warnings && data.warnings.length > 0) {
+            console.warn('Upload warnings:', data.warnings);
+        }
+        
         return data.urls;
     }
     async function getImagesForPayload(){
