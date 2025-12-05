@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Polyfill for crypto.randomUUID() for older browsers
+    if (!crypto.randomUUID) {
+        crypto.randomUUID = function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        };
+    }
+    
     const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     const API_BASE = isLocal ? 'http://localhost:7070' : ''; // en prod, vacío para usar el proxy de Netlify
     const API = `${API_BASE}/api`;
@@ -6,10 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('[ADMIN] API_BASE:', API_BASE);
 
-    // --- Config imágenes ---
-    const MAX_IMAGES = 10;
-    const MAX_FILE_MB = 5;
+    // --- Config imágenes (actualizado para soportar más imágenes y formatos) ---
+    const MAX_IMAGES = 100; // Aumentado de 10 a 100
+    const MAX_FILE_MB = 25; // Aumentado de 5MB a 25MB
     const USE_UPLOAD_API = true; // usa /api/uploads
+    
+    // Formatos de imagen soportados
+    const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.tiff', '.tif'];
+    const ALLOWED_MIME_TYPES = [
+        'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 
+        'image/webp', 'image/svg+xml', 'image/tiff'
+    ];
 
     // UI básicos
     const btnOpenCreateToolbar = document.getElementById('btnOpenCreateToolbar');
@@ -74,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageInput     = document.getElementById('imageFiles');
     const imagePreviewEl = document.getElementById('imagePreview');
     const imageCountEl   = document.getElementById('imageCount');
+    const imageDropZone  = document.getElementById('imageDropZone');
+    const uploadProgress = document.getElementById('uploadProgress');
 
     const getModal = () => new bootstrap.Modal(modalEl);
 
@@ -808,9 +828,14 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedFiles.forEach((obj, idx)=>{
             const item = document.createElement('div');
             item.className = 'image-item';
+            item.dataset.fileId = obj.id; // Add ID for progress tracking
+            
             item.innerHTML = `
         <img src="${obj.url}" alt="${escapeHtml(obj.file.name)}">
         <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
+        <div class="progress-bar-container d-none">
+            <div class="progress-bar" style="width: 0%"></div>
+        </div>
       `;
             item.querySelector('.remove').addEventListener('click', ()=>{
                 URL.revokeObjectURL(obj.url);
@@ -822,19 +847,89 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateImageCount();
     }
+    
+    // Update progress for a specific file during upload
+    function updateFileProgress(fileId, status, progress = 0) {
+        const item = imagePreviewEl.querySelector(`[data-file-id="${fileId}"]`);
+        if (!item) return;
+        
+        const progressContainer = item.querySelector('.progress-bar-container');
+        const progressBar = item.querySelector('.progress-bar');
+        const removeBtn = item.querySelector('.remove');
+        
+        if (status === 'uploading') {
+            progressContainer?.classList.remove('d-none');
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+                progressBar.style.background = '#0d6efd'; // Blue for uploading
+            }
+            removeBtn?.setAttribute('disabled', 'disabled');
+        } else if (status === 'success') {
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.background = '#28a745'; // Green for success
+            }
+            setTimeout(() => {
+                progressContainer?.classList.add('d-none');
+            }, 1000);
+            removeBtn?.removeAttribute('disabled');
+        } else if (status === 'error') {
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.background = '#dc3545'; // Red for error
+            }
+            setTimeout(() => {
+                progressContainer?.classList.add('d-none');
+            }, 2000);
+            removeBtn?.removeAttribute('disabled');
+        }
+    }
     function addFiles(fileList){
         const incoming = Array.from(fileList || []);
         if (!incoming.length) return;
 
         const totalNow = existingImageUrls.length + selectedFiles.length;
         const available = MAX_IMAGES - totalNow;
-        if (available <= 0) { alert('Límite de imágenes alcanzado.'); return; }
+        if (available <= 0) { 
+            alert(`Límite de ${MAX_IMAGES} imágenes alcanzado.`); 
+            return; 
+        }
 
-        const accepted = incoming.slice(0, available).filter(f=>{
-            if (!f.type.startsWith('image/')) { alert(`"${f.name}" no es una imagen válida.`); return false; }
-            if (f.size > MAX_FILE_MB*1024*1024) { alert(`"${f.name}" excede ${MAX_FILE_MB} MB.`); return false; }
+        const errors = [];
+        const accepted = incoming.slice(0, available).filter((f, idx) => {
+            // Validate MIME type
+            if (!ALLOWED_MIME_TYPES.includes(f.type.toLowerCase())) { 
+                errors.push(`"${f.name}": tipo no permitido (${f.type})`);
+                return false; 
+            }
+            
+            // Validate file extension
+            const ext = f.name.toLowerCase().substring(f.name.lastIndexOf('.'));
+            if (!ALLOWED_IMAGE_EXTENSIONS.includes(ext)) {
+                errors.push(`"${f.name}": extensión no permitida (${ext})`);
+                return false;
+            }
+            
+            // Validate file size
+            if (f.size > MAX_FILE_MB * 1024 * 1024) { 
+                errors.push(`"${f.name}": excede ${MAX_FILE_MB} MB (${(f.size / 1024 / 1024).toFixed(2)} MB)`);
+                return false; 
+            }
+            
+            // Validate file is not empty
+            if (f.size === 0) {
+                errors.push(`"${f.name}": archivo vacío`);
+                return false;
+            }
+            
             return true;
         });
+
+        if (errors.length > 0) {
+            const errorMsg = 'Algunos archivos no son válidos:\n\n' + errors.join('\n');
+            alert(errorMsg);
+        }
+
 
         accepted.forEach(f=>{
             selectedFiles.push({ id: crypto.randomUUID(), file: f, url: URL.createObjectURL(f) });
@@ -842,6 +937,41 @@ document.addEventListener('DOMContentLoaded', () => {
         renderImagePreview();
     }
     imageInput?.addEventListener('change', (e)=> addFiles(e.target.files));
+
+    // ===== Drag and Drop para imágenes =====
+    if (imageDropZone && imageInput) {
+        // Click en la zona abre el selector de archivos
+        imageDropZone.addEventListener('click', () => {
+            imageInput.click();
+        });
+        
+        // Prevenir comportamiento por defecto del navegador
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            imageDropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        });
+        
+        // Resaltar zona cuando se arrastra sobre ella
+        ['dragenter', 'dragover'].forEach(eventName => {
+            imageDropZone.addEventListener(eventName, () => {
+                imageDropZone.classList.add('drag-over');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            imageDropZone.addEventListener(eventName, () => {
+                imageDropZone.classList.remove('drag-over');
+            });
+        });
+        
+        // Manejar drop de archivos
+        imageDropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            addFiles(files);
+        });
+    }
 
     // ===== Prefill + edición =====
     function fillFormFromProperty(p){
@@ -927,19 +1057,121 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         });
     }
+    
+    // Upload images with progress tracking and concurrent processing
+    async function uploadSelectedFilesWithProgress(files, progressCallback) {
+        const BATCH_SIZE = 10; // Upload in batches of 10 to avoid overwhelming the server
+        const results = [];
+        const errors = [];
+        
+        for (let i = 0; i < files.length; i += BATCH_SIZE) {
+            const batch = files.slice(i, i + BATCH_SIZE);
+            const batchPromises = batch.map(async (file, batchIndex) => {
+                const fileIndex = i + batchIndex;
+                try {
+                    const fd = new FormData();
+                    fd.append('files', file);
+                    
+                    if (progressCallback) {
+                        progressCallback(fileIndex, 'uploading', file.name);
+                    }
+                    
+                    const res = await fetch(`${API_BASE}/api/uploads`, { 
+                        method: 'POST', 
+                        body: fd 
+                    });
+                    
+                    if (!res.ok) {
+                        const errorData = await res.json().catch(() => ({ message: `HTTP ${res.status}` }));
+                        throw new Error(errorData.message || `Upload failed with status ${res.status}`);
+                    }
+                    
+                    const data = await res.json();
+                    
+                    if (data && Array.isArray(data.urls) && data.urls.length > 0) {
+                        if (progressCallback) {
+                            progressCallback(fileIndex, 'success', file.name);
+                        }
+                        return { success: true, url: data.urls[0], warnings: data.warnings };
+                    } else {
+                        throw new Error('Invalid response from server');
+                    }
+                } catch (error) {
+                    if (progressCallback) {
+                        progressCallback(fileIndex, 'error', file.name, error.message);
+                    }
+                    return { success: false, error: error.message, filename: file.name };
+                }
+            });
+            
+            const batchResults = await Promise.all(batchPromises);
+            results.push(...batchResults);
+        }
+        
+        const urls = results.filter(r => r.success).map(r => r.url);
+        const failedFiles = results.filter(r => !r.success);
+        
+        return { urls, errors: failedFiles };
+    }
+    
+    // Legacy function for backward compatibility
     async function uploadSelectedFiles(files){
         const fd = new FormData();
         files.forEach(f => fd.append('files', f));
         const res = await fetch(`${API_BASE}/api/uploads`, { method:'POST', body: fd });
-        if (!res.ok) throw new Error(`upload ${res.status}`);
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || `upload ${res.status}`);
+        }
         const data = await res.json().catch(()=> ({}));
         if (!data || !Array.isArray(data.urls)) throw new Error('Respuesta inválida de /api/uploads');
+        
+        // Show warnings if any
+        if (data.warnings && data.warnings.length > 0) {
+            console.warn('Upload warnings:', data.warnings);
+        }
+        
         return data.urls;
     }
     async function getImagesForPayload(){
         if (selectedFiles.length === 0) return [...existingImageUrls];
-        const uploaded = await uploadSelectedFiles(selectedFiles.map(o=>o.file));
-        return [...existingImageUrls, ...uploaded].slice(0, MAX_IMAGES);
+        
+        // Show upload progress
+        if (uploadProgress) {
+            uploadProgress.classList.remove('d-none');
+            uploadProgress.textContent = 'Subiendo imágenes...';
+        }
+        
+        // Upload with progress tracking
+        const fileObjs = selectedFiles.map(obj => obj.file);
+        const progressCallback = (index, status, filename, error) => {
+            const fileObj = selectedFiles[index];
+            if (!fileObj) return;
+            
+            updateFileProgress(fileObj.id, status);
+            
+            if (uploadProgress) {
+                const completed = selectedFiles.filter((_, i) => i <= index).length;
+                const total = selectedFiles.length;
+                uploadProgress.textContent = `Subiendo ${completed}/${total} imágenes...`;
+            }
+        };
+        
+        const { urls, errors } = await uploadSelectedFilesWithProgress(fileObjs, progressCallback);
+        
+        // Hide progress indicator
+        if (uploadProgress) {
+            uploadProgress.classList.add('d-none');
+        }
+        
+        // Show errors if any
+        if (errors.length > 0) {
+            const errorMessages = errors.map(e => `${e.filename}: ${e.error}`).join('\n');
+            console.error('Upload errors:', errorMessages);
+            alert(`Algunas imágenes no se pudieron subir:\n\n${errorMessages}`);
+        }
+        
+        return [...existingImageUrls, ...urls].slice(0, MAX_IMAGES);
     }
 
     if (form){

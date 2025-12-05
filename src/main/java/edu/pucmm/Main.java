@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
 
 import edu.pucmm.config.MongoConfig;
+import edu.pucmm.config.UploadConfig;
 import edu.pucmm.controller.PropertyController;
 
 import edu.pucmm.controller.UploadController;
@@ -56,8 +57,9 @@ public class Main {
         Javalin app = Javalin.create(cfg -> {
             cfg.showJavalinBanner = false;
 
-            // Tamaño máx. request (JSON/multipart)
-            cfg.http.maxRequestSize = 100L * 1024 * 1024; // 100 MB
+            // Tamaño máx. request (JSON/multipart) - configurable desde UploadConfig
+            // Debe ser suficiente para soportar hasta 100 imágenes de 25MB cada una
+            cfg.http.maxRequestSize = UploadConfig.getMaxRequestSizeBytes();
 
             // / -> resources/public (CLASSPATH)
             cfg.staticFiles.add(staticFiles -> {
@@ -116,15 +118,17 @@ public class Main {
         });
 
         // ========= Endpoint de uploads =========
-        // Frontend: FormData con name="files" (múltiples). Máx 10 por request.
+        // Frontend: FormData con name="files" (múltiples). Máx configurable por request.
+        // DEPRECATED: Este endpoint se mantiene por compatibilidad pero se recomienda usar /api/uploads (GridFS)
         app.post("/api/uploads", ctx -> {
             var files = ctx.uploadedFiles("files");
             if (files == null || files.isEmpty()) {
                 ctx.status(400).json(Map.of("message", "Sin archivos"));
                 return;
             }
-            if (files.size() > 10) {
-                ctx.status(400).json(Map.of("message", "Máximo 10 archivos por solicitud"));
+            if (files.size() > UploadConfig.getMaxImagesPerBatch()) {
+                ctx.status(400).json(Map.of("message", 
+                    "Máximo " + UploadConfig.getMaxImagesPerBatch() + " archivos por solicitud"));
                 return;
             }
 
