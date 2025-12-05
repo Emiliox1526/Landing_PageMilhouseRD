@@ -22,7 +22,7 @@ public class PropertyValidatorTest {
         data.put("title", "Terreno en Punta Cana");
         data.put("saleType", "Venta");
         data.put("area", 500.0);
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000 (RD$5,800/m² - válido)
         
         List<String> errors = PropertyValidator.validate(data);
         assertTrue("Un solar válido no debe tener errores", errors.isEmpty());
@@ -35,7 +35,7 @@ public class PropertyValidatorTest {
         data.put("title", "Terreno");
         data.put("saleType", "Venta");
         data.put("area", 500.0);
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000
         data.put("bedrooms", 3);
         
         List<String> errors = PropertyValidator.validate(data);
@@ -51,7 +51,7 @@ public class PropertyValidatorTest {
         data.put("title", "Terreno");
         data.put("saleType", "Venta");
         data.put("area", 500.0);
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000
         data.put("bathrooms", 2);
         
         List<String> errors = PropertyValidator.validate(data);
@@ -67,7 +67,7 @@ public class PropertyValidatorTest {
         data.put("title", "Terreno");
         data.put("saleType", "Venta");
         data.put("area", 500.0);
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000
         data.put("amenities", List.of("Piscina", "Jardín"));
         
         List<String> errors = PropertyValidator.validate(data);
@@ -82,7 +82,7 @@ public class PropertyValidatorTest {
         data.put("type", "Solares");
         data.put("title", "Terreno");
         data.put("saleType", "Venta");
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Los solares requieren área", errors.isEmpty());
@@ -115,7 +115,7 @@ public class PropertyValidatorTest {
         data.put("bedrooms", 3);
         data.put("bathrooms", 2);
         data.put("area", 150.0);
-        data.put("price", 75000.0);
+        data.put("price", 4350000.0);  // RD$4,350,000 (~RD$29,000/m² - válido)
         
         List<String> errors = PropertyValidator.validate(data);
         assertTrue("Una casa válida no debe tener errores", errors.isEmpty());
@@ -130,7 +130,7 @@ public class PropertyValidatorTest {
         data.put("bedrooms", 2);
         data.put("bathrooms", 1);
         data.put("area", 80.0);
-        data.put("price", 18000.0);
+        data.put("price", 1044000.0);  // RD$1,044,000 (~RD$13,050/m² - válido)
         data.put("amenities", List.of("Piscina", "Gimnasio", "Seguridad 24/7"));
         
         List<String> errors = PropertyValidator.validate(data);
@@ -145,7 +145,7 @@ public class PropertyValidatorTest {
         data.put("saleType", "Venta");
         data.put("bathrooms", 2);
         data.put("area", 150.0);
-        data.put("price", 75000.0);
+        data.put("price", 4350000.0);  // RD$4,350,000
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Las propiedades residenciales requieren habitaciones", errors.isEmpty());
@@ -161,7 +161,7 @@ public class PropertyValidatorTest {
         data.put("saleType", "Venta");
         data.put("bedrooms", 4);
         data.put("area", 300.0);
-        data.put("price", 450000.0);
+        data.put("price", 26100000.0);  // RD$26,100,000
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Las propiedades residenciales requieren baños", errors.isEmpty());
@@ -177,7 +177,7 @@ public class PropertyValidatorTest {
         data.put("saleType", "Venta");
         data.put("bedrooms", 3);
         data.put("bathrooms", 3);
-        data.put("price", 250000.0);
+        data.put("price", 14500000.0);  // RD$14,500,000
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Las propiedades residenciales requieren área", errors.isEmpty());
@@ -194,7 +194,7 @@ public class PropertyValidatorTest {
         data.put("title", "Local en zona comercial");
         data.put("saleType", "Alquiler");
         data.put("area", 100.0);
-        data.put("price", 25000.0);
+        data.put("price", 1450000.0);  // RD$1,450,000 (RD$14,500/m² - válido)
         data.put("bathrooms", 1);
         
         List<String> errors = PropertyValidator.validate(data);
@@ -208,7 +208,7 @@ public class PropertyValidatorTest {
         data.put("title", "Local");
         data.put("saleType", "Venta");
         data.put("area", 100.0);
-        data.put("price", 80000.0);
+        data.put("price", 4640000.0);  // RD$4,640,000
         data.put("bedrooms", 1);
         
         List<String> errors = PropertyValidator.validate(data);
@@ -224,7 +224,7 @@ public class PropertyValidatorTest {
         data.put("title", "Local");
         data.put("saleType", "Venta");
         data.put("area", 100.0);
-        data.put("price", 80000.0);
+        data.put("price", 4640000.0);  // RD$4,640,000
         data.put("amenities", List.of("Piscina", "Jardín privado"));
         
         List<String> errors = PropertyValidator.validate(data);
@@ -240,7 +240,7 @@ public class PropertyValidatorTest {
         data.put("title", "Local");
         data.put("saleType", "Venta");
         data.put("area", 100.0);
-        data.put("price", 80000.0);
+        data.put("price", 4640000.0);  // RD$4,640,000
         data.put("amenities", List.of("Estacionamiento", "Seguridad", "Acceso vehicular"));
         
         List<String> errors = PropertyValidator.validate(data);
@@ -258,7 +258,7 @@ public class PropertyValidatorTest {
         data.put("bedrooms", 3);
         data.put("bathrooms", 2);
         data.put("area", 150.0);
-        data.put("price", 1000.0);  // $6.67/m² - muy bajo
+        data.put("price", 50000.0);  // RD$333/m² - muy bajo (debería ser mínimo RD$5,800/m²)
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Precio por m² muy bajo debe generar error", errors.isEmpty());
@@ -275,7 +275,7 @@ public class PropertyValidatorTest {
         data.put("bedrooms", 2);
         data.put("bathrooms", 1);
         data.put("area", 80.0);
-        data.put("price", 2000000.0);  // $25,000/m² - muy alto
+        data.put("price", 100000000.0);  // RD$1,250,000/m² - muy alto (máximo RD$870,000/m²)
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Precio por m² muy alto debe generar error", errors.isEmpty());
@@ -290,7 +290,7 @@ public class PropertyValidatorTest {
         data.put("title", "Solar");
         data.put("saleType", "Venta");
         data.put("area", 1000.0);
-        data.put("price", 100000.0);  // $100/m² - válido para solares
+        data.put("price", 5800000.0);  // RD$5,800/m² - válido para solares
         
         List<String> errors = PropertyValidator.validate(data);
         assertTrue("Precio válido para solar no debe generar errores", errors.isEmpty());
@@ -303,7 +303,7 @@ public class PropertyValidatorTest {
         data.put("title", "Local");
         data.put("saleType", "Venta");
         data.put("area", 200.0);
-        data.put("price", 200000.0);  // $1,000/m² - válido para locales
+        data.put("price", 11600000.0);  // RD$58,000/m² - válido para locales
         
         List<String> errors = PropertyValidator.validate(data);
         assertTrue("Precio válido para local comercial no debe generar errores", errors.isEmpty());
@@ -316,7 +316,7 @@ public class PropertyValidatorTest {
         Map<String, Object> data = new HashMap<>();
         data.put("title", "Propiedad");
         data.put("saleType", "Venta");
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Debe fallar sin tipo de propiedad", errors.isEmpty());
@@ -330,7 +330,7 @@ public class PropertyValidatorTest {
         data.put("type", "TipoInválido");
         data.put("title", "Propiedad");
         data.put("saleType", "Venta");
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Debe fallar con tipo inválido", errors.isEmpty());
@@ -347,7 +347,7 @@ public class PropertyValidatorTest {
         data.put("bedrooms", 3);
         data.put("bathrooms", 2);
         data.put("area", 150.0);
-        data.put("price", -50000.0);
+        data.put("price", -2900000.0);  // Precio negativo
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Debe fallar con precio negativo", errors.isEmpty());
@@ -364,7 +364,7 @@ public class PropertyValidatorTest {
         data.put("bedrooms", 2);
         data.put("bathrooms", 1);
         data.put("area", 0.0);
-        data.put("price", 50000.0);
+        data.put("price", 2900000.0);  // RD$2,900,000
         
         List<String> errors = PropertyValidator.validate(data);
         assertFalse("Debe fallar con área cero", errors.isEmpty());
@@ -386,6 +386,7 @@ public class PropertyValidatorTest {
     
     @Test
     public void testIsSolarType() {
+        assertTrue(PropertyValidator.isSolarType("Solar"));
         assertTrue(PropertyValidator.isSolarType("Solares"));
         assertFalse(PropertyValidator.isSolarType("Casa"));
         assertFalse(PropertyValidator.isSolarType("Local Comercial"));
@@ -396,5 +397,20 @@ public class PropertyValidatorTest {
         assertTrue(PropertyValidator.isCommercialType("Local Comercial"));
         assertFalse(PropertyValidator.isCommercialType("Casa"));
         assertFalse(PropertyValidator.isCommercialType("Solares"));
+    }
+
+    // ========== Test para nombre unificado "Solar" ==========
+    
+    @Test
+    public void testSolar_NewName_Valid() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("type", "Solar");  // Nuevo nombre estandarizado
+        data.put("title", "Terreno en Bávaro");
+        data.put("saleType", "Venta");
+        data.put("area", 500.0);
+        data.put("price", 2900000.0);
+        
+        List<String> errors = PropertyValidator.validate(data);
+        assertTrue("Un solar con el nuevo nombre debe ser válido", errors.isEmpty());
     }
 }

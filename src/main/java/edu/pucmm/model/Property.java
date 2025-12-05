@@ -8,9 +8,12 @@ import java.util.List;
 
 /**
  * Modelo de Propiedad.
- * - type: Casa | Apartamento | Penthouse | Solares | Villa
+ * - type: Casa | Apartamento | Penthouse | Solar | Villa | Local Comercial
  * - latitude / longitude: coordenadas
  * - units[].area: área de cada unidad (m²)
+ * - price: Precio en Pesos Dominicanos (RD$/DOP)
+ * 
+ * IMPORTANTE: Todos los precios se manejan en Pesos Dominicanos (DOP/RD$)
  */
 public class Property {
 

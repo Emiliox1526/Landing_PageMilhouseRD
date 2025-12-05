@@ -10,11 +10,12 @@ import java.util.Map;
  */
 public class PropertyValidator {
 
-    // Tipos de propiedad
+    // Tipos de propiedad (nombres estandarizados)
     public static final String TYPE_CASA = "Casa";
     public static final String TYPE_APARTAMENTO = "Apartamento";
     public static final String TYPE_PENTHOUSE = "Penthouse";
-    public static final String TYPE_SOLARES = "Solares";
+    public static final String TYPE_SOLAR = "Solar";  // Nombre estándar
+    public static final String TYPE_SOLARES = "Solares";  // Backwards compatibility
     public static final String TYPE_VILLA = "Villa";
     public static final String TYPE_LOCAL_COMERCIAL = "Local Comercial";
 
@@ -44,7 +45,8 @@ public class PropertyValidator {
 
         // Validaciones según tipo
         switch (type) {
-            case TYPE_SOLARES:
+            case TYPE_SOLAR:
+            case TYPE_SOLARES:  // Backwards compatibility
                 validateSolar(data, errors);
                 break;
             case TYPE_CASA:
@@ -68,7 +70,7 @@ public class PropertyValidator {
 
     /**
      * Valida un terreno/solar.
-     * - Requiere: área (solar) y precio
+     * - Requiere: área (solar) y precio en RD$
      * - No permite: habitaciones, baños, amenidades residenciales, área construida
      */
     private static void validateSolar(Map<String, Object> data, List<String> errors) {
@@ -77,27 +79,33 @@ public class PropertyValidator {
         Double price = getDouble(data, "price");
 
         if (area == null || area <= 0) {
-            errors.add("El área del solar es requerida y debe ser mayor a 0");
+            errors.add("El área del solar es requerida y debe ser mayor a 0 m². " +
+                      "Ejemplo: ingrese un valor como 500 para un solar de 500 m²");
         }
         if (price == null || price <= 0) {
-            errors.add("El precio es requerido y debe ser mayor a 0");
+            errors.add("El precio es requerido y debe ser mayor a 0. " +
+                      "Ingrese el precio total en Pesos Dominicanos (RD$). " +
+                      "Ejemplo: RD$2,500,000 para un solar de 500 m²");
         }
 
         // Campos no permitidos
         if (hasValue(data, "bedrooms")) {
-            errors.add("Los solares no deben tener habitaciones");
+            errors.add("Los solares/terrenos no deben tener habitaciones. " +
+                      "Este campo solo aplica para propiedades residenciales como casas o apartamentos");
         }
         if (hasValue(data, "bathrooms")) {
-            errors.add("Los solares no deben tener baños");
+            errors.add("Los solares/terrenos no deben tener baños. " +
+                      "Este campo solo aplica para propiedades residenciales o comerciales");
         }
         if (hasValue(data, "amenities")) {
-            errors.add("Los solares no deben tener amenidades residenciales");
+            errors.add("Los solares/terrenos no deben tener amenidades residenciales. " +
+                      "Elimine campos como piscina, jardín, etc.");
         }
     }
 
     /**
      * Valida una propiedad residencial (casa, apartamento, villa, penthouse).
-     * - Requiere: habitaciones, baños, área construida, precio
+     * - Requiere: habitaciones, baños, área construida, precio en RD$
      * - Permite: amenidades relevantes
      */
     private static void validateResidential(Map<String, Object> data, List<String> errors) {
@@ -108,22 +116,27 @@ public class PropertyValidator {
         Double price = getDouble(data, "price");
 
         if (bedrooms == null || bedrooms < 0) {
-            errors.add("El número de habitaciones es requerido y debe ser mayor o igual a 0");
+            errors.add("El número de habitaciones es requerido y debe ser mayor o igual a 0. " +
+                      "Ejemplo: ingrese 3 para una propiedad de 3 habitaciones, o 0 para un estudio");
         }
         if (bathrooms == null || bathrooms <= 0) {
-            errors.add("El número de baños es requerido y debe ser mayor a 0");
+            errors.add("El número de baños es requerido y debe ser mayor a 0. " +
+                      "Ejemplo: ingrese 2 para una propiedad con 2 baños completos");
         }
         if (area == null || area <= 0) {
-            errors.add("El área construida es requerida y debe ser mayor a 0");
+            errors.add("El área construida es requerida y debe ser mayor a 0 m². " +
+                      "Ejemplo: ingrese 150 para una casa de 150 m² construidos");
         }
         if (price == null || price <= 0) {
-            errors.add("El precio es requerido y debe ser mayor a 0");
+            errors.add("El precio es requerido y debe ser mayor a 0. " +
+                      "Ingrese el precio total en Pesos Dominicanos (RD$). " +
+                      "Ejemplo: RD$8,700,000 para una casa de 150 m²");
         }
     }
 
     /**
      * Valida un local comercial.
-     * - Requiere: área, precio
+     * - Requiere: área, precio en RD$
      * - Permite: baños (opcional, según región)
      * - No permite: habitaciones, amenidades residenciales
      */
@@ -133,15 +146,19 @@ public class PropertyValidator {
         Double price = getDouble(data, "price");
 
         if (area == null || area <= 0) {
-            errors.add("El área del local comercial es requerida y debe ser mayor a 0");
+            errors.add("El área del local comercial es requerida y debe ser mayor a 0 m². " +
+                      "Ejemplo: ingrese 100 para un local de 100 m²");
         }
         if (price == null || price <= 0) {
-            errors.add("El precio es requerido y debe ser mayor a 0");
+            errors.add("El precio es requerido y debe ser mayor a 0. " +
+                      "Ingrese el precio total en Pesos Dominicanos (RD$). " +
+                      "Ejemplo: RD$5,800,000 para un local de 100 m²");
         }
 
         // Campos no permitidos
         if (hasValue(data, "bedrooms")) {
-            errors.add("Los locales comerciales no deben tener habitaciones");
+            errors.add("Los locales comerciales no deben tener habitaciones. " +
+                      "Este campo solo aplica para propiedades residenciales");
         }
 
         // Amenidades residenciales no permitidas
@@ -153,7 +170,8 @@ public class PropertyValidator {
                 for (String amenity : amenities) {
                     if (RESIDENTIAL_AMENITIES.stream().anyMatch(ra -> 
                         amenity.toLowerCase().contains(ra.toLowerCase()))) {
-                        errors.add("Los locales comerciales no deben tener amenidades residenciales como: " + amenity);
+                        errors.add("Los locales comerciales no deben tener amenidades residenciales como: " + amenity + ". " +
+                                  "Use amenidades comerciales como: Estacionamiento, Seguridad 24/7, Aire acondicionado");
                     }
                 }
             }
@@ -163,6 +181,7 @@ public class PropertyValidator {
     /**
      * Valida que el precio tenga una relación lógica con los metros cuadrados.
      * Evita valores incoherentes (ej: precio muy bajo o muy alto por m²)
+     * Nota: Todos los precios se manejan en Pesos Dominicanos (DOP/RD$)
      */
     private static void validatePriceAreaRatio(Map<String, Object> data, List<String> errors) {
         Double price = getDouble(data, "price");
@@ -174,40 +193,62 @@ public class PropertyValidator {
 
         double pricePerSqm = price / area;
         
-        // Rangos razonables para República Dominicana (USD/m²)
+        // Rangos razonables para República Dominicana (RD$/m²)
+        // Nota: 1 USD ≈ 58 DOP (tasa de referencia)
         String type = getString(data, "type");
         double minPricePerSqm = 0;
         double maxPricePerSqm = 0;
 
         switch (type) {
-            case TYPE_SOLARES:
-                minPricePerSqm = 10;      // Mínimo $10/m² para solares
-                maxPricePerSqm = 5000;    // Máximo $5,000/m² para solares premium
+            case TYPE_SOLAR:
+            case TYPE_SOLARES:  // Backwards compatibility
+                minPricePerSqm = 500;      // Mínimo RD$500/m² para solares
+                maxPricePerSqm = 290000;   // Máximo RD$290,000/m² para solares premium
                 break;
             case TYPE_LOCAL_COMERCIAL:
-                minPricePerSqm = 50;      // Mínimo $50/m² para locales
-                maxPricePerSqm = 10000;   // Máximo $10,000/m² para locales premium
+                minPricePerSqm = 2900;     // Mínimo RD$2,900/m² para locales
+                maxPricePerSqm = 580000;   // Máximo RD$580,000/m² para locales premium
                 break;
             case TYPE_CASA:
             case TYPE_APARTAMENTO:
             case TYPE_PENTHOUSE:
             case TYPE_VILLA:
-                minPricePerSqm = 100;     // Mínimo $100/m² para residencial
-                maxPricePerSqm = 15000;   // Máximo $15,000/m² para residencial de lujo
+                minPricePerSqm = 5800;     // Mínimo RD$5,800/m² para residencial
+                maxPricePerSqm = 870000;   // Máximo RD$870,000/m² para residencial de lujo
                 break;
         }
 
         if (pricePerSqm < minPricePerSqm) {
             errors.add(String.format(
-                "El precio por m² es muy bajo (%.2f USD/m²). Mínimo esperado: %.0f USD/m²",
-                pricePerSqm, minPricePerSqm
+                "El precio por m² es muy bajo (RD$%,.2f/m²). Mínimo esperado: RD$%,.0f/m². " +
+                "Ejemplo: Para un %s de %.0f m², el precio mínimo recomendado sería RD$%,.0f",
+                pricePerSqm, minPricePerSqm, getPropertyTypeName(type), area, minPricePerSqm * area
             ));
         }
         if (pricePerSqm > maxPricePerSqm) {
             errors.add(String.format(
-                "El precio por m² es muy alto (%.2f USD/m²). Máximo esperado: %.0f USD/m²",
-                pricePerSqm, maxPricePerSqm
+                "El precio por m² es muy alto (RD$%,.2f/m²). Máximo esperado: RD$%,.0f/m². " +
+                "Ejemplo: Para un %s de %.0f m², el precio máximo recomendado sería RD$%,.0f",
+                pricePerSqm, maxPricePerSqm, getPropertyTypeName(type), area, maxPricePerSqm * area
             ));
+        }
+    }
+
+    /**
+     * Retorna el nombre descriptivo del tipo de propiedad para mensajes de error
+     */
+    private static String getPropertyTypeName(String type) {
+        if (type == null) return "propiedad";
+        switch (type) {
+            case TYPE_SOLAR:
+            case TYPE_SOLARES:
+                return "solar";
+            case TYPE_CASA: return "casa";
+            case TYPE_APARTAMENTO: return "apartamento";
+            case TYPE_PENTHOUSE: return "penthouse";
+            case TYPE_VILLA: return "villa";
+            case TYPE_LOCAL_COMERCIAL: return "local comercial";
+            default: return "propiedad";
         }
     }
 
@@ -222,7 +263,7 @@ public class PropertyValidator {
      * Verifica si un tipo de propiedad es un solar/terreno.
      */
     public static boolean isSolarType(String type) {
-        return TYPE_SOLARES.equals(type);
+        return TYPE_SOLAR.equals(type) || TYPE_SOLARES.equals(type);
     }
 
     /**

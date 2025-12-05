@@ -20,9 +20,9 @@ public class PropertyController {
     private final MongoCollection<Document> collection;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    // Tipos permitidos
+    // Tipos permitidos (acepta ambos "Solar" y "Solares" para compatibilidad)
     private static final List<String> ALLOWED_TYPES = List.of(
-            "Casa", "Apartamento", "Penthouse", "Solares", "Villa", "Local Comercial"
+            "Casa", "Apartamento", "Penthouse", "Solar", "Solares", "Villa", "Local Comercial"
     );
 
     public PropertyController(MongoCollection<Document> collection) {
