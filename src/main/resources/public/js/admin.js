@@ -321,12 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleUnitsUI();
     }
 
-    // Nueva función para actualizar hint de precio - SIMPLIFICADA (sin validación de rangos)
-    function updatePriceHint(type) {
-        // La validación de rangos de precio por m² ha sido eliminada
-        // No se muestran rangos ni se valida precio mínimo/máximo
-    }
-
     // Nueva función para calcular precio de solares automáticamente
     function calculateSolarPrice() {
         const type = typeSelect?.value || '';
@@ -786,8 +780,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create a document fragment to batch DOM updates
         const fragment = document.createDocumentFragment();
         
-        // Process existing images
-        existingImageUrls.forEach((u, idx)=>{
+        // Process existing images - store URLs in a closure to avoid index issues
+        existingImageUrls.forEach((u)=>{
             const item = document.createElement('div');
             item.className = 'image-item';
             const src = toImageUrl(u, API_BASE);
@@ -795,12 +789,15 @@ document.addEventListener('DOMContentLoaded', () => {
     <img src="${src}" alt="img">
     <button type="button" class="remove" title="Quitar"><i class="bi bi-x-lg"></i></button>
   `;
-            // Use closure to capture the correct index
-            const removeHandler = (capturedIdx) => () => {
-                existingImageUrls.splice(capturedIdx, 1);
-                renderImagePreview();
+            // Use the URL itself to find and remove the correct item
+            const removeHandler = (urlToRemove) => () => {
+                const urlIdx = existingImageUrls.indexOf(urlToRemove);
+                if (urlIdx !== -1) {
+                    existingImageUrls.splice(urlIdx, 1);
+                    renderImagePreview();
+                }
             };
-            item.querySelector('.remove').addEventListener('click', removeHandler(idx));
+            item.querySelector('.remove').addEventListener('click', removeHandler(u));
             fragment.appendChild(item);
         });
 

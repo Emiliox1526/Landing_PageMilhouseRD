@@ -85,7 +85,7 @@ public class PropertyValidator {
             errors.add("El precio es requerido y debe ser mayor a 0. " +
                     "Ingrese el precio total en Pesos Dominicanos (RD$). " +
                     "Ejemplo: RD$2,500,000 para un solar de 500 m²");
-        }  // ← ESTA LLAVE FALTABA
+        }
 
         // Campos no permitidos
         if (hasValue(data, "bedrooms")) {
