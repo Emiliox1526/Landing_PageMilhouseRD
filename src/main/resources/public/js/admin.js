@@ -399,7 +399,12 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleFieldsByPropertyType();
 
         modalEl.querySelector('.modal-title').textContent = 'Crear propiedad';
-        getModal().show();
+        const modal = getModal();
+        if (modal) {
+            modal.show();
+        } else {
+            console.error('[ADMIN] No se pudo abrir el modal: Bootstrap Modal no disponible');
+        }
     }
 
     btnOpenCreateToolbar?.addEventListener('click', openCreateModal);
@@ -1106,7 +1111,12 @@ document.addEventListener('DOMContentLoaded', () => {
         modalEl.querySelector('.modal-title').textContent = 'Modificar propiedad';
         form?.classList.remove('was-validated');
         fillFormFromProperty(p);
-        getModal().show();
+        const modal = getModal();
+        if (modal) {
+            modal.show();
+        } else {
+            console.error('[ADMIN] No se pudo abrir el modal: Bootstrap Modal no disponible');
+        }
         setTimeout(() => { map?.invalidateSize(); }, 50);
     }
 
@@ -1349,7 +1359,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Cerrar modal después de un breve delay para que se vea el mensaje de éxito
                     setTimeout(() => {
-                        getModal().hide();
+                        const modal = getModal();
+                        if (modal) {
+                            modal.hide();
+                        }
                     }, 1500);
                     
                     if (marker){ marker.remove(); marker = null; }
