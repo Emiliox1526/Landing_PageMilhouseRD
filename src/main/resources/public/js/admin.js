@@ -304,19 +304,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
             case 'apartment':
                 // Apartamento: habitaciones, baños, parqueos y área van en unidades (tipologías)
-                setFieldState(bedroomsField, bedroomsContainer, false, false);   // Oculto, va en unidades
-                setFieldState(bathroomsField, bathroomsContainer, false, false);  // Oculto, va en unidades
-                setFieldState(parkingField, parkingContainer, false, false);     // Oculto, va en unidades
-                // Ocultar campo de área, va en unidades
-                const areaContainer = areaField?.closest('.col-md-6');
-                if (areaField && areaContainer) {
-                    areaContainer.classList.add('d-none');
-                    areaField.removeAttribute('required');
-                    areaField.value = '';
-                    // Clear validation errors for area field
-                    if (typeof FormValidator !== 'undefined') {
-                        FormValidator.clearFieldError(areaField);
-                    }
+                setFieldState(bedroomsField, bedroomsContainer, false, false);
+                setFieldState(bathroomsField, bathroomsContainer, false, false);
+                setFieldState(parkingField, parkingContainer, false, false);
+                // Ocultar campo de área
+                if (areaField) {
+                    const areaContainer = areaField.closest('.col-md-6');
+                    setFieldState(areaField, areaContainer, false, false);
                 }
                 // Ocultar precio por m² para apartamentos
                 hidePricePerSqmField();
