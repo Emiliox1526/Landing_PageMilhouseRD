@@ -195,6 +195,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Helper function to update price hint based on property type
+    function updatePriceHint(type) {
+        const priceHintEl = document.getElementById('priceHint');
+        if (!priceHintEl) return;
+        
+        const category = getPropertyTypeCategory(type);
+        switch (category) {
+            case 'solar':
+                priceHintEl.textContent = 'El precio se calculará automáticamente (área × precio por m²).';
+                break;
+            case 'commercial':
+                priceHintEl.textContent = 'Ingrese el precio total del local comercial en Pesos Dominicanos (RD$).';
+                break;
+            case 'residential':
+                priceHintEl.textContent = 'Ingrese el precio total de la propiedad en Pesos Dominicanos (RD$).';
+                break;
+            default:
+                priceHintEl.textContent = 'Ingrese el precio total en Pesos Dominicanos (RD$).';
+                break;
+        }
+    }
+
     function toggleFieldsByPropertyType() {
         const type = typeSelect?.value || '';
         const category = getPropertyTypeCategory(type);
