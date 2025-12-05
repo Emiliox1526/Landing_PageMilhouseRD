@@ -177,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Referencias a campos específicos de solares
         const pricePerSqmContainer = document.getElementById('pricePerSqmContainer');
         const pricePerSqmField = document.getElementById('pricePerSqm');
-        const priceContainer = document.getElementById('priceContainer');
         const priceAutoCalculated = document.getElementById('priceAutoCalculated');
         
         // Referencias a los containers de los campos
@@ -870,7 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pricePerSqmField = document.getElementById('pricePerSqm');
         if (pricePerSqmField && p.pricePerSqm) {
             pricePerSqmField.value = Number.isFinite(p.pricePerSqm) ? p.pricePerSqm : '';
-        } else if (pricePerSqmField && p.type === 'Solar' && p.area && p.price) {
+        } else if (pricePerSqmField && p.type === 'Solar' && p.area > 0 && p.price > 0) {
             // Calcular precio por m² si no está guardado pero tenemos área y precio
             const calculatedPricePerSqm = p.price / p.area;
             pricePerSqmField.value = Number.isFinite(calculatedPricePerSqm) ? calculatedPricePerSqm.toFixed(2) : '';
