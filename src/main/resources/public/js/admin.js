@@ -314,8 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, false);
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
-                    areaField.setAttribute('required', 'required');
+                    setFieldState(areaField, areaContainer, true, true);  // Use setFieldState to properly enable the field
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del solar (m²)';
                 }
@@ -392,8 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, true);     // Opcional
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
-                    areaField.setAttribute('required', 'required');
+                    setFieldState(areaField, areaContainer, true, true);  // Use setFieldState to properly enable the field
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área del local (m²)';
                 }
@@ -417,8 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, true);  // Opcional
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
-                    areaField.setAttribute('required', 'required');
+                    setFieldState(areaField, areaContainer, true, true);  // Use setFieldState to properly enable the field
                     const areaLabel = document.querySelector('label[for="area"]');
                     if (areaLabel) areaLabel.innerHTML = '📐 Área construida (m²)';
                 }
@@ -442,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldState(parkingField, parkingContainer, false, true);
                 if (areaField) {
                     const areaContainer = areaField.closest('.col-md-6');
-                    if (areaContainer) areaContainer.classList.remove('d-none');
+                    setFieldState(areaField, areaContainer, false, true);  // Use setFieldState to properly enable the field
                 }
                 // Ocultar precio por m² para no solares
                 hidePricePerSqmField();
