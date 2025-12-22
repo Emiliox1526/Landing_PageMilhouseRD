@@ -28,27 +28,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 2) Lógica sencilla de login para admin
-            const loginBtn = document.getElementById('loginBtn');
             const adminDropdown = document.getElementById('adminDropdown');
-            if (!loginBtn || !adminDropdown) {
-                console.error('No se encontraron #loginBtn o #adminDropdown.');
+            if (!adminDropdown) {
+                console.error('No se encontró #adminDropdown.');
                 return;
             }
 
             const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            console.log('[Header] isAdmin status:', isAdmin);
+            
             if (isAdmin) {
-                loginBtn.classList.add('d-none');
+                // Usuario está logueado - mostrar botón admin
                 adminDropdown.classList.remove('d-none');
+                
+                // Configurar el botón de logout
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
-                    logoutBtn.addEventListener('click', e => {
+                    logoutBtn.addEventListener('click', (e) => {
                         e.preventDefault();
+                        console.log('[Header] Cerrando sesión...');
+                        
+                        // Limpiar el estado de autenticación
                         localStorage.removeItem('isAdmin');
+                        
+                        // Redirigir a la página principal
                         window.location.href = '/index.html';
                     });
+                } else {
+                    console.error('[Header] No se encontró el botón de logout');
                 }
             } else {
-                loginBtn.classList.remove('d-none');
+                // Usuario no está logueado - ocultar botón admin
                 adminDropdown.classList.add('d-none');
             }
 
