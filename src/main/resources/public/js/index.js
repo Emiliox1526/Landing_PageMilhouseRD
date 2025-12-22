@@ -133,12 +133,14 @@ async function cargarHeroRecientes() {
         const heroDefault = list.find(p => p.isHeroDefault === true);
         const others = list.filter(p => p.isHeroDefault !== true);
         
-        // Ordenar otros por fecha descendente y tomar hasta 5 (para total de 6 con hero default)
+        // Ordenar otros por fecha descendente.
+        // Limitamos a 5 cuando hay hero default para mantener un total de 6 slides en el carrusel
+        // (1 hero default + 5 recientes = 6 slides totales)
         const recientes = [...others]
             .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, heroDefault ? 5 : 6);
         
-        // Si hay hero default, ponerlo primero
+        // Si hay hero default, colocarlo primero en el array de slides
         const slides = heroDefault ? [heroDefault, ...recientes] : recientes;
 
         sliderContainer.innerHTML = "";
