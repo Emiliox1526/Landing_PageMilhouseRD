@@ -138,8 +138,9 @@ public class AuthController {
 
     /**
      * Authentication middleware - call before protected endpoints
+     * Returns true if authenticated, false otherwise
      */
-    public static void requireAuth(Context ctx, AuthService authService) {
+    public static boolean requireAuth(Context ctx, AuthService authService) {
         String token = ctx.cookie("session_token");
         String email = authService.validateSession(token);
         
@@ -148,11 +149,11 @@ public class AuthController {
                 "success", false,
                 "message", "No autorizado - inicie sesión"
             ));
-            // Prevent further processing
-            ctx.skipRemainingHandlers();
+            return false;
         }
         
         // Store email in attribute for use in handler
         ctx.attribute("userEmail", email);
+        return true;
     }
 }
