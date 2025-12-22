@@ -129,18 +129,28 @@ async function cargarHeroRecientes() {
         const list = coerceToArray(data);
         if (!list.length) return;
 
-        // Ordenar por fecha descendente y tomar 6
-        const recientes = [...list]
+        // Separar la propiedad hero default si existe
+        const heroDefault = list.find(p => p.isHeroDefault === true);
+        const others = list.filter(p => p.isHeroDefault !== true);
+        
+        // Ordenar otros por fecha descendente.
+        // Limitamos a 5 cuando hay hero default para mantener un total de 6 slides en el carrusel
+        // (1 hero default + 5 recientes = 6 slides totales)
+        const recientes = [...others]
             .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 6);
+            .slice(0, heroDefault ? 5 : 6);
+        
+        // Si hay hero default, colocarlo primero en el array de slides
+        const slides = heroDefault ? [heroDefault, ...recientes] : recientes;
 
         sliderContainer.innerHTML = "";
         dotsContainer.innerHTML = "";
 
-        recientes.forEach((p, i) => {
+        slides.forEach((p, i) => {
             const img = getMainImage(p);
-            const title = escapeHtml(p.title || "Propiedad");
-            const location = escapeHtml(resolveLocation(p));
+            // Use custom hero title/description if available, otherwise fallback to property data
+            const title = escapeHtml(p.heroTitle || p.title || "Propiedad");
+            const location = escapeHtml(p.heroDescription || resolveLocation(p));
 
             const slide = document.createElement("div");
             slide.className = "slide" + (i === 0 ? " active" : "");
@@ -171,11 +181,11 @@ async function cargarHeroRecientes() {
 
         document.getElementById("prev-slide")
             .addEventListener("click", () =>
-                goToSlide((currentSlide - 1 + recientes.length) % recientes.length)
+                goToSlide((currentSlide - 1 + slides.length) % slides.length)
             );
         document.getElementById("next-slide")
             .addEventListener("click", () =>
-                goToSlide((currentSlide + 1) % recientes.length)
+                goToSlide((currentSlide + 1) % slides.length)
             );
     } catch (err) {
         console.error("Error cargando hero recientes:", err);

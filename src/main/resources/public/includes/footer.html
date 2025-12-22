@@ -83,27 +83,31 @@
 
     /* Utilidades */
     .mhf-footer .mhf-legal a{ margin-right:1rem; }
+    
+    /* Admin link - subtle styling for less visibility */
+    .mhf-footer .mhf-admin-link{
+        opacity: 0.7;
+        font-size: 0.85rem;
+    }
 </style>
 
 
 <footer class="mhf-footer">
     <div class="mhf-container">
-        <div class="row gy-4 g-lg-5">
-            <!-- Marca + tagline -->
-            <div class="col-12 col-md-6 col-lg-4">
+        <div class="row gy-4 g-lg-5 justify-content-lg-between">
+            <!-- Marca + tagline (aligned left) -->
+            <div class="col-12 col-md-6 col-lg-4 order-lg-1">
                 <a class="mhf-brand" href="/index.html" aria-label="Milhouse RD">
                     <img src="/assets/img/LogoMilhouse.png" alt="Logo Milhouse RD" class="mhf-logo">
                     <span class="mhf-name">MILHOUSE RD</span>
                 </a>
                 <p class="mhf-small">Tu aliado en bienes raíces en República Dominicana.</p>
             </div>
-            <div class="col-6 col-md-3 col-lg-4">
-            </div>
-            <!-- Contacto -->
-            <div class="col-6 col-md-3 col-lg-4">
+            <!-- Contacto (aligned right) -->
+            <div class="col-6 col-md-3 col-lg-4 order-lg-2">
                 <p class="mhf-heading">Contáctanos</p>
                 <ul class="list-unstyled mhf-list small m-0">
-                    <li><i class="bi bi-geo-alt-fill me-2"></i> Calle principal No. 7, ed. Corporativo, mod. 1-9, ensanche. Román II, Santiago</li>
+                    <li><i class="bi bi-geo-alt-fill me-2"></i> Calle principal No. 7, ed. Corporativo, mod. 1-9, ensanche. Román II, Santiago</li>
                     <li><i class="bi bi-telephone-fill me-2"></i> +1 809-818-1834</li>
                     <li><i class="bi bi-envelope-fill me-2"></i> 1834jml@gmail.com</li>
                 </ul>
@@ -117,7 +121,9 @@
             <div class="small">
                 &copy; <script>document.write(new Date().getFullYear());</script> Milhouse RD. Todos los derechos reservados.
             </div>
-
+            <div class="small">
+                <a href="/login.html" class="text-decoration-none mhf-admin-link">Acceso administrador</a>
+            </div>
         </div>
     </div>
 </footer>
