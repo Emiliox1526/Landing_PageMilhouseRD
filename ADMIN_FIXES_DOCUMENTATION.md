@@ -1,6 +1,6 @@
 # Documentación de Correcciones - Funcionalidad de Administrador
 
-## Fecha: 22 de Diciembre, 2025
+## Fecha: 22 de diciembre, 2025
 
 ### Problemas Solucionados
 

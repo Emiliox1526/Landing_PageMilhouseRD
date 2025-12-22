@@ -44,7 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Configurar el botón de logout
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
-                    logoutBtn.addEventListener('click', (e) => {
+                    // Remove any existing listener to prevent duplicates
+                    const newLogoutBtn = logoutBtn.cloneNode(true);
+                    logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+                    
+                    newLogoutBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         console.log('[Header] Cerrando sesión...');
                         
