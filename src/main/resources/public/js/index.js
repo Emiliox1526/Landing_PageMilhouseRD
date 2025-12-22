@@ -179,11 +179,11 @@ async function cargarHeroRecientes() {
 
         document.getElementById("prev-slide")
             .addEventListener("click", () =>
-                goToSlide((currentSlide - 1 + recientes.length) % recientes.length)
+                goToSlide((currentSlide - 1 + slides.length) % slides.length)
             );
         document.getElementById("next-slide")
             .addEventListener("click", () =>
-                goToSlide((currentSlide + 1) % recientes.length)
+                goToSlide((currentSlide + 1) % slides.length)
             );
     } catch (err) {
         console.error("Error cargando hero recientes:", err);
