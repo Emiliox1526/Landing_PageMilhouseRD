@@ -166,6 +166,13 @@ public class PropertyController {
         putIfNotBlank(doc, "saleType", body.get("saleType"));
         putIfNotBlank(doc, "address", body.get("address"));
         putIfNotBlank(doc, "descriptionParagraph", body.get("descriptionParagraph"));
+        
+        // Hero configuration
+        if (body.containsKey("isHeroDefault")) {
+            doc.append("isHeroDefault", Boolean.TRUE.equals(body.get("isHeroDefault")));
+        }
+        putIfNotBlank(doc, "heroTitle", body.get("heroTitle"));
+        putIfNotBlank(doc, "heroDescription", body.get("heroDescription"));
 
         if (price != null)     doc.append("price", price);
         if (pricePerSqm != null) doc.append("pricePerSqm", pricePerSqm);

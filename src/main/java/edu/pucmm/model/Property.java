@@ -61,6 +61,11 @@ public class Property {
     // Relacionados
     private List<Related> related = new ArrayList<>();
 
+    // Hero configuration
+    private Boolean isHeroDefault; // If true, this property shows first in hero slider
+    private String heroTitle;       // Custom title for hero display (optional)
+    private String heroDescription; // Custom description for hero display (optional)
+
     // Metadatos
     private Date createdAt;
     private Date updatedAt;
@@ -134,6 +139,15 @@ public class Property {
 
     public Date getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+
+    public Boolean getIsHeroDefault() { return isHeroDefault; }
+    public void setIsHeroDefault(Boolean isHeroDefault) { this.isHeroDefault = isHeroDefault; }
+
+    public String getHeroTitle() { return heroTitle; }
+    public void setHeroTitle(String heroTitle) { this.heroTitle = heroTitle; }
+
+    public String getHeroDescription() { return heroDescription; }
+    public void setHeroDescription(String heroDescription) { this.heroDescription = heroDescription; }
 
     // ----- Nested classes -----
 

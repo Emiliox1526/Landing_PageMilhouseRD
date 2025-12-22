@@ -1169,6 +1169,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         form.descriptionParagraph.value = p.descriptionParagraph ?? '';
         
+        // Hero configuration
+        const isHeroDefaultCheckbox = document.getElementById('isHeroDefault');
+        const heroTitleInput = document.getElementById('heroTitle');
+        const heroDescriptionInput = document.getElementById('heroDescription');
+        if (isHeroDefaultCheckbox) isHeroDefaultCheckbox.checked = p.isHeroDefault === true;
+        if (heroTitleInput) heroTitleInput.value = p.heroTitle ?? '';
+        if (heroDescriptionInput) heroDescriptionInput.value = p.heroDescription ?? '';
+        
         // Precio por m² para solares
         const pricePerSqmField = document.getElementById('pricePerSqm');
         if (pricePerSqmField && p.pricePerSqm) {
@@ -1400,7 +1408,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     descriptionParagraph: form.descriptionParagraph.value.trim(),
                     features: featuresList,
                     amenities: amenitiesList,
-                    images
+                    images,
+                    // Hero configuration
+                    isHeroDefault: document.getElementById('isHeroDefault')?.checked || false,
+                    heroTitle: document.getElementById('heroTitle')?.value.trim() || undefined,
+                    heroDescription: document.getElementById('heroDescription')?.value.trim() || undefined
                 };
                 
                 // Añadir pricePerSqm para solares con validación

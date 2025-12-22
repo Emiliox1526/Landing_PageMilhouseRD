@@ -129,18 +129,26 @@ async function cargarHeroRecientes() {
         const list = coerceToArray(data);
         if (!list.length) return;
 
-        // Ordenar por fecha descendente y tomar 6
-        const recientes = [...list]
+        // Separar la propiedad hero default si existe
+        const heroDefault = list.find(p => p.isHeroDefault === true);
+        const others = list.filter(p => p.isHeroDefault !== true);
+        
+        // Ordenar otros por fecha descendente y tomar hasta 5 (para total de 6 con hero default)
+        const recientes = [...others]
             .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 6);
+            .slice(0, heroDefault ? 5 : 6);
+        
+        // Si hay hero default, ponerlo primero
+        const slides = heroDefault ? [heroDefault, ...recientes] : recientes;
 
         sliderContainer.innerHTML = "";
         dotsContainer.innerHTML = "";
 
-        recientes.forEach((p, i) => {
+        slides.forEach((p, i) => {
             const img = getMainImage(p);
-            const title = escapeHtml(p.title || "Propiedad");
-            const location = escapeHtml(resolveLocation(p));
+            // Use custom hero title/description if available, otherwise fallback to property data
+            const title = escapeHtml(p.heroTitle || p.title || "Propiedad");
+            const location = escapeHtml(p.heroDescription || resolveLocation(p));
 
             const slide = document.createElement("div");
             slide.className = "slide" + (i === 0 ? " active" : "");
