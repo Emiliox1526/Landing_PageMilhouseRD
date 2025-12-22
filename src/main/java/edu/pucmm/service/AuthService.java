@@ -12,9 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Authentication service for secure user authentication
+ * 
+ * Note: Currently uses in-memory session storage (ConcurrentHashMap).
+ * For production deployments with multiple server instances or high availability,
+ * consider using a distributed cache (Redis, Memcached) or database storage
+ * to persist sessions across restarts and share sessions between instances.
  */
 public class AuthService {
     private final MongoCollection<Document> usersCollection;
+    // In-memory session storage - sessions will be lost on server restart
     private final ConcurrentHashMap<String, SessionData> activeSessions;
 
     // Session data class
@@ -157,14 +163,24 @@ public class AuthService {
     /**
      * Initialize default admin user if no users exist
      * IMPORTANT: Change this password after first deployment
+     * Can be configured via environment variables:
+     * - DEFAULT_ADMIN_EMAIL
+     * - DEFAULT_ADMIN_PASSWORD
      */
     public void initializeDefaultAdmin() {
         long userCount = usersCollection.countDocuments();
         if (userCount == 0) {
             // Create default admin with a temporary password
             // This should be changed immediately after deployment
-            String defaultEmail = "admin@milhouserd.com";
-            String temporaryPassword = "ChangeMe123!"; // MUST be changed after first login
+            // Use environment variables to customize credentials
+            String defaultEmail = System.getenv().getOrDefault(
+                "DEFAULT_ADMIN_EMAIL", 
+                "admin@milhouserd.com"
+            );
+            String temporaryPassword = System.getenv().getOrDefault(
+                "DEFAULT_ADMIN_PASSWORD", 
+                "ChangeMe123!"
+            ); // MUST be changed after first login
             
             try {
                 createUser(defaultEmail, temporaryPassword);

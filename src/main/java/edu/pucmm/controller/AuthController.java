@@ -66,8 +66,19 @@ public class AuthController {
                 return;
             }
 
-            // Set cookie with session token (HTTPOnly and Secure in production)
-            ctx.cookie("session_token", token, 24 * 60 * 60); // 24 hours
+            // Set cookie with session token with security attributes
+            // In production with HTTPS, the Secure flag should be enabled
+            io.javalin.http.Cookie cookie = new io.javalin.http.Cookie(
+                "session_token", 
+                token,
+                "/",           // path
+                24 * 60 * 60,  // maxAge in seconds (24 hours)
+                false,         // secure - set to true in production with HTTPS
+                0,             // version
+                true           // httpOnly - prevents XSS attacks
+            );
+            cookie.setSameSite(io.javalin.http.SameSite.STRICT); // CSRF protection
+            ctx.cookie(cookie);
             
             ctx.json(Map.of(
                 "success", true,

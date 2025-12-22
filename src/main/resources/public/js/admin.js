@@ -3,7 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/auth/validate', {
         credentials: 'include'
     })
-    .then(resp => resp.json())
+    .then(resp => {
+        if (!resp.ok) {
+            throw new Error('Network error: ' + resp.status);
+        }
+        return resp.json();
+    })
     .then(data => {
         if (!data.success || !data.authenticated) {
             // No autenticado - redirigir al login
@@ -18,7 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(err => {
         console.error('[ADMIN] Error validating session:', err);
-        window.location.href = '/login.html';
+        // Show error message instead of immediate redirect
+        const mainContent = document.querySelector('main') || document.body;
+        mainContent.innerHTML = `
+            <div class="container mt-5">
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Error de Conexión</h4>
+                    <p>No se pudo verificar la autenticación. Por favor verifica tu conexión a internet e intenta nuevamente.</p>
+                    <hr>
+                    <button class="btn btn-primary" onclick="window.location.reload()">Reintentar</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='/login.html'">Ir al Login</button>
+                </div>
+            </div>
+        `;
     });
 });
 
