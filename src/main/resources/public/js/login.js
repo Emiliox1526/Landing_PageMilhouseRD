@@ -27,23 +27,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Manejar el envío del formulario con validación
-    FormValidator.preventInvalidSubmit(form, validationRules, () => {
+    FormValidator.preventInvalidSubmit(form, validationRules, async () => {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
 
-        // Verificar credenciales
-        if (username === '1834jml@gmail.com' && password === 'Desiree2009') {
-            FormValidator.showGlobalSuccess(form, 'Iniciando sesión...');
-            localStorage.setItem('isAdmin', 'true');
-            
-            // Redirigir después de un breve delay para que se vea el mensaje
-            setTimeout(() => {
-                window.location.href = '/index.html';
-            }, 500);
-        } else {
-            FormValidator.showGlobalError(form, 'Usuario o contraseña incorrectos. Por favor verifica tus credenciales e intenta nuevamente.');
-            
-            // Limpiar el campo de contraseña por seguridad
+        try {
+            // Call backend authentication API
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: username,
+                    password: password
+                }),
+                credentials: 'include' // Important for cookies
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                FormValidator.showGlobalSuccess(form, 'Iniciando sesión...');
+                localStorage.setItem('isAdmin', 'true');
+                
+                // Redirigir después de un breve delay para que se vea el mensaje
+                setTimeout(() => {
+                    window.location.href = '/index.html';
+                }, 500);
+            } else {
+                FormValidator.showGlobalError(form, data.message || 'Usuario o contraseña incorrectos. Por favor verifica tus credenciales e intenta nuevamente.');
+                
+                // Limpiar el campo de contraseña por seguridad
+                passwordField.value = '';
+                passwordField.focus();
+            }
+        } catch (error) {
+            console.error('Error en autenticación:', error);
+            FormValidator.showGlobalError(form, 'Error al conectar con el servidor. Por favor intenta nuevamente.');
             passwordField.value = '';
             passwordField.focus();
         }

@@ -1,4 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar autenticación antes de cargar la página admin
+    fetch('/api/auth/validate', {
+        credentials: 'include'
+    })
+    .then(resp => resp.json())
+    .then(data => {
+        if (!data.success || !data.authenticated) {
+            // No autenticado - redirigir al login
+            console.log('[ADMIN] Usuario no autenticado, redirigiendo al login');
+            window.location.href = '/login.html';
+            return;
+        }
+        
+        // Usuario autenticado - continuar con la carga de admin
+        console.log('[ADMIN] Usuario autenticado:', data.email);
+        initializeAdminPanel();
+    })
+    .catch(err => {
+        console.error('[ADMIN] Error validating session:', err);
+        window.location.href = '/login.html';
+    });
+});
+
+function initializeAdminPanel() {
     // Polyfill for crypto.randomUUID() for older browsers
     if (!crypto.randomUUID) {
         crypto.randomUUID = function() {
@@ -1751,4 +1775,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Carga inicial =====
     loadCards();
-});
+}
