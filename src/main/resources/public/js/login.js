@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('loginForm');
     if (!form) return;
+    
+    // Configuration constants
+    const SESSION_VALIDATION_DELAY_MS = 1000; // Wait time before validating session after error
 
     // Definir reglas de validación
     const validationRules = {
@@ -109,7 +112,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 passwordField.focus();
             }
         } catch (error) {
-            console.error('Error en autenticación:', error);
+            console.error('[LOGIN] Error en autenticación:', error);
+            
+            // El servidor puede haber autenticado exitosamente pero falló al enviar la respuesta
+            // Verificar si la sesión se creó correctamente
+            console.log('[LOGIN] Attempting to validate session despite error...');
+            
+            await new Promise(resolve => setTimeout(resolve, SESSION_VALIDATION_DELAY_MS));
+            
+            try {
+                const validateResp = await fetch('/api/auth/validate', {
+                    credentials: 'include'
+                });
+                
+                if (validateResp.ok) {
+                    const validateData = await validateResp.json();
+                    
+                    if (validateData.success && validateData.authenticated) {
+                        console.log('[LOGIN] Session validated successfully - login was actually successful');
+                        FormValidator.showGlobalSuccess(form, 'Iniciando sesión...');
+                        localStorage.setItem('isAdmin', 'true');
+                        
+                        setTimeout(() => {
+                            window.location.href = '/index.html';
+                        }, 500);
+                        return; // Exit successfully
+                    }
+                }
+            } catch (validateError) {
+                console.error('[LOGIN] Session validation also failed:', validateError);
+            }
+            
+            // Si llegamos aquí, el error fue real
             FormValidator.showGlobalError(form, 'Error al conectar con el servidor. Por favor intenta nuevamente.');
             passwordField.value = '';
             passwordField.focus();

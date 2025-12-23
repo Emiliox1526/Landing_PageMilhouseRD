@@ -34,88 +34,134 @@ public class AuthController {
      * Returns: { "success": true, "token": "session-token" } or { "success": false, "message": "error" }
      */
     private void login(Context ctx) {
+        System.out.println("[AUTH] Login endpoint called");
         String email = null;
         try {
-            System.out.println("[AUTH] Login request received");
-            
+            System.out.println("[AUTH] Parsing request body");
             Map<String, Object> body = ctx.bodyAsClass(Map.class);
             email = (String) body.get("email");
             String password = (String) body.get("password");
 
-            System.out.println("[AUTH] Login attempt for email: " + (email != null ? email : "null"));
+            System.out.println("[AUTH] Login attempt for: " + (email != null ? email : "null"));
 
+            // Validate email
             if (email == null || email.trim().isEmpty()) {
-                System.out.println("[AUTH] Login failed: Email is required");
-                ctx.status(400).json(Map.of(
-                    "success", false,
-                    "message", "Email es requerido"
-                ));
+                System.out.println("[AUTH] Missing email");
+                ctx.status(400)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Email es requerido"
+                   ));
                 return;
             }
 
+            // Validate password
             if (password == null || password.trim().isEmpty()) {
-                System.out.println("[AUTH] Login failed: Password is required for email: " + email);
-                ctx.status(400).json(Map.of(
-                    "success", false,
-                    "message", "Contraseña es requerida"
-                ));
+                System.out.println("[AUTH] Missing password");
+                ctx.status(400)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Contraseña es requerida"
+                   ));
                 return;
             }
 
             // Authenticate user
-            String token = authService.authenticate(email.trim(), password);
+            String token = null;
+            try {
+                System.out.println("[AUTH] Calling authentication service");
+                token = authService.authenticate(email.trim(), password);
+                System.out.println("[AUTH] Authentication result: " + (token != null ? "SUCCESS" : "FAILED"));
+            } catch (Exception authEx) {
+                System.err.println("[AUTH] Exception during authentication: " + authEx.getMessage());
+                authEx.printStackTrace();
+                ctx.status(500)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Error durante la autenticación"
+                   ));
+                return;
+            }
             
             if (token == null) {
-                System.out.println("[AUTH] Authentication failed for email: " + email);
-                ctx.status(401).json(Map.of(
-                    "success", false,
-                    "message", "Usuario o contraseña incorrectos"
-                ));
+                System.out.println("[AUTH] Invalid credentials");
+                ctx.status(401)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Usuario o contraseña incorrectos"
+                   ));
                 return;
             }
 
-            System.out.println("[AUTH] Authentication successful for email: " + email);
+            System.out.println("[AUTH] Authentication successful");
 
-            // Set cookie with session token with security attributes
-            // In production with HTTPS, the Secure flag should be enabled
-            io.javalin.http.Cookie cookie = new io.javalin.http.Cookie(
-                "session_token", 
-                token,
-                "/",           // path
-                24 * 60 * 60,  // maxAge in seconds (24 hours)
-                false,         // secure - set to true in production with HTTPS
-                0,             // version
-                true           // httpOnly - prevents XSS attacks
-            );
-            cookie.setSameSite(io.javalin.http.SameSite.STRICT); // CSRF protection
-            ctx.cookie(cookie);
+            // Set cookie - this might be where the error occurs in production
+            try {
+                System.out.println("[AUTH] Setting session cookie");
+                io.javalin.http.Cookie cookie = new io.javalin.http.Cookie(
+                    "session_token", 
+                    token,
+                    "/",           // path
+                    24 * 60 * 60,  // maxAge in seconds (24 hours)
+                    false,         // secure - consider true for HTTPS in production
+                    0,             // version
+                    true           // httpOnly - prevents XSS attacks
+                );
+                cookie.setSameSite(io.javalin.http.SameSite.STRICT); // CSRF protection
+                ctx.cookie(cookie);
+                System.out.println("[AUTH] Cookie set successfully");
+            } catch (Exception cookieEx) {
+                System.err.println("[AUTH] Error setting cookie: " + cookieEx.getMessage());
+                cookieEx.printStackTrace();
+                // Cookie setting failed - return error since session won't work
+                ctx.status(500)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Error al establecer la sesión"
+                   ));
+                return;
+            }
             
-            System.out.println("[AUTH] Sending successful response with token");
-            
-            // Ensure we explicitly set status and content-type before sending JSON
-            ctx.status(200);
-            ctx.contentType("application/json; charset=utf-8");
-            ctx.json(Map.of(
-                "success", true,
-                "message", "Autenticación exitosa",
-                "token", token
-            ));
+            // Return success response
+            try {
+                System.out.println("[AUTH] Sending success response");
+                ctx.status(200)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", true,
+                       "message", "Autenticación exitosa"
+                   ));
+                System.out.println("[AUTH] Response sent successfully");
+            } catch (Exception responseEx) {
+                System.err.println("[AUTH] Error sending response: " + responseEx.getMessage());
+                responseEx.printStackTrace();
+                throw responseEx; // Re-throw to be caught by outer catch
+            }
 
         } catch (Exception e) {
-            System.err.println("[AUTH] Error in login endpoint: " + e.getMessage());
+            System.err.println("[AUTH] Unexpected error in login endpoint: " + e.getMessage());
             e.printStackTrace();
             
             // Ensure we always return valid JSON even on error
             try {
-                ctx.status(500);
-                ctx.contentType("application/json; charset=utf-8");
-                ctx.json(Map.of(
-                    "success", false,
-                    "message", "Error interno del servidor"
-                ));
-            } catch (Exception innerE) {
-                System.err.println("[AUTH] Critical: Failed to send error response: " + innerE.getMessage());
-                innerE.printStackTrace();
+                ctx.status(500)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Error interno del servidor"
+                   ));
+            } catch (Exception jsonEx) {
+                System.err.println("[AUTH] Failed to send error response: " + jsonEx.getMessage());
+                jsonEx.printStackTrace();
+                // Last resort - send plain text error
+                ctx.status(500)
+                   .contentType("text/plain")
+                   .result("Internal server error");
             }
         }
     }
