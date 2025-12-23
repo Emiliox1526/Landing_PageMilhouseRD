@@ -27,44 +27,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // 2) Lógica sencilla de login para admin
+            // 2) Lógica de autenticación - verificar con backend
             const adminDropdown = document.getElementById('adminDropdown');
             if (!adminDropdown) {
                 console.error('No se encontró #adminDropdown.');
                 return;
             }
 
-            const isAdmin = localStorage.getItem('isAdmin') === 'true';
-            console.log('[Header] isAdmin status:', isAdmin);
-            
-            if (isAdmin) {
-                // Usuario está logueado - mostrar botón admin
-                adminDropdown.classList.remove('d-none');
+            // Verificar sesión con el backend
+            fetch('/api/auth/validate', {
+                credentials: 'include'
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                const isAuthenticated = data.success && data.authenticated;
+                console.log('[Header] Authentication status:', isAuthenticated);
+                
+                // Sincronizar localStorage con el estado del backend
+                if (isAuthenticated) {
+                    localStorage.setItem('isAdmin', 'true');
+                    adminDropdown.classList.remove('d-none');
+                } else {
+                    localStorage.removeItem('isAdmin');
+                    adminDropdown.classList.add('d-none');
+                }
                 
                 // Configurar el botón de logout
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    // Remove any existing listener to prevent duplicates
-                    const newLogoutBtn = logoutBtn.cloneNode(true);
-                    logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
-                    
-                    newLogoutBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        console.log('[Header] Cerrando sesión...');
+                if (isAuthenticated) {
+                    const logoutBtn = document.getElementById('logoutBtn');
+                    if (logoutBtn) {
+                        // Remove any existing listener to prevent duplicates
+                        const newLogoutBtn = logoutBtn.cloneNode(true);
+                        logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
                         
-                        // Limpiar el estado de autenticación
-                        localStorage.removeItem('isAdmin');
-                        
-                        // Redirigir a la página principal
-                        window.location.href = '/index.html';
-                    });
-                } else {
-                    console.error('[Header] No se encontró el botón de logout');
+                        newLogoutBtn.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            console.log('[Header] Cerrando sesión...');
+                            
+                            try {
+                                // Llamar al endpoint de logout
+                                await fetch('/api/auth/logout', {
+                                    method: 'POST',
+                                    credentials: 'include'
+                                });
+                            } catch (error) {
+                                console.error('Error al cerrar sesión:', error);
+                            }
+                            
+                            // Limpiar el estado de autenticación
+                            localStorage.removeItem('isAdmin');
+                            
+                            // Redirigir a la página principal
+                            window.location.href = '/index.html';
+                        });
+                    } else {
+                        console.error('[Header] No se encontró el botón de logout');
+                    }
                 }
-            } else {
-                // Usuario no está logueado - ocultar botón admin
+            })
+            .catch(err => {
+                console.error('[Header] Error validating session:', err);
+                localStorage.removeItem('isAdmin');
                 adminDropdown.classList.add('d-none');
-            }
+            });
 
             // 3) Cambio de fondo según página
             if (navEl) {

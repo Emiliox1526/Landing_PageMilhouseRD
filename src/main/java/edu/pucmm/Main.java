@@ -8,7 +8,8 @@ import com.mongodb.client.MongoCollection;
 import edu.pucmm.config.MongoConfig;
 import edu.pucmm.config.UploadConfig;
 import edu.pucmm.controller.PropertyController;
-
+import edu.pucmm.controller.AuthController;
+import edu.pucmm.service.AuthService;
 import edu.pucmm.controller.UploadController;
 import io.javalin.Javalin;
 import io.javalin.http.UploadedFile;
@@ -52,6 +53,11 @@ public class Main {
         MongoClient mongo = MongoClients.create(mongoUri);
         MongoDatabase db  = mongo.getDatabase(dbName);
         MongoCollection<Document> properties = db.getCollection(collName);
+        MongoCollection<Document> users = db.getCollection("users");
+
+        // ========= Authentication Service =========
+        AuthService authService = new AuthService(users);
+        authService.initializeDefaultAdmin(); // Create default admin if needed
 
         // ========= Javalin (v5+) =========
         Javalin app = Javalin.create(cfg -> {
@@ -92,6 +98,7 @@ public class Main {
         }).start(port);
 
         // ========= Rutas de dominio =========
+        new AuthController(authService).register(app);                              // /api/auth/*
         new UploadController(MongoConfig.getGridFSBucket()).register(app);           // /api/uploads y /api/images/:id
         new PropertyController(db.getCollection("properties")).register(app);
 
