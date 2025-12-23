@@ -147,7 +147,7 @@ public class Main {
         new AuthController(authService).register(app);                              // /api/auth/*
         new UploadController(MongoConfig.getGridFSBucket()).register(app);           // /api/uploads y /api/images/:id
         new PropertyController(db.getCollection("properties")).register(app);
-        new HeroConfigController(db.getCollection("heroConfig")).register(app);     // /api/hero/*
+        new HeroConfigController(db.getCollection("heroConfig"), MongoConfig.getGridFSBucket()).register(app);     // /api/hero/*
 
         // ========= Healthcheck =========
         app.get("/health", ctx -> ctx.json(Map.of("status", "ok")));
