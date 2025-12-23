@@ -66,6 +66,9 @@ public class Main {
             // Tamaño máx. request (JSON/multipart) - configurable desde UploadConfig
             // Debe ser suficiente para soportar hasta 100 imágenes de 25MB cada una
             cfg.http.maxRequestSize = UploadConfig.getMaxRequestSizeBytes();
+            
+            // Set default content type for better consistency
+            cfg.http.defaultContentType = "application/json; charset=utf-8";
 
             // / -> resources/public (CLASSPATH)
             cfg.staticFiles.add(staticFiles -> {
@@ -96,6 +99,27 @@ public class Main {
                 // rule.exposeHeader("Content-Disposition");
             }));
         }).start(port);
+        
+        // ========= Global exception handler =========
+        // Catch any unhandled exceptions and return proper JSON response
+        app.exception(Exception.class, (e, ctx) -> {
+            System.err.println("[ERROR] Unhandled exception: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            
+            try {
+                ctx.status(500)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Error interno del servidor"
+                   ));
+            } catch (Exception jsonEx) {
+                System.err.println("[ERROR] Failed to send error response: " + jsonEx.getMessage());
+                ctx.status(500)
+                   .contentType("text/plain")
+                   .result("Internal server error");
+            }
+        });
 
         // ========= Global middleware for API endpoints =========
         // Ensure all API endpoints return proper Content-Type
