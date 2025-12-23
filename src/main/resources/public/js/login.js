@@ -45,13 +45,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 credentials: 'include' // Important for cookies
             });
 
+            // Log response details for debugging
+            console.log('[LOGIN] Response status:', response.status);
+            console.log('[LOGIN] Response ok:', response.ok);
+            console.log('[LOGIN] Response headers:', {
+                contentType: response.headers.get('Content-Type'),
+                contentLength: response.headers.get('Content-Length')
+            });
+
+            // Enhanced JSON parsing with better error handling
             let data;
             try {
-                data = await response.json();
+                const text = await response.text();
+                console.log('[LOGIN] Response text length:', text.length);
+                
+                if (text && text.trim().length > 0) {
+                    try {
+                        data = JSON.parse(text);
+                        console.log('[LOGIN] Successfully parsed JSON:', data);
+                    } catch (jsonError) {
+                        console.error('[LOGIN] Error parsing JSON response:', jsonError);
+                        console.error('[LOGIN] Response text:', text);
+                        // Si el response es OK pero JSON es inválido, asumir éxito
+                        if (response.ok) {
+                            data = { success: true, message: 'Autenticación exitosa' };
+                        } else {
+                            throw new Error('Respuesta inválida del servidor');
+                        }
+                    }
+                } else {
+                    // Respuesta vacía
+                    console.warn('[LOGIN] Empty response received');
+                    if (response.ok) {
+                        // Respuesta vacía pero exitosa - asumir login exitoso
+                        data = { success: true, message: 'Autenticación exitosa' };
+                    } else {
+                        throw new Error('Respuesta vacía del servidor');
+                    }
+                }
             } catch (e) {
+                console.error('[LOGIN] Error reading response:', e);
                 // Si no hay JSON válido pero el response es OK, asumir éxito
                 if (response.ok) {
-                    data = { success: true };
+                    data = { success: true, message: 'Autenticación exitosa' };
                 } else {
                     throw new Error('Respuesta inválida del servidor');
                 }
