@@ -191,7 +191,7 @@ async function cargarHeroRecientes() {
 
         // 3.2. Agregar propiedades recientes
         recientes.forEach((propiedad, idx) => {
-            const img = propiedad.images[0];
+            const img = getMainImage(propiedad);
             const title = propiedad.heroTitle || propiedad.title || 'Sin título';
             const description = propiedad.heroDescription || 
                                (propiedad.location ? 
@@ -233,7 +233,9 @@ async function cargarHeroRecientes() {
             slideDiv.className = `slide ${index === 0 ? 'active' : ''}`;
             
             // CRÍTICO: Asegurar que la imagen se cargue correctamente
-            slideDiv.style.backgroundImage = `url('${slide.imageUrl}')`;
+            // Escape the URL to prevent CSS injection
+            const escapedUrl = slide.imageUrl.replace(/'/g, "\\'").replace(/"/g, '\\"');
+            slideDiv.style.backgroundImage = `url('${escapedUrl}')`;
             slideDiv.style.backgroundSize = 'cover';
             slideDiv.style.backgroundPosition = 'center';
             slideDiv.style.backgroundRepeat = 'no-repeat';
