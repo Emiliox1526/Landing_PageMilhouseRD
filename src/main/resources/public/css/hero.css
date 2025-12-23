@@ -355,3 +355,43 @@
         width: 80vw;
     }
 }
+
+/* ====================
+   HERO PROPERTY LINK
+==================== */
+.hero-property-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+}
+
+.hero-property-link:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.hero-property-link svg {
+    flex-shrink: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .hero-property-link {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
