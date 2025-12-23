@@ -9,6 +9,7 @@ import edu.pucmm.config.MongoConfig;
 import edu.pucmm.config.UploadConfig;
 import edu.pucmm.controller.PropertyController;
 import edu.pucmm.controller.AuthController;
+import edu.pucmm.controller.HeroConfigController;
 import edu.pucmm.service.AuthService;
 import edu.pucmm.controller.UploadController;
 import io.javalin.Javalin;
@@ -146,6 +147,7 @@ public class Main {
         new AuthController(authService).register(app);                              // /api/auth/*
         new UploadController(MongoConfig.getGridFSBucket()).register(app);           // /api/uploads y /api/images/:id
         new PropertyController(db.getCollection("properties")).register(app);
+        new HeroConfigController(db.getCollection("heroConfig")).register(app);     // /api/hero/*
 
         // ========= Healthcheck =========
         app.get("/health", ctx -> ctx.json(Map.of("status", "ok")));

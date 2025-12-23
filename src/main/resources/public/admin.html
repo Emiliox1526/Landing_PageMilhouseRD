@@ -15,6 +15,7 @@
     <!-- CSS del proyecto -->
     <link rel="stylesheet" href="css/global.css"/>
     <link rel="stylesheet" href="css/header.css"/>
+    <link rel="stylesheet" href="css/admin-hero.css"/>
 
     <!-- Leaflet (Mapa) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -500,27 +501,45 @@
 <div id="header-container"></div>
 
 <div class="container custom-padding">
-    <!-- Toolbar superior -->
-    <div class="section-card mb-3">
-        <div class="card-header bg-transparent border-0">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <div class="d-flex align-items-center gap-2">
-                    <button id="btnOpenCreateToolbar" class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-2"></i>Crear propiedad
-                    </button>
-                    <button id="btnReloadList" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-repeat me-1"></i>Recargar
-                    </button>
-                </div>
-                <div class="small text-muted">
-                    <span id="resultsCount"></span>
+    <!-- Tabs de navegación -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties-panel" type="button" role="tab" aria-controls="properties-panel" aria-selected="true">
+                <i class="bi bi-buildings me-2"></i>Propiedades
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="hero-tab" data-bs-toggle="tab" data-bs-target="#hero-panel" type="button" role="tab" aria-controls="hero-panel" aria-selected="false">
+                <i class="bi bi-image-fill me-2"></i>Hero de Propiedades
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab content -->
+    <div class="tab-content" id="adminTabContent">
+        <!-- Tab de Propiedades -->
+        <div class="tab-pane fade show active" id="properties-panel" role="tabpanel" aria-labelledby="properties-tab">
+            <!-- Toolbar superior -->
+            <div class="section-card mb-3">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <button id="btnOpenCreateToolbar" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Crear propiedad
+                            </button>
+                            <button id="btnReloadList" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-repeat me-1"></i>Recargar
+                            </button>
+                        </div>
+                        <div class="small text-muted">
+                            <span id="resultsCount"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Sección propiedades -->
-    <section class="properties" id="properties">
+            <!-- Sección propiedades -->
+            <section class="properties" id="properties">
         <div class="row">
             <!-- Filtros -->
             <aside class="col-lg-3 mb-3" id="filtersCol">
@@ -638,6 +657,139 @@
             </div> <!-- /col-lg-9 -->
         </div> <!-- /row -->
     </section>
+        </div> <!-- /properties-panel -->
+
+        <!-- Tab Hero de Propiedades -->
+        <div class="tab-pane fade" id="hero-panel" role="tabpanel" aria-labelledby="hero-tab">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Card principal -->
+                    <div class="card shadow-sm border-0 section-card">
+                        <div class="card-header" style="background: linear-gradient(135deg, #1E40AF, #3B82F6); color: white; border: none; border-radius: 18px 18px 0 0;">
+                            <h3 class="mb-0">
+                                <i class="bi bi-image-fill me-2"></i>
+                                Configuración del Hero - Página de Propiedades
+                            </h3>
+                            <p class="mb-0 mt-2 small" style="opacity: 0.90;">
+                                Personaliza la imagen, título y descripción que aparecen en la parte superior de la página de propiedades
+                            </p>
+                        </div>
+                        
+                        <div class="card-body p-4">
+                            <!-- Vista previa -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-eye me-2"></i>Vista Previa
+                                </label>
+                                <div id="heroPreview" class="hero-preview-container">
+                                    <div class="hero-preview-overlay">
+                                        <h1 id="previewTitle" class="hero-preview-title">
+                                            Cargando...
+                                        </h1>
+                                        <p id="previewDescription" class="hero-preview-description">
+                                            Cargando...
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload de imagen -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-image me-2"></i>Imagen de Fondo
+                                </label>
+                                <div class="upload-zone" id="heroImageUpload">
+                                    <i class="bi bi-cloud-upload upload-icon"></i>
+                                    <p class="upload-text">
+                                        <strong>Arrastra una imagen aquí</strong><br>
+                                        o haz clic para seleccionar
+                                    </p>
+                                    <input type="file" id="heroImageInput" accept="image/*" hidden>
+                                </div>
+                                <small class="text-muted">
+                                    💡 <strong>Tip:</strong> Para mejores resultados, usa imágenes de al menos 1920x1080px en formato JPG o PNG
+                                </small>
+                            </div>
+
+                            <!-- Título -->
+                            <div class="mb-4">
+                                <label for="heroTitle" class="form-label fw-bold">
+                                    <i class="bi bi-type-h1 me-2"></i>Título
+                                </label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-lg" 
+                                    id="heroTitle"
+                                    placeholder="Ej: Encuentra tu hogar ideal"
+                                    maxlength="100"
+                                >
+                                <div class="form-text">
+                                    Este será el texto principal que verán los visitantes
+                                </div>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="mb-4">
+                                <label for="heroDescription" class="form-label fw-bold">
+                                    <i class="bi bi-text-paragraph me-2"></i>Descripción
+                                </label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="heroDescription"
+                                    rows="3"
+                                    placeholder="Ej: Las mejores propiedades en República Dominicana"
+                                    maxlength="250"
+                                ></textarea>
+                                <div class="form-text">
+                                    Un texto breve que complementa el título
+                                </div>
+                            </div>
+
+                            <!-- Botones de acción -->
+                            <div class="d-flex gap-3 justify-content-end">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-outline-secondary btn-lg"
+                                    id="resetHeroBtn"
+                                >
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    Restablecer
+                                </button>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-primary btn-lg"
+                                    id="saveHeroBtn"
+                                >
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    Guardar Cambios
+                                </button>
+                            </div>
+
+                            <!-- Mensaje de estado -->
+                            <div id="heroStatusMessage" class="mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Card de ayuda -->
+                    <div class="card mt-4 border-info section-card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-lightbulb text-warning me-2"></i>
+                                Consejos para una mejor presentación
+                            </h5>
+                            <ul class="mb-0">
+                                <li>Usa imágenes de alta calidad y bien iluminadas</li>
+                                <li>El título debe ser corto y atractivo (máximo 100 caracteres)</li>
+                                <li>La descripción complementa el título (máximo 250 caracteres)</li>
+                                <li>Evita imágenes con mucho texto o elementos pequeños</li>
+                                <li>Los cambios se reflejan inmediatamente en la página de propiedades</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /hero-panel -->
+    </div> <!-- /tab-content -->
 </div>
 
 <!-- MODAL -->
@@ -893,5 +1045,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/validation.js"></script>
 <script src="js/admin.js"></script>
+<script src="js/admin-hero.js"></script>
 </body>
 </html>
