@@ -104,10 +104,16 @@ public class Main {
         });
         
         app.after("/api/*", ctx -> {
-            // Ensure Content-Type is set for all API responses if not already set
+            // Only set Content-Type for API endpoints that haven't explicitly set one
+            // and don't override responses that might not be JSON (like file downloads)
             String contentType = ctx.contentType();
             if (contentType == null || contentType.isEmpty()) {
-                ctx.contentType("application/json; charset=utf-8");
+                // Only set JSON content type for auth, property, and upload endpoints
+                String path = ctx.path();
+                if (path.startsWith("/api/auth/") || path.startsWith("/api/properties") || 
+                    path.startsWith("/api/_diag/")) {
+                    ctx.contentType("application/json; charset=utf-8");
+                }
             }
             System.out.println("[API] Response: " + ctx.status() + " Content-Type: " + ctx.contentType());
         });
