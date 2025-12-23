@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('loginForm');
     if (!form) return;
+    
+    // Configuration constants
+    const SESSION_VALIDATION_DELAY_MS = 1000; // Wait time before validating session after error
 
     // Definir reglas de validación
     const validationRules = {
@@ -115,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Verificar si la sesión se creó correctamente
             console.log('[LOGIN] Attempting to validate session despite error...');
             
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Esperar 1 segundo
+            await new Promise(resolve => setTimeout(resolve, SESSION_VALIDATION_DELAY_MS));
             
             try {
                 const validateResp = await fetch('/api/auth/validate', {

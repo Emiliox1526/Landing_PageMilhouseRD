@@ -117,7 +117,14 @@ public class AuthController {
             } catch (Exception cookieEx) {
                 System.err.println("[AUTH] Error setting cookie: " + cookieEx.getMessage());
                 cookieEx.printStackTrace();
-                // Continue anyway - authentication was successful
+                // Cookie setting failed - return error since session won't work
+                ctx.status(500)
+                   .contentType("application/json; charset=utf-8")
+                   .json(Map.of(
+                       "success", false,
+                       "message", "Error al establecer la sesión"
+                   ));
+                return;
             }
             
             // Return success response
@@ -127,8 +134,7 @@ public class AuthController {
                    .contentType("application/json; charset=utf-8")
                    .json(Map.of(
                        "success", true,
-                       "message", "Autenticación exitosa",
-                       "email", email
+                       "message", "Autenticación exitosa"
                    ));
                 System.out.println("[AUTH] Response sent successfully");
             } catch (Exception responseEx) {
