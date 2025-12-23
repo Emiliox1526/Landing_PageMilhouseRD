@@ -137,7 +137,11 @@
                 if (!uploadResp.ok) throw new Error('Error al subir imagen');
                 
                 const uploadData = await uploadResp.json();
-                imageUrl = uploadData.urls[0]; // GridFS retorna array de URLs
+                imageUrl = uploadData.urls?.[0]; // GridFS retorna array de URLs
+                
+                if (!imageUrl) {
+                    throw new Error('No se recibió URL de imagen');
+                }
             }
 
             // 2. Guardar configuración

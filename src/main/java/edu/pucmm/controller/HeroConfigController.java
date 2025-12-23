@@ -3,23 +3,14 @@ package edu.pucmm.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import edu.pucmm.config.UploadConfig;
-import edu.pucmm.util.ImageValidator;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
-import io.javalin.http.UploadedFile;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Controlador para gestionar la configuración del Hero de la página de propiedades.
@@ -30,12 +21,10 @@ public class HeroConfigController {
     
     private static final String HERO_CONFIG_ID = "propiedades_hero";
     private final MongoCollection<Document> collection;
-    private final GridFSBucket bucket;
     private final ObjectMapper mapper = new ObjectMapper();
     
-    public HeroConfigController(MongoCollection<Document> collection, GridFSBucket bucket) {
+    public HeroConfigController(MongoCollection<Document> collection) {
         this.collection = collection;
-        this.bucket = bucket;
     }
     
     public void register(Javalin app) {
@@ -113,71 +102,6 @@ public class HeroConfigController {
             }
             
             ctx.json(updated != null ? updated : doc);
-        });
-        
-        // POST /api/hero/propiedades/image - Subir nueva imagen a GridFS
-        app.post("/api/hero/propiedades/image", ctx -> {
-            UploadedFile file = ctx.uploadedFile("image");
-            
-            if (file == null) {
-                throw new BadRequestResponse("No se proporcionó ninguna imagen");
-            }
-            
-            String contentType = file.contentType();
-            String filename = file.filename() != null ? file.filename() : "hero-image";
-            long fileSize = file.size();
-            
-            // Validate extension
-            if (!ImageValidator.isExtensionAllowed(filename)) {
-                throw new BadRequestResponse("Extensión no permitida. Permitidas: " + 
-                    UploadConfig.getAllowedExtensions());
-            }
-
-            // Validate MIME type
-            if (!ImageValidator.isMimeTypeAllowed(contentType)) {
-                throw new BadRequestResponse("Tipo MIME no permitido. Recibido: " + contentType);
-            }
-
-            // Validate file size
-            if (fileSize > UploadConfig.getMaxImageSizeBytes()) {
-                throw new BadRequestResponse("La imagen es muy grande. Máximo " + 
-                    UploadConfig.getMaxImageSizeMB() + "MB");
-            }
-
-            if (fileSize <= 0) {
-                throw new BadRequestResponse("Archivo vacío");
-            }
-
-            // Validate magic bytes and upload to GridFS
-            try (var in = new BufferedInputStream(file.content())) {
-                // Mark the stream before validation so we can reset it
-                in.mark(12);
-                
-                if (!ImageValidator.validateMagicBytes(in, contentType)) {
-                    throw new BadRequestResponse("El contenido no coincide con el tipo declarado (posible archivo malicioso)");
-                }
-
-                // Reset stream to beginning for upload to GridFS
-                in.reset();
-                
-                Document meta = new Document("contentType", contentType)
-                        .append("originalName", filename)
-                        .append("size", fileSize)
-                        .append("uploadedBy", "hero-config");
-
-                GridFSUploadOptions opts = new GridFSUploadOptions().metadata(meta);
-                ObjectId id = bucket.uploadFromStream(filename, in, opts);
-
-                String imageUrl = "/api/images/" + id.toHexString();
-                
-                ctx.json(Map.of(
-                    "success", true,
-                    "imageUrl", imageUrl,
-                    "message", "Imagen subida exitosamente"
-                ));
-            } catch (IOException e) {
-                throw new BadRequestResponse("Error al procesar imagen: " + e.getMessage());
-            }
         });
     }
     
