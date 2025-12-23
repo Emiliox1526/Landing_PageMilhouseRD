@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Panel de Administración - Gestión de Propiedades | MILHOUSE RD</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/img/LogoMilhouse.png" />
 
@@ -26,43 +26,47 @@
             --mh-primary: #1E40AF;           /* Vibrant Blue - Main brand color */
             --mh-primary-light: #3B82F6;     /* Light Blue - Hover states */
             --mh-primary-dark: #1E3A8A;      /* Dark Blue - Active states */
-            
+
             --mh-secondary: #10B981;         /* Emerald Green - Success, positive actions */
             --mh-secondary-light: #34D399;   /* Light Green */
             --mh-secondary-dark: #059669;    /* Dark Green */
-            
+
             --mh-accent: #F59E0B;            /* Vibrant Amber - Highlights, CTAs */
             --mh-accent-light: #FBBF24;      /* Light Amber */
             --mh-accent-dark: #D97706;       /* Dark Amber */
-            
+
             /* === NEUTRAL COLORS === */
             --mh-ink: #0B1220;               /* Almost black - Primary text */
             --mh-navy: #1E293B;              /* Dark slate - Headers */
             --mh-navy-2: #334155;            /* Medium slate */
             --mh-slate: #475569;             /* Medium gray - Secondary text */
             --mh-muted: #64748B;             /* Light gray - Muted text */
-            
+
             /* === BACKGROUND COLORS === */
             --mh-bg: #F8FAFC;                /* Very light gray - Main background */
             --mh-bg-alt: #F1F5F9;            /* Light gray - Alternate background */
             --mh-white: #FFFFFF;             /* Pure white - Cards, containers */
-            
+
             /* === BORDER & DIVIDER COLORS === */
             --mh-line: #E2E8F0;              /* Light border */
             --mh-line-dark: #CBD5E1;         /* Medium border */
-            
+
             /* === SEMANTIC COLORS === */
             --mh-success: #10B981;           /* Success messages */
             --mh-warning: #F59E0B;           /* Warnings */
             --mh-error: #EF4444;             /* Errors, destructive actions */
             --mh-info: #3B82F6;              /* Information */
-            
+
             /* === UI ELEMENTS === */
             --select-arrow: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231E40AF' viewBox='0 0 16 16'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708L8.354 10.354a.5.5 0 0 1-.708 0L4.646 7.354a.5.5 0 0 1 0-.708z'/></svg>");
-            
+
             --header-h:68px;
         }
-        html,body{ background: var(--mh-bg) !important; font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: var(--mh-ink); }
+        html,body{
+            background: var(--mh-bg) !important;
+            font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--mh-ink);
+        }
 
         /* Header fijo sin tapar contenido */
         body.admin-compact{ padding-top: var(--header-h); }
@@ -73,19 +77,32 @@
             box-shadow: 0 6px 20px rgba(16,24,40,.06);
         }
 
-        .custom-padding { padding: 24px; }
-        .section-card{ 
-            border-radius: 18px; 
-            background: var(--mh-white); 
+        .custom-padding {
+            padding: 16px; /* móvil */
+        }
+        @media (min-width: 768px){
+            .custom-padding {
+                padding: 24px 24px 32px; /* desktop */
+            }
+        }
+
+        .section-card{
+            border-radius: 18px;
+            background: var(--mh-white);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             border: 1px solid var(--mh-line);
         }
 
         /* ===== Sección Propiedades ===== */
-        .properties{ 
-            background: transparent !important; 
-            padding: 2rem 1rem; 
-            border-radius: 18px; 
+        .properties{
+            background: transparent !important;
+            padding: 2rem 1rem;
+            border-radius: 18px;
+        }
+        @media (min-width: 768px){
+            .properties{
+                padding: 2.5rem 1.5rem 3rem;
+            }
         }
 
         /* ===== Filtros (coherente con index: colapsable en móvil, sticky en desktop) ===== */
@@ -95,10 +112,10 @@
         .filters-card .card-header{ background:transparent; border:0; padding:0 0 .75rem; }
         .filters-card .title{ font-weight:800; color:var(--mh-ink); margin:0; }
         .filters-card .form-label{ font-weight:500; color:var(--mh-navy); }
-        
+
         /* Mejoras de contraste para accesibilidad */
-        .form-text, .text-muted, small.text-muted { 
-            color: var(--mh-slate) !important; 
+        .form-text, .text-muted, small.text-muted {
+            color: var(--mh-slate) !important;
             font-weight: 500;
         }
         #priceHint, #areaHint, #priceRangeHint {
@@ -113,55 +130,55 @@
         }
 
         .mh-input,.mh-select{
-            border-radius: 12px !important; 
-            border: 2px solid var(--mh-line) !important; 
+            border-radius: 12px !important;
+            border: 2px solid var(--mh-line) !important;
             background: var(--mh-white) !important;
-            box-shadow: none !important; 
-            padding: 0.75rem 1rem !important; 
-            font-weight: 500; 
+            box-shadow: none !important;
+            padding: 0.75rem 1rem !important;
+            font-weight: 500;
             color: var(--mh-ink);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .mh-input:focus,.mh-select:focus{
-            outline: 0; 
-            border-color: var(--mh-primary) !important; 
+            outline: 0;
+            border-color: var(--mh-primary) !important;
             box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1) !important;
         }
         .mh-select{
             appearance: none;
             background-image: var(--select-arrow);
-            background-repeat: no-repeat; 
-            background-position: right 0.8rem center; 
-            background-size: 16px 16px; 
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 16px 16px;
             padding-right: 2.5rem !important;
         }
 
         .btn-primary{
             background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light)) !important;
-            color: var(--mh-white); 
-            border-radius: 12px; 
+            color: var(--mh-white);
+            border-radius: 12px;
             border: 2px solid var(--mh-primary) !important;
             font-weight: 600;
             padding: 0.75rem 1.5rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .btn-primary:hover{ 
+        .btn-primary:hover{
             background: linear-gradient(135deg, var(--mh-primary-dark), var(--mh-primary)) !important;
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         .btn-secondary{
             background: linear-gradient(135deg, var(--mh-secondary), var(--mh-secondary-light)) !important;
-            color: var(--mh-white); 
-            border-radius: 12px; 
+            color: var(--mh-white);
+            border-radius: 12px;
             border: 2px solid var(--mh-secondary) !important;
             font-weight: 600;
             padding: 0.75rem 1.5rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .btn-secondary:hover{ 
+        .btn-secondary:hover{
             background: linear-gradient(135deg, var(--mh-secondary-dark), var(--mh-secondary)) !important;
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -196,24 +213,26 @@
         }
 
         /* Toolbar + segmented */
-        .toolbar-card .card-body{ padding: 1rem 1.25rem; }
+        .toolbar-card .card-body{
+            padding: 1rem 1.25rem;
+        }
         .segmented{
-            display: flex; 
-            flex-wrap: wrap; 
+            display: flex;
+            flex-wrap: wrap;
             gap: 0.5rem;
-            background: var(--mh-bg-alt); 
-            border: 2px solid var(--mh-line); 
-            border-radius: 9999px; 
+            background: var(--mh-bg-alt);
+            border: 2px solid var(--mh-line);
+            border-radius: 9999px;
             padding: 0.375rem;
         }
         .seg-btn{
-            border: 0; 
-            background: transparent; 
+            border: 0;
+            background: transparent;
             border-radius: 9999px;
-            padding: 0.5rem 1rem; 
-            font-weight: 600; 
-            color: var(--mh-slate); 
-            cursor: pointer; 
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--mh-slate);
+            cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .seg-btn:hover{
@@ -221,7 +240,7 @@
             color: var(--mh-ink);
         }
         .seg-btn[aria-pressed="true"]{
-            background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light)); 
+            background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light));
             color: var(--mh-white);
             box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
         }
@@ -232,28 +251,28 @@
 
         /* Cards del admin (con menú 3 puntos) */
         .properties .card{
-            border: 1px solid var(--mh-line); 
-            border-radius: 16px; 
+            border: 1px solid var(--mh-line);
+            border-radius: 16px;
             background: var(--mh-white);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            overflow: hidden; 
+            overflow: hidden;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
-        .properties .card:hover{ 
-            transform: translateY(-4px); 
+        .properties .card:hover{
+            transform: translateY(-4px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             border-color: var(--mh-primary-light);
         }
         .properties .card .ratio{ --bs-aspect-ratio: 56.25%; }
         .properties .card img{ width: 100%; height: 100%; object-fit: cover; }
-        .badge.text-bg-primary{ 
+        .badge.text-bg-primary{
             background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light)) !important;
             font-weight: 600;
             padding: 0.375rem 0.75rem;
             border-radius: 9999px;
         }
-        .badge.text-bg-secondary{ 
+        .badge.text-bg-secondary{
             background: linear-gradient(135deg, var(--mh-secondary), var(--mh-secondary-light)) !important;
             font-weight: 600;
             padding: 0.375rem 0.75rem;
@@ -263,10 +282,10 @@
         .properties .card .card-body{ padding-bottom: 3rem; }
 
         /* Paginación */
-        .ta-pagination .page-link{ 
-            border-radius: 8px; 
-            border: 2px solid var(--mh-line); 
-            background: var(--mh-white); 
+        .ta-pagination .page-link{
+            border-radius: 8px;
+            border: 2px solid var(--mh-line);
+            background: var(--mh-white);
             font-weight: 600;
             color: var(--mh-slate);
             padding: 0.5rem 0.75rem;
@@ -278,14 +297,14 @@
             color: var(--mh-primary);
         }
         .ta-pagination .page-item + .page-item .page-link{ margin-left: 0.5rem; }
-        .ta-pagination .page-item.active .page-link{ 
-            color: var(--mh-white); 
-            background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light)); 
+        .ta-pagination .page-item.active .page-link{
+            color: var(--mh-white);
+            background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light));
             border-color: var(--mh-primary);
         }
-        .ta-pagination .page-item.disabled .page-link{ 
-            background: var(--mh-bg-alt); 
-            color: var(--mh-muted); 
+        .ta-pagination .page-item.disabled .page-link{
+            background: var(--mh-bg-alt);
+            color: var(--mh-muted);
             border-color: var(--mh-line);
         }
 
@@ -295,10 +314,10 @@
         .modal-body{ overflow-y: auto; }
 
         /* Mapa selector */
-        .map-picker{ 
-            height: 360px; 
-            border: 2px solid var(--mh-line); 
-            border-radius: 12px; 
+        .map-picker{
+            height: 360px;
+            border: 2px solid var(--mh-line);
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
@@ -307,13 +326,13 @@
         .chip-input { gap: 0.5rem; }
         .chip-list{ display: flex; flex-wrap: wrap; gap: 0.5rem; }
         .chip{
-            display: inline-flex; 
-            align-items: center; 
+            display: inline-flex;
+            align-items: center;
             gap: 0.5rem;
-            background: var(--mh-bg-alt); 
-            border: 1px solid var(--mh-line); 
-            border-radius: 9999px; 
-            padding: 0.375rem 0.75rem; 
+            background: var(--mh-bg-alt);
+            border: 1px solid var(--mh-line);
+            border-radius: 9999px;
+            padding: 0.375rem 0.75rem;
             font-size: 0.875rem;
             font-weight: 500;
             color: var(--mh-ink);
@@ -322,26 +341,26 @@
         .chip:hover{
             background: var(--mh-line);
         }
-        .chip .chip-remove{ 
-            border: 0; 
-            background: transparent; 
-            line-height: 1; 
-            cursor: pointer; 
+        .chip .chip-remove{
+            border: 0;
+            background: transparent;
+            line-height: 1;
+            cursor: pointer;
             font-weight: 700;
             color: var(--mh-error);
         }
 
         /* Previews de imágenes */
-        .image-grid{ 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
-            gap: 0.75rem; 
+        .image-grid{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.75rem;
         }
-        .image-item{ 
-            position: relative; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            border: 2px solid var(--mh-line); 
+        .image-item{
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--mh-line);
             background: var(--mh-bg-alt);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -351,18 +370,18 @@
         }
         .image-item img{ width: 100%; height: 100px; object-fit: cover; display: block; }
         .image-item .remove{
-            position: absolute; 
-            top: 6px; 
-            right: 6px; 
-            border: 0; 
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            border: 0;
             border-radius: 9999px;
-            width: 28px; 
-            height: 28px; 
-            display: flex; 
-            align-items: center; 
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            background: var(--mh-error); 
-            color: var(--mh-white); 
+            background: var(--mh-error);
+            color: var(--mh-white);
             cursor: pointer;
             font-weight: 700;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -372,20 +391,35 @@
             transform: scale(1.1);
             background: #dc2626;
         }
+        .container.custom-padding {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+        }
+
+        @media (min-width: 768px){
+            .container.custom-padding {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+                padding-top: 12px !important;
+                padding-bottom: 12px !important;
+            }
+        }
         .image-item .progress-bar-container {
-            position: absolute; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            height: 4px; 
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
             background: rgba(0, 0, 0, 0.2);
         }
         .image-item .progress-bar {
-            height: 100%; 
-            background: var(--mh-primary); 
+            height: 100%;
+            background: var(--mh-primary);
             transition: width 0.3s ease;
         }
-        
+
         /* Drag and Drop Zone */
         .image-drop-zone {
             border: 3px dashed var(--mh-line-dark);
@@ -428,72 +462,216 @@
             height: calc(100dvh - 2.5rem);
         }
         #propertyModal .modal-content{
-            border: 1px solid var(--mh-line); 
-            border-radius: 20px; 
-            background: var(--mh-white); 
+            border: 1px solid var(--mh-line);
+            border-radius: 20px;
+            background: var(--mh-white);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            display: flex; 
-            flex-direction: column; 
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
         #propertyModal .modal-header{
-            border: 0; 
+            border: 0;
             padding: 1.25rem 1.5rem;
-            background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light)); 
+            background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light));
             color: var(--mh-white);
         }
-        #propertyModal .modal-title{ 
-            font-weight: 800; 
-            color: var(--mh-white); 
+        #propertyModal .modal-title{
+            font-weight: 800;
+            color: var(--mh-white);
         }
-        #propertyModal .btn-close{ 
-            filter: invert(1) brightness(200%); 
-            opacity: 0.9; 
+        #propertyModal .btn-close{
+            filter: invert(1) brightness(200%);
+            opacity: 0.9;
         }
         #propertyModal .btn-close:hover{ opacity: 1; }
-        #propertyModal .modal-body{ 
-            padding: 1.5rem; 
-            overflow: auto; 
-            flex: 1 1 auto; 
+        #propertyModal .modal-body{
+            padding: 1.5rem;
+            overflow: auto;
+            flex: 1 1 auto;
         }
-        #propertyModal .modal-footer{ 
-            border-top: 1px solid var(--mh-line); 
-            padding: 1rem 1.5rem; 
-            background: var(--mh-white); 
+        #propertyModal .modal-footer{
+            border-top: 1px solid var(--mh-line);
+            padding: 1rem 1.5rem;
+            background: var(--mh-white);
         }
 
         /* Inputs del modal con look mh-* */
-        #propertyModal .form-label{ 
-            font-weight: 600; 
-            color: var(--mh-navy); 
+        #propertyModal .form-label{
+            font-weight: 600;
+            color: var(--mh-navy);
             margin-bottom: 0.5rem;
         }
         #propertyModal .form-control, #propertyModal .form-select{
-            border-radius: 12px !important; 
+            border-radius: 12px !important;
             border: 2px solid var(--mh-line) !important;
-            background: var(--mh-white) !important; 
-            box-shadow: none !important; 
+            background: var(--mh-white) !important;
+            box-shadow: none !important;
             padding: 0.75rem 1rem !important;
-            font-weight: 500; 
+            font-weight: 500;
             color: var(--mh-ink);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #propertyModal .form-control:focus, #propertyModal .form-select:focus{
-            outline: 0; 
-            border-color: var(--mh-primary) !important; 
+            outline: 0;
+            border-color: var(--mh-primary) !important;
             box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1) !important;
         }
         #propertyModal .form-select{
             appearance: none;
             background-image: var(--select-arrow);
-            background-repeat: no-repeat; 
-            background-position: right 0.8rem center; 
-            background-size: 16px 16px; 
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 16px 16px;
             padding-right: 2.5rem !important;
         }
 
         /* Backdrop suave */
         .modal-backdrop.show{ opacity: .4; }
+
+        /* ====== AJUSTES DE CONTRASTE Y PADDING EN ZONAS OSCURAS ====== */
+
+        /* Nav tabs header: fondo oscuro, texto claro */
+        .nav-tabs{
+            border-bottom-color: rgba(15,23,42,0.12);
+        }
+        .nav-tabs .nav-link{
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            border: none;
+            color: var(--mh-slate);
+            border-radius: 12px 12px 0 0;
+            background: transparent;
+        }
+        .nav-tabs .nav-link:hover{
+            color: var(--mh-primary);
+            background: rgba(15,23,42,0.03);
+        }
+        .nav-tabs .nav-link.active{
+            color: var(--mh-white);
+            background: linear-gradient(135deg, var(--mh-primary-dark), var(--mh-primary));
+            box-shadow: 0 8px 16px rgba(15,23,42,0.25);
+        }
+        .nav-tabs .nav-link.active i{
+            color: var(--mh-accent-light);
+        }
+
+        /* Encabezados con fondo degradado (hero panel & otros) */
+        .card-header.text-on-dark,
+        .card-header.text-on-dark h3,
+        .card-header.text-on-dark p,
+        .card-header.text-on-dark .small{
+            color: var(--mh-white) !important;
+        }
+
+        /* Zonas oscuras posibles dentro de hero-preview */
+        .hero-preview-container{
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+        .hero-preview-overlay{
+            padding: 2.5rem 2rem;
+        }
+        @media (min-width: 768px){
+            .hero-preview-overlay{
+                padding: 3rem 3rem;
+            }
+        }
+        .hero-preview-title,
+        .hero-preview-description{
+            color: #F9FAFB;
+            text-shadow: 0 2px 8px rgba(15,23,42,0.75);
+        }
+
+        /* Textos sobre fondos oscuros genéricos */
+        .text-on-dark,
+        .bg-dark,
+        .bg-primary,
+        .bg-gradient,
+        [class*="bg-"] .text-on-dark{
+            color: #F9FAFB;
+        }
+        .text-on-dark small,
+        .text-on-dark .form-text,
+        .text-on-dark .text-muted{
+            color: #E5E7EB !important;
+        }
+        /* ===== Toolbar superior refinada ===== */
+        .admin-toolbar-card {
+            /* redondeo consistente con .section-card */
+            border-radius: 18px;
+            overflow: hidden; /* evita que se vea cuadrado por dentro */
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: linear-gradient(135deg, #0f172a, #1e293b); /* azul marino suave */
+            box-shadow:
+                    0 10px 18px rgba(15, 23, 42, 0.25),
+                    0 1px 0 rgba(255, 255, 255, 0.02);
+        }
+
+        .admin-toolbar-card .card-header {
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+        }
+
+        /* Texto de "Mostrando X–Y..." más legible sobre fondo oscuro */
+        .admin-toolbar-card .small.text-muted {
+            color: rgba(148, 163, 184, 0.95) !important;
+            font-weight: 500;
+        }
+
+        /* Botones dentro de esta barra, manteniendo el estilo global */
+        .admin-toolbar-card .btn {
+            border-radius: 999px;          /* igual para ambos: pastilla */
+            padding: 0.55rem 1.45rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Solo aquí, refinar el primario sin romper el global */
+        .admin-toolbar-card #btnOpenCreateToolbar.btn-primary {
+            background: linear-gradient(135deg, var(--mh-primary), var(--mh-primary-light)) !important;
+            border-color: rgba(191, 219, 254, 0.95) !important; /* borde claro como en el screenshot */
+            box-shadow:
+                    0 0 0 1px rgba(15, 23, 42, 0.8),
+                    0 10px 20px rgba(37, 99, 235, 0.45);
+        }
+
+        /* Hover suave, sin exagerar respecto al resto de la web */
+        .admin-toolbar-card #btnOpenCreateToolbar.btn-primary:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--mh-primary-dark), var(--mh-primary)) !important;
+            box-shadow:
+                    0 0 0 1px rgba(15, 23, 42, 0.9),
+                    0 14px 26px rgba(37, 99, 235, 0.6);
+        }
+
+        /* Botón de recarga: borde claro, interior semitransparente, mismo radio */
+        .admin-toolbar-card #btnReloadList.btn-outline-secondary {
+            border-width: 2px;
+            border-color: rgba(226, 232, 240, 0.9) !important;
+            color: rgba(226, 232, 240, 0.8);
+            background: transparent !important;
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
+        }
+
+        /* Hover del secundario, consistente con el primario */
+        .admin-toolbar-card #btnReloadList.btn-outline-secondary:hover {
+            background: rgba(15, 23, 42, 0.45) !important;
+            color: #e5e7eb;
+        }
+
+        /* Ajuste responsivo pequeño */
+        @media (max-width: 575.98px) {
+            .admin-toolbar-card .card-header {
+                padding-inline: 0.8rem;
+            }
+
+            .admin-toolbar-card .btn {
+                padding-inline: 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body class="admin-compact">
@@ -520,8 +698,8 @@
         <!-- Tab de Propiedades -->
         <div class="tab-pane fade show active" id="properties-panel" role="tabpanel" aria-labelledby="properties-tab">
             <!-- Toolbar superior -->
-            <div class="section-card mb-3">
-                <div class="card-header bg-transparent border-0">
+            <div class="section-card mb-3 admin-toolbar-card">
+                <div class="card-header bg-transparent border-0 px-3 pt-3 pb-1 pb-md-2">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <div class="d-flex align-items-center gap-2">
                             <button id="btnOpenCreateToolbar" class="btn btn-primary">
@@ -540,123 +718,123 @@
 
             <!-- Sección propiedades -->
             <section class="properties" id="properties">
-        <div class="row">
-            <!-- Filtros -->
-            <aside class="col-lg-3 mb-3" id="filtersCol">
-                <!-- Botón colapsable en móvil -->
-                <button class="btn btn-primary w-100 d-lg-none mb-2" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#filtersCollapse"
-                        aria-expanded="false" aria-controls="filtersCollapse">
-                    <i class="bi bi-funnel me-2"></i> Filtros
-                </button>
+                <div class="row">
+                    <!-- Filtros -->
+                    <aside class="col-lg-3 mb-3" id="filtersCol">
+                        <!-- Botón colapsable en móvil -->
+                        <button class="btn btn-primary w-100 d-lg-none mb-2" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#filtersCollapse"
+                                aria-expanded="false" aria-controls="filtersCollapse">
+                            <i class="bi bi-funnel me-2"></i> Filtros
+                        </button>
 
-                <div id="filtersCollapse" class="collapse d-lg-block show">
-                    <div class="section-card filters-card">
-                        <div class="card-header"><h3 class="title">Filtrar búsqueda</h3></div>
-                        <div class="card-body">
-                            <form id="filtersForm" class="row g-3 align-items-end" novalidate>
-                                <div class="col-12">
-                                    <label for="q" class="form-label">Buscar</label>
-                                    <input id="q" type="search" class="form-control mh-input" placeholder="Título, sector, ciudad…">
+                        <div id="filtersCollapse" class="collapse d-lg-block show">
+                            <div class="section-card filters-card p-3 p-md-4">
+                                <div class="card-header"><h3 class="title">Filtrar búsqueda</h3></div>
+                                <div class="card-body pt-3 px-0 px-md-1">
+                                    <form id="filtersForm" class="row g-3 align-items-end" novalidate>
+                                        <div class="col-12">
+                                            <label for="q" class="form-label">Buscar</label>
+                                            <input id="q" type="search" class="form-control mh-input" placeholder="Título, sector, ciudad…">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="fType" class="form-label">Tipo de Propiedad</label>
+                                            <select id="fType" class="form-select mh-select">
+                                                <option value="">Todos</option>
+                                                <option>Apartamento</option><option>Casa</option><option>Penthouse</option>
+                                                <option>Solar</option><option>Villa</option><option>Local Comercial</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="fSaleType" class="form-label">Transacción</label>
+                                            <select id="fSaleType" class="form-select mh-select">
+                                                <option value="">Venta / Alquiler</option>
+                                                <option>Venta</option><option>Alquiler</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Rango de precio</label>
+                                            <div class="row g-2">
+                                                <div class="col-6"><input id="fMin" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Mínimo"></div>
+                                                <div class="col-6"><input id="fMax" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Máximo"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 d-grid gap-2 mt-2">
+                                            <button class="btn btn-primary" type="submit">Filtrar</button>
+                                            <button class="btn btn-secondary" id="resetFilters" type="button">Reestablecer</button>
+                                        </div>
+                                    </form>
                                 </div>
+                            </div>
+                        </div>
+                    </aside>
 
-                                <div class="col-12">
-                                    <label for="fType" class="form-label">Tipo de Propiedad</label>
-                                    <select id="fType" class="form-select mh-select">
-                                        <option value="">Todos</option>
-                                        <option>Apartamento</option><option>Casa</option><option>Penthouse</option>
-                                        <option>Solar</option><option>Villa</option><option>Local Comercial</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label for="fSaleType" class="form-label">Transacción</label>
-                                    <select id="fSaleType" class="form-select mh-select">
-                                        <option value="">Venta / Alquiler</option>
-                                        <option>Venta</option><option>Alquiler</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">Rango de precio</label>
-                                    <div class="row g-2">
-                                        <div class="col-6"><input id="fMin" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Mínimo"></div>
-                                        <div class="col-6"><input id="fMax" type="number" class="form-control mh-input" min="0" step="1000" placeholder="Máximo"></div>
+                    <!-- Listado -->
+                    <div class="col-lg-9 pb-5">
+                        <!-- Toolbar de orden/tamaño -->
+                        <div class="section-card toolbar-card mb-3">
+                            <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2 ta-toolbar">
+                                <div class="d-flex flex-wrap align-items-center gap-3">
+                                    <div class="d-flex flex-column gap-1">
+                                        <span class="small fw-bold text-muted">Orden</span>
+                                        <div id="sortSegment" class="segmented" role="group" aria-label="Ordenar">
+                                            <button type="button" class="seg-btn" data-sort="createdAt-desc" aria-pressed="true">Recientes</button>
+                                            <button type="button" class="seg-btn" data-sort="price-asc">Precio ↑</button>
+                                            <button type="button" class="seg-btn" data-sort="price-desc">Precio ↓</button>
+                                            <button type="button" class="seg-btn" data-sort="area-asc">Área ↑</button>
+                                            <button type="button" class="seg-btn" data-sort="area-desc">Área ↓</button>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-12 d-grid gap-2">
-                                    <button class="btn btn-primary" type="submit">Filtrar</button>
-                                    <button class="btn btn-secondary" id="resetFilters" type="button">Reestablecer</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+                                    <div class="d-flex flex-column gap-1">
+                                        <span class="small fw-bold text-muted">Por página</span>
+                                        <div id="pageSizeSegment" class="segmented" role="group" aria-label="Por página">
+                                            <button type="button" class="seg-btn" data-size="6">6</button>
+                                            <button type="button" class="seg-btn" data-size="9" aria-pressed="true">9</button>
+                                            <button type="button" class="seg-btn" data-size="12">12</button>
+                                            <button type="button" class="seg-btn" data-size="18">18</button>
+                                        </div>
+                                    </div>
 
-            <!-- Listado -->
-            <div class="col-lg-9 pb-5">
-                <!-- Toolbar de orden/tamaño -->
-                <div class="section-card toolbar-card mb-3">
-                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2 ta-toolbar">
-                        <div class="d-flex flex-wrap align-items-center gap-3">
-                            <div class="d-flex flex-column gap-1">
-                                <span class="small fw-bold text-muted">Orden</span>
-                                <div id="sortSegment" class="segmented" role="group" aria-label="Ordenar">
-                                    <button type="button" class="seg-btn" data-sort="createdAt-desc" aria-pressed="true">Recientes</button>
-                                    <button type="button" class="seg-btn" data-sort="price-asc">Precio ↑</button>
-                                    <button type="button" class="seg-btn" data-sort="price-desc">Precio ↓</button>
-                                    <button type="button" class="seg-btn" data-sort="area-asc">Área ↑</button>
-                                    <button type="button" class="seg-btn" data-sort="area-desc">Área ↓</button>
-                                </div>
-                            </div>
+                                    <!-- Selects reales (ocultos) que usa admin.js -->
+                                    <label class="visually-hidden" for="sortBy">Orden</label>
+                                    <select id="sortBy" class="visually-hidden">
+                                        <option value="createdAt-desc" selected>Más recientes</option>
+                                        <option value="price-asc">Precio ↑</option>
+                                        <option value="price-desc">Precio ↓</option>
+                                        <option value="area-desc">Área ↓</option>
+                                        <option value="area-asc">Área ↑</option>
+                                    </select>
 
-                            <div class="d-flex flex-column gap-1">
-                                <span class="small fw-bold text-muted">Por página</span>
-                                <div id="pageSizeSegment" class="segmented" role="group" aria-label="Por página">
-                                    <button type="button" class="seg-btn" data-size="6">6</button>
-                                    <button type="button" class="seg-btn" data-size="9" aria-pressed="true">9</button>
-                                    <button type="button" class="seg-btn" data-size="12">12</button>
-                                    <button type="button" class="seg-btn" data-size="18">18</button>
+                                    <label class="visually-hidden" for="pageSize">Por página</label>
+                                    <select id="pageSize" class="visually-hidden">
+                                        <option value="6">6</option>
+                                        <option value="9" selected>9</option>
+                                        <option value="12">12</option>
+                                        <option value="18">18</option>
+                                    </select>
                                 </div>
                             </div>
-
-                            <!-- Selects reales (ocultos) que usa admin.js -->
-                            <label class="visually-hidden" for="sortBy">Orden</label>
-                            <select id="sortBy" class="visually-hidden">
-                                <option value="createdAt-desc" selected>Más recientes</option>
-                                <option value="price-asc">Precio ↑</option>
-                                <option value="price-desc">Precio ↓</option>
-                                <option value="area-desc">Área ↓</option>
-                                <option value="area-asc">Área ↑</option>
-                            </select>
-
-                            <label class="visually-hidden" for="pageSize">Por página</label>
-                            <select id="pageSize" class="visually-hidden">
-                                <option value="6">6</option>
-                                <option value="9" selected>9</option>
-                                <option value="12">12</option>
-                                <option value="18">18</option>
-                            </select>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Tarjetas -->
-                <div id="propertiesContainer" class="row g-3"></div>
+                        <!-- Tarjetas -->
+                        <div id="propertiesContainer" class="row g-3"></div>
 
-                <!-- Paginación -->
-                <div class="section-card mt-3">
-                    <div class="card-body">
-                        <nav aria-label="Paginación">
-                            <ul id="pagination" class="pagination ta-pagination justify-content-center mb-0"></ul>
-                        </nav>
-                    </div>
-                </div>
-            </div> <!-- /col-lg-9 -->
-        </div> <!-- /row -->
-    </section>
+                        <!-- Paginación -->
+                        <div class="section-card mt-3">
+                            <div class="card-body">
+                                <nav aria-label="Paginación">
+                                    <ul id="pagination" class="pagination ta-pagination justify-content-center mb-0"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div> <!-- /col-lg-9 -->
+                </div> <!-- /row -->
+            </section>
         </div> <!-- /properties-panel -->
 
         <!-- Tab Hero de Propiedades -->
@@ -665,17 +843,17 @@
                 <div class="col-lg-10">
                     <!-- Card principal -->
                     <div class="card shadow-sm border-0 section-card">
-                        <div class="card-header" style="background: linear-gradient(135deg, #1E40AF, #3B82F6); color: white; border: none; border-radius: 18px 18px 0 0;">
+                        <div class="card-header text-on-dark" style="background: linear-gradient(135deg, #1E40AF, #3B82F6); border: none; border-radius: 18px 18px 0 0; padding: 1.5rem 1.75rem;">
                             <h3 class="mb-0">
                                 <i class="bi bi-image-fill me-2"></i>
                                 Configuración del Hero - Página de Propiedades
                             </h3>
-                            <p class="mb-0 mt-2 small" style="opacity: 0.90;">
+                            <p class="mb-0 mt-2 small" style="opacity: 0.92;">
                                 Personaliza la imagen, título y descripción que aparecen en la parte superior de la página de propiedades
                             </p>
                         </div>
-                        
-                        <div class="card-body p-4">
+
+                        <div class="card-body p-4 p-md-5">
                             <!-- Vista previa -->
                             <div class="mb-4">
                                 <label class="form-label fw-bold">
@@ -716,12 +894,12 @@
                                 <label for="heroTitle" class="form-label fw-bold">
                                     <i class="bi bi-type-h1 me-2"></i>Título
                                 </label>
-                                <input 
-                                    type="text" 
-                                    class="form-control form-control-lg" 
-                                    id="heroTitle"
-                                    placeholder="Ej: Encuentra tu hogar ideal"
-                                    maxlength="100"
+                                <input
+                                        type="text"
+                                        class="form-control form-control-lg"
+                                        id="heroTitle"
+                                        placeholder="Ej: Encuentra tu hogar ideal"
+                                        maxlength="100"
                                 >
                                 <div class="form-text">
                                     Este será el texto principal que verán los visitantes
@@ -733,12 +911,12 @@
                                 <label for="heroDescription" class="form-label fw-bold">
                                     <i class="bi bi-text-paragraph me-2"></i>Descripción
                                 </label>
-                                <textarea 
-                                    class="form-control" 
-                                    id="heroDescription"
-                                    rows="3"
-                                    placeholder="Ej: Las mejores propiedades en República Dominicana"
-                                    maxlength="250"
+                                <textarea
+                                        class="form-control"
+                                        id="heroDescription"
+                                        rows="3"
+                                        placeholder="Ej: Las mejores propiedades en República Dominicana"
+                                        maxlength="250"
                                 ></textarea>
                                 <div class="form-text">
                                     Un texto breve que complementa el título
@@ -747,18 +925,18 @@
 
                             <!-- Botones de acción -->
                             <div class="d-flex gap-3 justify-content-end">
-                                <button 
-                                    type="button" 
-                                    class="btn btn-outline-secondary btn-lg"
-                                    id="resetHeroBtn"
+                                <button
+                                        type="button"
+                                        class="btn btn-outline-secondary btn-lg"
+                                        id="resetHeroBtn"
                                 >
                                     <i class="bi bi-arrow-clockwise me-2"></i>
                                     Restablecer
                                 </button>
-                                <button 
-                                    type="button" 
-                                    class="btn btn-primary btn-lg"
-                                    id="saveHeroBtn"
+                                <button
+                                        type="button"
+                                        class="btn btn-primary btn-lg"
+                                        id="saveHeroBtn"
                                 >
                                     <i class="bi bi-check-circle me-2"></i>
                                     Guardar Cambios
@@ -772,8 +950,8 @@
 
                     <!-- Card de ayuda -->
                     <div class="card mt-4 border-info section-card">
-                        <div class="card-body">
-                            <h5 class="card-title">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3">
                                 <i class="bi bi-lightbulb text-warning me-2"></i>
                                 Consejos para una mejor presentación
                             </h5>
@@ -879,13 +1057,13 @@
                             <label class="form-label d-flex align-items-center justify-content-between">
                                 <span>Ubicación (elige en el mapa)</span>
                                 <span class="d-flex gap-2">
-                    <button type="button" id="btnUseMyLocation" class="btn btn-sm btn-outline-secondary">
-                      <i class="bi bi-crosshair"></i> Mi ubicación
-                    </button>
-                    <button type="button" id="btnClearMarker" class="btn btn-sm btn-outline-secondary">
-                      <i class="bi bi-x-circle"></i> Limpiar
-                    </button>
-                  </span>
+                                    <button type="button" id="btnUseMyLocation" class="btn btn-sm btn-outline-secondary">
+                                      <i class="bi bi-crosshair"></i> Mi ubicación
+                                    </button>
+                                    <button type="button" id="btnClearMarker" class="btn btn-sm btn-outline-secondary">
+                                      <i class="bi bi-x-circle"></i> Limpiar
+                                    </button>
+                                </span>
                             </label>
                             <div id="latLngPicker" class="map-picker rounded"></div>
                             <small class="text-muted">Haz clic en el mapa para fijar la ubicación. Arrastra el marcador para ajustar.</small>
@@ -907,7 +1085,7 @@
 
                         <!-- Hero Configuration -->
                         <div class="col-12">
-                            <div class="section-card p-3">
+                            <div class="section-card p-3 p-md-4">
                                 <h6 class="mb-3"><i class="bi bi-star-fill me-2"></i>Configuración de Hero (Imagen Principal)</h6>
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" id="isHeroDefault">
@@ -962,7 +1140,7 @@
                                 <small class="text-muted">Solo para Apartamento y Penthouse. El precio del anuncio se fija al menor precio.</small>
                             </label>
 
-                            <div class="section-card p-3 mb-3">
+                            <div class="section-card p-3 p-md-4 mb-3">
                                 <div class="row g-2 align-items-end">
                                     <div class="col-sm-3">
                                         <label class="form-label">Nombre</label>

@@ -93,7 +93,15 @@
         .ta-pagination .page-item + .page-item .page-link{ margin-left:.4rem; }
         .ta-pagination .page-item.active .page-link{ color:#fff; background:linear-gradient(135deg,var(--mh-navy),var(--mh-navy-2)); border-color:transparent; }
         .ta-pagination .page-item.disabled .page-link{ background:#f4f6fa; color:#9aa1b3; border-color:var(--mh-line); }
-
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:  rgba(0, 0, 0, 0.2); /* o el color que uses */
+            z-index: 2;
+        }
         /* Legibilidad en hero (si la imagen es clara) */
         .hero-overlay h1, .hero-overlay p { color:#fff !important; text-shadow:0 2px 16px rgba(0,0,0,.35); }
         .slider-dots{
