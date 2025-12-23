@@ -53,21 +53,34 @@ public class HeroConfigController {
         
         // GET /api/hero/propiedades - Obtener configuración actual
         app.get("/api/hero/propiedades", ctx -> {
-            Document config = collection.find(Filters.eq("id", HERO_CONFIG_ID)).first();
-            
-            if (config == null) {
-                // Retornar configuración por defecto
-                ctx.json(Map.of(
-                    "id", HERO_CONFIG_ID,
-                    "imageUrl", "/images/default-hero.jpg",
-                    "title", "Encuentra tu hogar ideal",
-                    "description", "Las mejores propiedades en República Dominicana"
+            try {
+                System.out.println("[HERO] GET request for hero config");
+                
+                Document config = collection.find(Filters.eq("id", HERO_CONFIG_ID)).first();
+                
+                if (config == null) {
+                    System.out.println("[HERO] No configuration found, returning default");
+                    // Retornar configuración por defecto
+                    ctx.json(Map.of(
+                        "id", HERO_CONFIG_ID,
+                        "imageUrl", "/images/default-hero.jpg",
+                        "title", "Encuentra tu hogar ideal",
+                        "description", "Las mejores propiedades en República Dominicana"
+                    ));
+                } else {
+                    System.out.println("[HERO] Configuration found: " + config.getString("imageUrl"));
+                    // Convertir _id a string y eliminar campo _id
+                    config.put("objectId", config.getObjectId("_id").toHexString());
+                    config.remove("_id");
+                    ctx.json(config);
+                }
+            } catch (Exception e) {
+                System.err.println("[HERO] Error getting hero config: " + e.getMessage());
+                e.printStackTrace();
+                ctx.status(500).json(Map.of(
+                    "success", false,
+                    "message", "Error al obtener configuración del hero"
                 ));
-            } else {
-                // Convertir _id a string y eliminar campo _id
-                config.put("objectId", config.getObjectId("_id").toHexString());
-                config.remove("_id");
-                ctx.json(config);
             }
         });
         

@@ -119,8 +119,8 @@ function coerceToArray(data) {
 }
 /* ---------------------------- Cargar hero --------------------------- */
 async function cargarHeroRecientes() {
-    const slider = document.getElementById("dynamic-slider");
-    const dotsContainer = document.getElementById("slider-dots");
+    const slider = document.getElementById('dynamic-slider');
+    const dotsContainer = document.getElementById('slider-dots');
     
     if (!slider) {
         console.warn('[HERO] No se encontró #dynamic-slider');
@@ -128,28 +128,39 @@ async function cargarHeroRecientes() {
     }
 
     slider.innerHTML = '';
-    dotsContainer.innerHTML = '';
+    if (dotsContainer) dotsContainer.innerHTML = '';
 
     try {
-        // 1. PRIMERO: Cargar configuración del Hero de Propiedades
+        console.log('[HERO] Iniciando carga del hero...');
+
+        // 1. Cargar configuración del Hero de Propiedades PRIMERO
         let heroConfig = null;
         try {
-            const heroResponse = await fetch('/api/hero/propiedades');
+            console.log('[HERO] Solicitando configuración del hero...');
+            const heroResponse = await fetch('/api/hero/propiedades', {
+                credentials: 'include'
+            });
+            
+            console.log('[HERO] Respuesta del servidor:', heroResponse.status);
+            
             if (heroResponse.ok) {
                 heroConfig = await heroResponse.json();
-                console.log('[HERO] Configuración del hero cargada:', heroConfig);
+                console.log('[HERO] ✅ Configuración del hero cargada:', heroConfig);
+            } else {
+                console.log('[HERO] ⚠️ No hay configuración del hero (status:', heroResponse.status, ')');
             }
         } catch (heroError) {
-            console.warn('[HERO] No se pudo cargar configuración del hero:', heroError);
+            console.warn('[HERO] ⚠️ Error al cargar configuración del hero:', heroError);
         }
 
         // 2. Cargar propiedades recientes
+        console.log('[HERO] Cargando propiedades recientes...');
         const { ok, status, data } = await fetchJSON('/api/properties');
         if (!ok) throw new Error(`HTTP ${status}`);
 
         const properties = coerceToArray(data);
         
-        // Filtrar propiedades con imágenes
+        // Filtrar y ordenar propiedades con imágenes
         const recientes = properties
             .filter(p => Array.isArray(p.images) && p.images.length > 0)
             .sort((a, b) => {
@@ -157,13 +168,16 @@ async function cargarHeroRecientes() {
                 const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
                 return dateB - dateA;
             })
-            .slice(0, 5); // Solo las 5 más recientes
+            .slice(0, 5);
+
+        console.log('[HERO] Propiedades recientes encontradas:', recientes.length);
 
         // 3. Construir array de slides
         const slides = [];
 
-        // 3.1. Agregar Hero de Propiedades como PRIMER slide (si existe)
+        // 3.1. Agregar Hero de Propiedades como PRIMERA slide (si existe)
         if (heroConfig && heroConfig.imageUrl) {
+            console.log('[HERO] ✅ Agregando hero config como primera slide');
             slides.push({
                 type: 'hero-config',
                 imageUrl: heroConfig.imageUrl,
@@ -171,13 +185,20 @@ async function cargarHeroRecientes() {
                 description: heroConfig.description || '',
                 isHeroConfig: true
             });
+        } else {
+            console.log('[HERO] ⚠️ No se agregará hero config (no existe o no tiene imagen)');
         }
 
         // 3.2. Agregar propiedades recientes
-        recientes.forEach(propiedad => {
-            const img = getMainImage(propiedad);
+        recientes.forEach((propiedad, idx) => {
+            const img = propiedad.images[0];
             const title = propiedad.heroTitle || propiedad.title || 'Sin título';
-            const description = propiedad.heroDescription || resolveLocation(propiedad);
+            const description = propiedad.heroDescription || 
+                               (propiedad.location ? 
+                                `${propiedad.location.city || ''}${propiedad.location.sector ? ', ' + propiedad.location.sector : ''}`.trim() 
+                                : '');
+            
+            console.log(`[HERO] Agregando propiedad ${idx + 1}: ${title}`);
             
             slides.push({
                 type: 'property',
@@ -189,10 +210,13 @@ async function cargarHeroRecientes() {
             });
         });
 
+        console.log('[HERO] Total de slides a renderizar:', slides.length);
+
         // 4. Renderizar slides
         if (slides.length === 0) {
+            console.warn('[HERO] No hay slides para mostrar, usando fallback');
             slider.innerHTML = `
-                <div class="slide active">
+                <div class="slide active" style="background-image: url('/images/default-hero.jpg'); background-size: cover; background-position: center;">
                     <div class="hero-overlay">
                         <h1>Bienvenido a Milhouse RD</h1>
                         <p>Las mejores propiedades en República Dominicana</p>
@@ -203,104 +227,99 @@ async function cargarHeroRecientes() {
 
         // Crear elementos de slide
         slides.forEach((slide, index) => {
+            console.log(`[HERO] Renderizando slide ${index + 1}:`, slide.title);
+            
             const slideDiv = document.createElement('div');
             slideDiv.className = `slide ${index === 0 ? 'active' : ''}`;
             
-            // Crear imagen de fondo
-            const imgElement = document.createElement('img');
-            imgElement.className = 'hero-image';
-            imgElement.src = slide.imageUrl;
-            imgElement.alt = slide.title;
-            slideDiv.appendChild(imgElement);
+            // CRÍTICO: Asegurar que la imagen se cargue correctamente
+            slideDiv.style.backgroundImage = `url('${slide.imageUrl}')`;
+            slideDiv.style.backgroundSize = 'cover';
+            slideDiv.style.backgroundPosition = 'center';
+            slideDiv.style.backgroundRepeat = 'no-repeat';
             
             const overlay = document.createElement('div');
             overlay.className = 'hero-overlay';
             
             const h1 = document.createElement('h1');
-            h1.innerHTML = escapeHtml(slide.title);
+            h1.textContent = slide.title;
             overlay.appendChild(h1);
             
             if (slide.description) {
                 const p = document.createElement('p');
-                p.innerHTML = escapeHtml(slide.description);
+                p.textContent = slide.description;
                 overlay.appendChild(p);
             }
             
-            // Si es una propiedad (no el hero config), agregar enlace
-            if (slide.type === 'property' && slide.propertyId) {
-                const link = document.createElement('a');
-                link.href = `/property-detail.html?id=${slide.propertyId}`;
-                link.className = 'hero-property-link';
-                link.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-                    </svg>
-                    Ver detalles
-                `;
-                overlay.appendChild(link);
-            }
+            // ❌ NO agregar botón "Ver detalles" - REMOVIDO
             
             slideDiv.appendChild(overlay);
             slider.appendChild(slideDiv);
             
             // Crear dot
-            const dot = document.createElement('span');
-            dot.className = `dot ${index === 0 ? 'active' : ''}`;
-            dot.dataset.index = index;
-            dot.addEventListener('click', () => goToSlide(index));
-            dotsContainer.appendChild(dot);
+            if (dotsContainer) {
+                const dot = document.createElement('span');
+                dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                dot.dataset.index = index;
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+            }
         });
 
-        // 5. Configurar navegación del slider
+        // 5. Configurar navegación del slider (SIN auto-play)
         let currentSlide = 0;
         const slideElements = slider.querySelectorAll('.slide');
-        const dotElements = dotsContainer.querySelectorAll('.dot');
+        const dotElements = dotsContainer ? dotsContainer.querySelectorAll('.dot') : [];
 
         function goToSlide(n) {
-            if (slideElements.length === 0 || dotElements.length === 0) return;
+            if (slideElements.length === 0) return;
             
             slideElements[currentSlide].classList.remove('active');
-            dotElements[currentSlide].classList.remove('active');
+            if (dotElements.length > 0) dotElements[currentSlide].classList.remove('active');
             
             currentSlide = n;
             if (currentSlide >= slideElements.length) currentSlide = 0;
             if (currentSlide < 0) currentSlide = slideElements.length - 1;
             
             slideElements[currentSlide].classList.add('active');
-            dotElements[currentSlide].classList.add('active');
+            if (dotElements.length > 0) dotElements[currentSlide].classList.add('active');
+            
+            console.log('[HERO] Cambiando a slide:', currentSlide);
         }
 
         function nextSlide() {
-            goToSlide((currentSlide + 1) % slideElements.length);
+            goToSlide(currentSlide + 1);
         }
 
         function prevSlide() {
-            goToSlide((currentSlide - 1 + slideElements.length) % slideElements.length);
+            goToSlide(currentSlide - 1);
         }
 
-        // Configurar botones
+        // Configurar botones de navegación
         const prevBtn = document.getElementById('prev-slide');
         const nextBtn = document.getElementById('next-slide');
         
-        if (prevBtn) prevBtn.onclick = prevSlide;
-        if (nextBtn) nextBtn.onclick = nextSlide;
+        if (prevBtn) {
+            prevBtn.onclick = prevSlide;
+            console.log('[HERO] Botón anterior configurado');
+        }
+        
+        if (nextBtn) {
+            nextBtn.onclick = nextSlide;
+            console.log('[HERO] Botón siguiente configurado');
+        }
 
-        // Auto-play every 5 seconds
-        let autoPlayInterval = setInterval(nextSlide, 5000);
+        // ❌ REMOVER AUTO-PLAY - Ya no hay setInterval aquí
 
-        // Pause on hover
-        slider.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
-        slider.addEventListener('mouseleave', () => {
-            clearInterval(autoPlayInterval);
-            autoPlayInterval = setInterval(nextSlide, 5000);
-        });
-
-        console.log(`[HERO] Cargadas ${slides.length} slides (${heroConfig ? '1 hero config + ' : ''}${recientes.length} propiedades)`);
+        console.log(`[HERO] ✅ Hero cargado exitosamente con ${slides.length} slides`);
+        if (heroConfig) {
+            console.log('[HERO] ✅ Primera slide es el Hero de Propiedades configurado');
+        }
 
     } catch (error) {
-        console.error('[HERO] Error al cargar el hero:', error);
+        console.error('[HERO] ❌ Error crítico al cargar el hero:', error);
         slider.innerHTML = `
-            <div class="slide active">
+            <div class="slide active" style="background-image: url('/images/default-hero.jpg'); background-size: cover; background-position: center;">
                 <div class="hero-overlay">
                     <h1>Bienvenido a Milhouse RD</h1>
                     <p>Las mejores propiedades en República Dominicana</p>
