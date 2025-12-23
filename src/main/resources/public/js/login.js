@@ -45,7 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 credentials: 'include' // Important for cookies
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                // Si no hay JSON válido pero el response es OK, asumir éxito
+                if (response.ok) {
+                    data = { success: true };
+                } else {
+                    throw new Error('Respuesta inválida del servidor');
+                }
+            }
 
             if (response.ok && data.success) {
                 FormValidator.showGlobalSuccess(form, 'Iniciando sesión...');
