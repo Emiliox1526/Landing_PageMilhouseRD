@@ -97,6 +97,27 @@ public class Main {
             }));
         }).start(port);
 
+        // ========= Global middleware for API endpoints =========
+        // Ensure all API endpoints return proper Content-Type
+        app.before("/api/*", ctx -> {
+            System.out.println("[API] Request: " + ctx.method() + " " + ctx.path());
+        });
+        
+        app.after("/api/*", ctx -> {
+            // Only set Content-Type for API endpoints that haven't explicitly set one
+            // and don't override responses that might not be JSON (like file downloads)
+            String contentType = ctx.contentType();
+            if (contentType == null || contentType.isEmpty()) {
+                // Only set JSON content type for auth, property, and upload endpoints
+                String path = ctx.path();
+                if (path.startsWith("/api/auth/") || path.startsWith("/api/properties") || 
+                    path.startsWith("/api/_diag/")) {
+                    ctx.contentType("application/json; charset=utf-8");
+                }
+            }
+            System.out.println("[API] Response: " + ctx.status() + " Content-Type: " + ctx.contentType());
+        });
+
         // ========= Rutas de dominio =========
         new AuthController(authService).register(app);                              // /api/auth/*
         new UploadController(MongoConfig.getGridFSBucket()).register(app);           // /api/uploads y /api/images/:id
