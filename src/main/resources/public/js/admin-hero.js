@@ -126,9 +126,9 @@
             let imageUrl = currentConfig?.imageUrl;
             if (selectedImage) {
                 const formData = new FormData();
-                formData.append('image', selectedImage);
+                formData.append('files', selectedImage);
 
-                const uploadResp = await fetch('/api/hero/propiedades/image', {
+                const uploadResp = await fetch('/api/uploads', {
                     method: 'POST',
                     body: formData,
                     credentials: 'include'
@@ -137,7 +137,11 @@
                 if (!uploadResp.ok) throw new Error('Error al subir imagen');
                 
                 const uploadData = await uploadResp.json();
-                imageUrl = uploadData.imageUrl;
+                imageUrl = uploadData.urls?.[0]; // GridFS retorna array de URLs
+                
+                if (!imageUrl) {
+                    throw new Error('No se recibió URL de imagen');
+                }
             }
 
             // 2. Guardar configuración

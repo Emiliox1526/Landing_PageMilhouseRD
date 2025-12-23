@@ -7,19 +7,10 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
-import io.javalin.http.UploadedFile;
 import org.bson.Document;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Controlador para gestionar la configuración del Hero de la página de propiedades.
@@ -31,22 +22,9 @@ public class HeroConfigController {
     private static final String HERO_CONFIG_ID = "propiedades_hero";
     private final MongoCollection<Document> collection;
     private final ObjectMapper mapper = new ObjectMapper();
-    private final Path uploadsRoot;
     
     public HeroConfigController(MongoCollection<Document> collection) {
         this.collection = collection;
-        
-        // Configurar ruta de uploads
-        String uploadsDirEnv = Optional.ofNullable(System.getenv("UPLOADS_DIR")).orElse("");
-        this.uploadsRoot = uploadsDirEnv.isBlank()
-                ? Paths.get(System.getProperty("user.dir"), "uploads")
-                : Paths.get(uploadsDirEnv);
-        
-        try {
-            Files.createDirectories(uploadsRoot);
-        } catch (Exception e) {
-            System.err.println("Error creating uploads directory: " + e.getMessage());
-        }
     }
     
     public void register(Javalin app) {
@@ -124,55 +102,6 @@ public class HeroConfigController {
             }
             
             ctx.json(updated != null ? updated : doc);
-        });
-        
-        // POST /api/hero/propiedades/image - Subir nueva imagen
-        app.post("/api/hero/propiedades/image", ctx -> {
-            UploadedFile file = ctx.uploadedFile("image");
-            
-            if (file == null) {
-                throw new BadRequestResponse("No se proporcionó ninguna imagen");
-            }
-            
-            String contentType = file.contentType();
-            if (contentType == null || !contentType.toLowerCase().startsWith("image/")) {
-                throw new BadRequestResponse("El archivo debe ser una imagen");
-            }
-            
-            // Validar tamaño (máximo 10MB)
-            long maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.size() > maxSize) {
-                throw new BadRequestResponse("La imagen es muy grande. Máximo 10MB");
-            }
-            
-            // Generar nombre único para la imagen
-            String ext = "";
-            String original = file.filename() == null ? "" : file.filename();
-            int dot = original.lastIndexOf('.');
-            if (dot > -1 && dot < original.length() - 1) {
-                ext = original.substring(dot).toLowerCase();
-            } else if (contentType.contains("/")) {
-                String guessed = contentType.substring(contentType.indexOf('/') + 1).toLowerCase();
-                if (guessed.equals("jpeg")) guessed = "jpg";
-                if (guessed.matches("[a-z0-9]+")) {
-                    ext = "." + guessed;
-                }
-            }
-            
-            String filename = "hero-propiedades-" + UUID.randomUUID().toString().replace("-", "") + ext;
-            Path dest = uploadsRoot.resolve(filename);
-            
-            try (InputStream in = file.content()) {
-                Files.copy(in, dest, REPLACE_EXISTING);
-            }
-            
-            String imageUrl = "/uploads/" + filename;
-            
-            ctx.json(Map.of(
-                "success", true,
-                "imageUrl", imageUrl,
-                "message", "Imagen subida exitosamente"
-            ));
         });
     }
     
