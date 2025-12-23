@@ -175,12 +175,9 @@ async function cargarHeroRecientes() {
 
         // 3.2. Agregar propiedades recientes
         recientes.forEach(propiedad => {
-            const img = propiedad.images[0];
+            const img = getMainImage(propiedad);
             const title = propiedad.heroTitle || propiedad.title || 'Sin título';
-            const description = propiedad.heroDescription || 
-                               (propiedad.location ? 
-                                `${propiedad.location.city || ''}${propiedad.location.sector ? ', ' + propiedad.location.sector : ''}`.trim() 
-                                : '');
+            const description = propiedad.heroDescription || resolveLocation(propiedad);
             
             slides.push({
                 type: 'property',
@@ -220,12 +217,12 @@ async function cargarHeroRecientes() {
             overlay.className = 'hero-overlay';
             
             const h1 = document.createElement('h1');
-            h1.textContent = slide.title;
+            h1.innerHTML = escapeHtml(slide.title);
             overlay.appendChild(h1);
             
             if (slide.description) {
                 const p = document.createElement('p');
-                p.textContent = slide.description;
+                p.innerHTML = escapeHtml(slide.description);
                 overlay.appendChild(p);
             }
             
@@ -260,6 +257,8 @@ async function cargarHeroRecientes() {
         const dotElements = dotsContainer.querySelectorAll('.dot');
 
         function goToSlide(n) {
+            if (slideElements.length === 0 || dotElements.length === 0) return;
+            
             slideElements[currentSlide].classList.remove('active');
             dotElements[currentSlide].classList.remove('active');
             
@@ -286,10 +285,10 @@ async function cargarHeroRecientes() {
         if (prevBtn) prevBtn.onclick = prevSlide;
         if (nextBtn) nextBtn.onclick = nextSlide;
 
-        // Auto-play (cada 5 segundos)
+        // Auto-play every 5 seconds
         let autoPlayInterval = setInterval(nextSlide, 5000);
 
-        // Pausar en hover
+        // Pause on hover
         slider.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
         slider.addEventListener('mouseleave', () => {
             clearInterval(autoPlayInterval);
