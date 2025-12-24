@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             localStorage.removeItem('isAdmin');
                             
                             // Redirigir a la página principal
-                            window.location.href = '/index.html';
+                            window.location.href = '/';
                         });
                     } else {
                         console.error('[Header] No se encontró el botón de logout');
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3) Cambio de fondo según página
             if (navEl) {
-                const isHome = location.pathname.endsWith('/index.html') || location.pathname === '/';
+                const isHome = location.pathname === '/' || location.pathname === '/index.html';
                 navEl.classList.add(isHome ? 'navbar-gradiente' : 'bg-vino');
             }
         })

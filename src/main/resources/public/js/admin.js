@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!data.success || !data.authenticated) {
             // No autenticado - redirigir al login
             console.log('[ADMIN] Usuario no autenticado, redirigiendo al login');
-            window.location.href = '/login.html';
+            window.location.href = '/login/';
             return;
         }
         
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>No se pudo verificar la autenticación. Por favor verifica tu conexión a internet e intenta nuevamente.</p>
                     <hr>
                     <button class="btn btn-primary" onclick="window.location.reload()">Reintentar</button>
-                    <button class="btn btn-secondary" onclick="window.location.href='/login.html'">Ir al Login</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='/login/'">Ir al Login</button>
                 </div>
             </div>
         `;
@@ -800,7 +800,7 @@ function initializeAdminPanel() {
             col.className = 'col-sm-6 col-md-4';
 
             const link = document.createElement('a');
-            link.href = `property.html?id=${encodeURIComponent(id)}`;
+            link.href = `/property/?id=${encodeURIComponent(id)}`;
             link.className = 'text-decoration-none text-dark';
 
             const card = document.createElement('div');

@@ -487,7 +487,7 @@ function renderCards(items){
         col.className = 'col-md-4';
 
         const link = document.createElement('a');
-        link.href = `property.html?id=${encodeURIComponent(id)}`;
+        link.href = `/property/?id=${encodeURIComponent(id)}`;
         link.className = 'text-decoration-none text-dark';
         link.setAttribute('data-id', id);
 
