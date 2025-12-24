@@ -1,128 +1,254 @@
 <style>
-    /* ===== MilhouseRD Footer - Updated with vibrant colors ===== */
+    /* (tu CSS tal cual, sin cambios) */
+    /* ===== MilhouseRD Footer - UI/UX + Colores claros azules (SIN secciones extra) ===== */
     .mhf-footer{
-        /* Updated vibrant color tokens */
-        --mhf-primary:#1E40AF;        /* Vibrant Blue */
-        --mhf-primary-light:#3B82F6;  /* Light Blue */
-        --mhf-accent:#F59E0B;         /* Vibrant Amber */
+        --mhf-primary:#7FA1A8;
+        --mhf-primary-light:#A9C6CC;
+        --mhf-primary-soft:#E5F2F4;
+        --mhf-accent:#CFBB9B;
+        --mhf-text-main:#1F2933;
+        --mhf-text-muted:#4B5A67;
 
-        background: linear-gradient(
-                135deg,
-                var(--mhf-primary) 0%,
-                var(--mhf-primary-light) 100%
-        ) !important;
+        background:
+                radial-gradient(circle at top left, rgba(127,161,168,.3), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(207,187,155,.25), transparent 55%),
+                linear-gradient(135deg, #F8FBFC 0%, var(--mhf-primary-soft) 55%, #F1F5F7 100%) !important;
 
-        color:#fff;
-        padding:56px 0 20px;
+        color:var(--mhf-text-main);
+        padding:40px 0 20px;
         font-family:"Montserrat",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+        position:relative;
+        overflow:hidden;
     }
-    .mhf-footer *{ font-family:inherit; }
 
-    /* layout */
-    .mhf-footer .mhf-container{ max-width:1280px; margin-inline:auto; }
+    .mhf-footer::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+        border-top:1px solid rgba(148,163,184,.35);
+        opacity:.85;
+    }
+
+    .mhf-footer *{
+        font-family:inherit;
+        box-sizing:border-box;
+    }
+
+    .mhf-footer .mhf-container{
+        max-width:1200px;
+        margin-inline:auto;
+        padding-inline:16px;
+        position:relative;
+        z-index:1;
+    }
 
     /* Marca */
-    .mhf-footer .mhf-brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff; }
-    .mhf-footer .mhf-logo{ width:64px; height:auto; } /* logo reducido */
-    @media (max-width:991.98px){ .mhf-footer .mhf-logo{ width:56px; } }
-    .mhf-footer .mhf-name{ font-weight:800; letter-spacing:.5px; color:#fff; }
+    .mhf-footer .mhf-brand{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        text-decoration:none;
+        color:var(--mhf-text-main);
+        margin-bottom:.5rem;
+    }
+    .mhf-footer .mhf-logo{
+        width:60px;
+        height:auto;
+        border-radius:12px;
+        box-shadow:0 6px 14px rgba(15,23,42,.08);
+        background:#fff;
+    }
+    @media (max-width:991.98px){
+        .mhf-footer .mhf-logo{ width:52px; }
+    }
 
-    /* Encabezados de columna */
+    .mhf-footer .mhf-name{
+        font-weight:800;
+        letter-spacing:.6px;
+        font-size:1.1rem;
+        color:var(--mhf-text-main);
+    }
+
+    .mhf-footer .mhf-tagline{
+        font-size:.9rem;
+        color:var(--mhf-text-muted);
+        max-width:320px;
+        margin-bottom:.75rem;
+    }
+
+    /* Encabezados */
     .mhf-footer .mhf-heading{
-        font-weight:800; text-transform:uppercase; letter-spacing:.6px;
-        font-size:.9rem; margin:0 0 .75rem; color:#fff;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:.12em;
+        font-size:.78rem;
+        margin:0 0 .6rem;
+        color:var(--mhf-text-main);
+        opacity:.9;
     }
 
-    /* Texto y enlaces (TODO blanco) */
-    .mhf-footer p,
-    .mhf-footer a,
-    .mhf-footer a:hover,
-    .mhf-footer .mhf-bottom,
-    .mhf-footer .mhf-bottom a{ color:#fff !important; text-decoration:none; }
+    /* Listas */
+    .mhf-footer .mhf-list{
+        list-style:none;
+        padding:0;
+        margin:0;
+        font-size:.9rem;
+        color:var(--mhf-text-muted);
+    }
+    .mhf-footer .mhf-list li{
+        margin-bottom:.45rem;
+        display:flex;
+        align-items:flex-start;
+        gap:.5rem;
+    }
+    .mhf-footer .mhf-list li i{
+        color:var(--mhf-primary);
+        margin-top:.15rem;
+    }
 
-    /* Listas / contacto */
-    .mhf-footer .mhf-list li{ margin-bottom:.5rem; }
+    /* Enlaces */
+    .mhf-footer a{
+        color:var(--mhf-text-muted);
+        text-decoration:none;
+        transition:color .18s ease, opacity .18s ease, transform .18s ease;
+    }
+    .mhf-footer a:hover{
+        color:var(--mhf-primary);
+    }
 
-    /* Redes */
-    .mhf-footer .mhf-social .btn{
-        border-color:rgba(255,255,255,.35);
-        color:#fff;
+    /* Navegación rápida */
+    .mhf-footer .mhf-nav a{
+        display:inline-flex;
+        align-items:center;
+        gap:.35rem;
+        font-size:.88rem;
     }
-    .mhf-footer .mhf-social .btn:hover{
-        background:var(--mhf-accent); color:#fff; border-color:var(--mhf-accent);
+    .mhf-footer .mhf-nav a::before{
+        content:"›";
+        font-size:.8rem;
+        opacity:.7;
+        color:var(--mhf-primary);
     }
-    /* ===== FIX de color blanco en listas de contacto ===== */
-    .mhf-footer .mhf-list,
-    .mhf-footer .mhf-list li,
-    .mhf-footer .mhf-list li i,
-    .mhf-footer .mhf-list a{
-        color:#fff !important;
+    .mhf-footer .mhf-nav a:hover{
+        transform:translateX(2px);
     }
-    /* Newsletter */
-    .mhf-footer .mhf-newsletter .form-control{
-        border-radius:9999px 0 0 9999px;
-        background:rgba(255,255,255,.10);
-        border:1px solid rgba(255,255,255,.28);
-        color:#fff;
+
+    /* Redes sociales */
+    .mhf-footer .mhf-social{
+        display:flex;
+        flex-wrap:wrap;
+        gap:.5rem;
+        margin-top:.5rem;
     }
-    .mhf-footer .mhf-newsletter .form-control::placeholder{
-        color:#fff; opacity:.85;
+    .mhf-footer .mhf-social-link{
+        width:32px;
+        height:32px;
+        border-radius:999px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        border:1px solid rgba(148,163,184,.7);
+        color:var(--mhf-primary);
+        font-size:1rem;
+        background:#ffffff;
+        box-shadow:0 3px 8px rgba(15,23,42,.04);
     }
-    .mhf-footer .mhf-newsletter .btn{
-        border-radius:0 9999px 9999px 0;
-        background:linear-gradient(135deg,var(--mhf-accent),#FBBF24);
-        border:0; color:#fff; font-weight:800;
+    .mhf-footer .mhf-social-link:hover{
+        background:linear-gradient(135deg,var(--mhf-primary),var(--mhf-primary-light));
+        border-color:transparent;
+        color:#ffffff;
+        transform:translateY(-1px);
     }
-    .mhf-footer .mhf-newsletter .btn:hover{ filter:brightness(1.1); }
 
     /* Franja inferior */
     .mhf-footer .mhf-bottom{
-        border-top:1px solid rgba(255,255,255,.22);
-        margin-top:32px; padding-top:16px;
+        border-top:1px solid rgba(148,163,184,.5);
+        margin-top:24px;
+        padding-top:12px;
+        font-size:.8rem;
+        color:var(--mhf-text-muted);
+        display:flex;
+        flex-direction:column;
+        gap:.35rem;
+    }
+    @media (min-width:768px){
+        .mhf-footer .mhf-bottom{
+            flex-direction:row;
+            align-items:center;
+            justify-content:space-between;
+        }
     }
 
-    /* Utilidades */
-    .mhf-footer .mhf-legal a{ margin-right:1rem; }
-    
-    /* Admin link - subtle styling for less visibility */
     .mhf-footer .mhf-admin-link{
-        opacity: 0.7;
-        font-size: 0.85rem;
+        opacity:.65;
+        font-size:.8rem;
+    }
+    .mhf-footer .mhf-admin-link:hover{
+        opacity:1;
+        color:var(--mhf-primary);
+    }
+
+    @media (max-width:767.98px){
+        .mhf-footer{
+            padding-top:32px;
+        }
     }
 </style>
 
-
 <footer class="mhf-footer">
     <div class="mhf-container">
-        <div class="row gy-4 g-lg-5 justify-content-lg-between">
-            <!-- Marca + tagline (aligned left) -->
-            <div class="col-12 col-md-6 col-lg-4 order-lg-1">
-                <a class="mhf-brand" href="/index.html" aria-label="Milhouse RD">
-                    <img src="/assets/img/LogoMilhouse.png" alt="Logo Milhouse RD" class="mhf-logo">
-                    <span class="mhf-name">MILHOUSE RD</span>
-                </a>
-                <p class="mhf-small">Tu aliado en bienes raíces en República Dominicana.</p>
-            </div>
-            <!-- Contacto (aligned right) -->
-            <div class="col-6 col-md-3 col-lg-4 order-lg-2">
+        <div class="row gy-3 g-lg-4 justify-content-lg-between">
+            <!-- Columna 1: Contáctanos (alineada a la izquierda) -->
+            <div class="col-12 col-md-6 col-lg-6">
                 <p class="mhf-heading">Contáctanos</p>
-                <ul class="list-unstyled mhf-list small m-0">
-                    <li><i class="bi bi-geo-alt-fill me-2"></i> Calle principal No. 7, ed. Corporativo, mod. 1-9, ensanche. Román II, Santiago</li>
-                    <li><i class="bi bi-telephone-fill me-2"></i> +1 809-818-1834</li>
-                    <li><i class="bi bi-envelope-fill me-2"></i> 1834jml@gmail.com</li>
+                <ul class="mhf-list">
+                    <li>
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>Calle principal No. 7, ed. Corporativo, mod. 1-9, ensanche Román II, Santiago</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-telephone-fill"></i>
+                        <a href="tel:+18098181834">+1 809-818-1834</a>
+                    </li>
+                    <li>
+                        <i class="bi bi-envelope-fill"></i>
+                        <a href="mailto:1834jml@gmail.com">1834jml@gmail.com</a>
+                    </li>
                 </ul>
             </div>
 
+            <!-- Columna 2: Marca + tagline + redes (alineada con la primera) -->
+            <div class="col-12 col-md-6 col-lg-6 d-flex flex-column align-items-md-end align-items-start text-md-end text-start">
+                <a class="mhf-brand justify-content-md-end" href="/index.html" aria-label="Milhouse RD">
+                    <img src="/assets/img/LogoMilhouse.png" alt="Logo Milhouse RD" class="mhf-logo">
+                    <span class="mhf-name">MILHOUSE RD</span>
+                </a>
+                <p class="mhf-tagline">
+                    Tu aliado en bienes raíces en República Dominicana.
+                </p>
 
+                <div class="mhf-social" aria-label="Redes sociales de Milhouse RD">
+                    <a href="#" class="mhf-social-link" aria-label="WhatsApp">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                    <a href="#" class="mhf-social-link" aria-label="Instagram">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="#" class="mhf-social-link" aria-label="Facebook">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Franja inferior -->
-        <div class="mhf-bottom d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
-            <div class="small">
+        <div class="mhf-bottom mt-3">
+            <div>
                 &copy; <script>document.write(new Date().getFullYear());</script> Milhouse RD. Todos los derechos reservados.
             </div>
-            <div class="small">
-                <a href="/login.html" class="text-decoration-none mhf-admin-link">Acceso administrador</a>
+            <div>
+                <a href="/login.html" class="mhf-admin-link">Acceso administrador</a>
             </div>
         </div>
     </div>
