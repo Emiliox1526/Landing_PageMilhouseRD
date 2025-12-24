@@ -2,6 +2,34 @@
 
 Sistema de administración de propiedades inmobiliarias con soporte avanzado de subida de imágenes.
 
+## 🔗 Estructura de URLs
+
+El sistema utiliza URLs limpias sin extensiones `.html` para una mejor experiencia de usuario y SEO:
+
+### URLs Públicas
+- **Inicio**: `/` o `/index.html`
+- **Propiedades**: `/property/?id={propertyId}`
+- **Login**: `/login/`
+
+### URL de Administración
+- **Panel de Administración**: `/management-panel-mh2024/`
+  - La URL del panel de administración está ofuscada para dificultar el acceso no autorizado
+  - Solo accesible tras autenticación exitosa mediante el sistema de login
+  - El enlace al panel **no aparece en la navegación pública**
+  - Solo es visible en el dropdown de usuario una vez autenticado
+
+### Seguridad de Acceso al Panel de Administración
+
+El sistema implementa múltiples capas de seguridad para proteger el panel de administración:
+
+1. **URL No Obvia**: El panel usa una ruta ofuscada (`/management-panel-mh2024/`) en lugar de `/admin/`
+2. **Autenticación Backend**: El servidor valida la sesión mediante `/api/auth/validate` antes de mostrar contenido
+3. **Redirección Automática**: Usuarios no autenticados son redirigidos automáticamente a `/login/`
+4. **Visibilidad Condicional**: El enlace al panel solo aparece en el header para usuarios autenticados
+5. **Validación de Sesión**: Cada carga de página admin verifica la autenticación con el backend
+
+> **Nota de Seguridad**: Aunque la URL está ofuscada, esto es solo una medida de "seguridad por oscuridad". La verdadera protección viene de la autenticación backend. No confíes únicamente en URLs ocultas para proteger contenido sensible.
+
 ## 🏖️ Características de Propiedades Tipo Solar
 
 ### Precio por Metro Cuadrado

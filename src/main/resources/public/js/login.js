@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Redirigir después de un breve delay para que se vea el mensaje
                 setTimeout(() => {
-                    window.location.href = '/index.html';
+                    window.location.href = '/management-panel-mh2024/';
                 }, 500);
             } else {
                 FormValidator.showGlobalError(form, data.message || 'Usuario o contraseña incorrectos. Por favor verifica tus credenciales e intenta nuevamente.');
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.setItem('isAdmin', 'true');
                         
                         setTimeout(() => {
-                            window.location.href = '/index.html';
+                            window.location.href = '/management-panel-mh2024/';
                         }, 500);
                         return; // Exit successfully
                     }
