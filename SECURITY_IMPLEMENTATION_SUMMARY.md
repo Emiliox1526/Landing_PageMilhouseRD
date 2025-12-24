@@ -107,7 +107,7 @@ fetch('/api/auth/validate', { credentials: 'include' })
 ```javascript
 // Redirect to login if not authenticated
 if (!data.success || !data.authenticated) {
-    window.location.href = '/login.html';
+    window.location.href = '/login';
 }
 ```
 
